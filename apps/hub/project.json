@@ -1,0 +1,104 @@
+{
+  "name": "hub",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/hub",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "root": "apps/hub",
+        "outputPath": "apps/hub/dist"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/hub"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "hub:build",
+        "dev": true,
+        "turbo": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "hub:build:development",
+          "dev": true,
+          "turbo": true
+        },
+        "production": {
+          "buildTarget": "hub:build:production",
+          "dev": false
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "hub:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/hub/cypress.config.ts",
+        "devServerTarget": "hub:serve:development",
+        "testingType": "e2e"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "hub:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/hub/src/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "containerize": {
+      "executor": "@nx-tools/nx-container:build",
+      "defaultConfiguration": "local",
+      "options": {
+        "context": "{workspaceRoot}",
+        "cwd": "{workspaceRoot}",
+        "file": "apps/hub/deploy/Dockerfile",
+        "push": false,
+        "load": true
+      },
+      "configurations": {
+        "local": {
+          "tags": [
+            "iotea-hub:local"
+          ],
+          "platforms": [],
+          "no-cache": true
+        },
+        "production": {
+          "tags": [
+            "378120902656.dkr.ecr.us-west-2.amazonaws.com/hub:latest"
+          ],
+          "platforms": [
+            "linux/arm64"
+          ]
+        }
+      }
+    }
+  },
+  "tags": []
+}

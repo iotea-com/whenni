@@ -1,0 +1,45 @@
+{
+  "version": "beta-dev",
+  "name": "Message Queue",
+  "label": "messageQueue",
+  "type": "source",
+  "description": "Triggers a channel on a new message from a specific topic in a message queueing system",
+  "io": {
+    "inputs": [
+      {
+        "id": "passThrough",
+        "allowedEdge": [
+          "channel"
+        ],
+        "dataType": [
+          "bytes"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "id": "trigger",
+        "allowedEdge": [
+          "*"
+        ],
+        "dataType": [
+          "bytes"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "natsClient::thing": "__IOTEA_IGNORE__",
+    "topic": ""
+  },
+  "dependencies": {
+    "models": [],
+    "things": [
+      {
+        "internal": false,
+        "thingId": "__IOTEA_IGNORE__",
+        "fieldName": "natsClient::thing"
+      }
+    ]
+  }
+}

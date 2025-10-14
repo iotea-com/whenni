@@ -1,0 +1,9 @@
+.dotGrid {
+  background: url('/img/dot-grid.webp') repeat;
+  background-size: 250px;
+}
+
+.headerContent {
+  @apply w-fit;
+  background: radial-gradient(circle at 50% 50%, white 0%, transparent 120%);
+}

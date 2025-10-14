@@ -1,0 +1,53 @@
+{
+  "version": "beta-dev",
+  "name": "HTTP",
+  "label": "http",
+  "type": "source",
+  "description": "Listen for incoming HTTP requests",
+  "io": {
+    "inputs": [
+      {
+        "id": "passThrough",
+        "allowedEdge": [
+          "channel"
+        ],
+        "dataType": [
+          "bytes",
+          "json",
+          "file"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "id": "httpOutput",
+        "allowedEdge": [
+          "processing",
+          "action",
+          "conditional",
+          "custom"
+        ],
+        "dataType": [
+          "bytes",
+          "json",
+          "file"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "httpServer::thing": "__IOTEA_IGNORE__",
+    "method": "GET",
+    "responseTimeout": 10
+  },
+  "dependencies": {
+    "models": [],
+    "things": [
+      {
+        "internal": true,
+        "thingId": "__IOTEA_IGNORE__",
+        "fieldName": "httpServer::thing"
+      }
+    ]
+  }
+}

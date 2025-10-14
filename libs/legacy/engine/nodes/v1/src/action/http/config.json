@@ -1,0 +1,46 @@
+{
+    "version": "beta-dev",
+    "name": "HTTP",
+    "label": "http",
+    "type": "action",
+    "description": "Send an HTTP request",
+    "io": {
+        "inputs": [
+            {
+                "id": "httpInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "id": "httpOutput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "httpServer::thing": "__IOTEA_IGNORE__",
+        "method": "GET",
+        "path": "/test"
+    },
+    "dependencies": {
+        "models": [],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "httpServer::thing"
+            }
+        ]
+    }
+}

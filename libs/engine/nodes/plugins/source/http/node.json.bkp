@@ -1,0 +1,15 @@
+{
+  "name": "http",
+  "label": "HTTP",
+  "version": "0.1.0",
+  "description": "Listen for HTTP requests",
+  "category": "source",
+  "inputs": [],
+  "outputs": [
+    {
+      "id": "request",
+      "label": "Request"
+    }
+  ],
+  "runtime": "jvm"
+}

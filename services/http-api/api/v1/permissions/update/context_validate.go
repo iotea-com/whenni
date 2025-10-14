@@ -1,0 +1,82 @@
+package permissionsUpdate
+
+import (
+	"fmt"
+
+	"github.com/gofiber/fiber/v2"
+	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
+	"github.com/iotea-com/iotea/prisma/db"
+	"github.com/iotea-com/iotea/services/http-api/config"
+	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+)
+
+func contextValidate(request *ioteahttp.Request[Input]) error {
+	request.Span.AddEvent("contextValidate")
+
+	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
+		BearerToken:  request.Input.BearerToken,
+		PrismaClient: prisma.Client,
+		JwtSecret:    config.VaultConf.JwtSecret,
+		ScopeId:      request.Input.OrgId,
+		Namespace:    ioteapermissions.NamespacePermissions,
+		Action:       ioteapermissions.ActionUpdate,
+	}
+
+	if request.Input.SpaceId != "" {
+		authorizeRequestParams.ScopeId = request.Input.SpaceId
+	}
+
+	err := request.Authorize(authorizeRequestParams)
+	if err != nil {
+		request.Span.SetAttributes(
+			attribute.String("error.type", "authorize"),
+			attribute.String("error.message", err.Error()),
+			attribute.String("context_validation.status", "fail"),
+		)
+		return err
+	}
+
+	// Get the current permission set
+	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get permission set")
+	permissionSet, dbErr := prisma.Client.PermissionSet.FindUnique(
+		db.PermissionSet.ID.Equals(request.Input.PermissionSetId),
+	).Exec(dbCtx)
+
+	if dbErr != nil {
+		dbSpan.SetAttributes(
+			attribute.String("error.type", "database"),
+			attribute.String("error.message", fmt.Sprintf("error updating permission set in the database: %s", dbErr)),
+		)
+		dbSpan.End()
+		return fiber.NewError(fiber.StatusInternalServerError, dbErr.Error())
+	}
+
+	// Check if the permission set is the Default permission set
+	if permissionSet.Name == "Default" && request.Input.Name != "Default" {
+		errMessage := "Cannot change the name of the 'Default' permission set."
+		request.Span.SetAttributes(
+			attribute.String("error.type", "context_validation"),
+			attribute.String("error.message", errMessage),
+		)
+		errResponse := ioteahttp.NewErrorResponse([]any{errMessage})
+		responseJson, _ := errResponse.MarshalJson()
+		return fiber.NewError(fiber.StatusBadRequest, string(responseJson))
+	}
+
+	if permissionSet.Name != "Default" && request.Input.Name == "Default" {
+		errMessage := "Cannot change the name of the permission set to 'Default'."
+		request.Span.SetAttributes(
+			attribute.String("error.type", "context_validation"),
+			attribute.String("error.message", errMessage),
+		)
+		errResponse := ioteahttp.NewErrorResponse([]any{errMessage})
+		responseJson, _ := errResponse.MarshalJson()
+		return fiber.NewError(fiber.StatusBadRequest, string(responseJson))
+	}
+
+	request.Span.SetAttributes(attribute.String("context_validation.status", "pass"))
+	return nil
+}

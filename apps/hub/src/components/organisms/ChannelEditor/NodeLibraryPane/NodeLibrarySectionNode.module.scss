@@ -1,0 +1,23 @@
+.sectionNode {
+  @apply relative transition my-1 py-3 pl-5 pr-7 bg-gray-50 dark:bg-gray-900 border border-gray-200 rounded select-none dark:text-gray-200 text-sm cursor-grab;
+
+  .name {
+    @apply text-sm font-semibold;
+  }
+
+  .description {
+    @apply text-xs;
+  }
+}
+
+.sectionNode:last-child {
+  @apply mb-2;
+}
+
+.sectionNode:hover {
+  @apply bg-green-50 dark:bg-green-700 border-green-300 dark:border-green-500;
+
+  .name, .description {
+    @apply text-green-800 dark:text-white;
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "frontend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frontend/src",
+  "projectType": "library",
+  "tags": [
+    "react"
+  ],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/frontend/src/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/frontend"
+      ],
+      "options": {
+        "jestConfig": "libs/frontend/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

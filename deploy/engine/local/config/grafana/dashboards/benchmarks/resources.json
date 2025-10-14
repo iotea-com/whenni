@@ -1,0 +1,470 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "panels": [
+        {
+            "datasource": {
+                "type": "influxdb",
+                "uid": "eeaqxbe9txywwa"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "fixedColor": "red",
+                        "mode": "fixed"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": 5000,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "displayName": "CPU Cores",
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "none"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "influxdb",
+                        "uid": "eeaqxbe9txywwa"
+                    },
+                    "query": "from(bucket: \"benchmark-tests\")\r\n  |> range(start: ${__from:date}, stop: ${__to:date})\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"resources\")\r\n  |> filter(fn: (r) => r[\"test_name\"] == \"${testName}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"cpu_milli_cores\")\r\n  |> keep(columns: [\"_value\", \"_time\"])\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) / 1000.0 })) \r\n  |> aggregateWindow(every: 1s, fn: mean)",
+                    "refId": "A"
+                }
+            ],
+            "title": "CPU Utilization",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "influxdb",
+                "uid": "eeaqxbe9txywwa"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "fixedColor": "yellow",
+                        "mode": "fixed"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": 5000,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "displayName": "Megabytes",
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "none"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 24,
+                "x": 0,
+                "y": 6
+            },
+            "id": 3,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "influxdb",
+                        "uid": "eeaqxbe9txywwa"
+                    },
+                    "query": "from(bucket: \"benchmark-tests\")\r\n  |> range(start: ${__from:date}, stop: ${__to:date})\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"resources\")\r\n  |> filter(fn: (r) => r[\"test_name\"] == \"${testName}\")  \r\n  |> filter(fn: (r) => r[\"_field\"] == \"memory_bytes\")\r\n  |> keep(columns: [\"_value\", \"_time\"])\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) / (1024.0 * 1024.0) }))\r\n  |> aggregateWindow(every: 1s, fn: mean)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Memory Utilization",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "influxdb",
+                "uid": "eeaqxbe9txywwa"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "fixedColor": "blue",
+                        "mode": "fixed"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": 5000,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "displayName": "Megabytes",
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "none"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 24,
+                "x": 0,
+                "y": 12
+            },
+            "id": 2,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "influxdb",
+                        "uid": "eeaqxbe9txywwa"
+                    },
+                    "query": "from(bucket: \"benchmark-tests\")\r\n  |> range(start: ${__from:date}, stop: ${__to:date})\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"resources\")\r\n  |> filter(fn: (r) => r[\"test_name\"] == \"${testName}\")  \r\n  |> filter(fn: (r) => r[\"_field\"] == \"network_total_rx\")\r\n  |> keep(columns: [\"_value\", \"_time\"])\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) / (1024.0 * 1024.0) }))\r\n  |> aggregateWindow(every: 1s, fn: mean)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Network RX",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "influxdb",
+                "uid": "eeaqxbe9txywwa"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "fixedColor": "green",
+                        "mode": "fixed"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": 5000,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "displayName": "Megabytes",
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "none"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 24,
+                "x": 0,
+                "y": 18
+            },
+            "id": 4,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "influxdb",
+                        "uid": "eeaqxbe9txywwa"
+                    },
+                    "query": "from(bucket: \"benchmark-tests\")\r\n  |> range(start: ${__from:date}, stop: ${__to:date})\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"resources\")\r\n  |> filter(fn: (r) => r[\"test_name\"] == \"${testName}\")  \r\n  |> filter(fn: (r) => r[\"_field\"] == \"network_total_tx\")\r\n  |> keep(columns: [\"_value\", \"_time\"])\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) / (1024.0 * 1024.0) }))\r\n  |> aggregateWindow(every: 1s, fn: mean)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Network TX",
+            "type": "timeseries"
+        }
+    ],
+    "refresh": "1s",
+    "schemaVersion": 39,
+    "tags": [],
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "selected": false,
+                    "text": "Simple Channel",
+                    "value": "Simple Channel"
+                },
+                "datasource": {
+                    "type": "influxdb",
+                    "uid": "eeaqxbe9txywwa"
+                },
+                "definition": "from(bucket: \"benchmark-tests\")\r\n  |> range(start: -30d)  // Adjust range as needed\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"resources\")\r\n  |> keep(columns: [\"test_name\"])\r\n  |> distinct(column: \"test_name\")",
+                "hide": 0,
+                "includeAll": false,
+                "label": "Test Name",
+                "multi": false,
+                "name": "testName",
+                "options": [],
+                "query": "from(bucket: \"benchmark-tests\")\r\n  |> range(start: -30d)  // Adjust range as needed\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"resources\")\r\n  |> keep(columns: [\"test_name\"])\r\n  |> distinct(column: \"test_name\")",
+                "refresh": 2,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 1,
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-15m",
+        "to": "now"
+    },
+    "timepicker": {
+        "refresh_intervals": [
+            "1s",
+            "5s",
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+        ],
+        "time_options": [
+            "1m",
+            "5m",
+            "15m",
+            "1h",
+            "6h",
+            "12h",
+            "24h",
+            "2d",
+            "7d",
+            "30d"
+        ]
+    },
+    "timezone": "browser",
+    "title": "Channel Runtime Resources",
+    "uid": "eeaoqbe9txywwa",
+    "version": 3,
+    "weekStart": ""
+}

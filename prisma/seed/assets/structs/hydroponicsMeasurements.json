@@ -1,0 +1,4 @@
+{
+    "humidity": "float",
+    "temperature": "float"
+}

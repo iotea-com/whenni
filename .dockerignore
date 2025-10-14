@@ -1,0 +1,12 @@
+.cursor
+.devcontainer
+.git
+.github
+.nx
+.vscode
+node_modules
+deploy/engine/production
+deploy/services/production
+**/.env
+**/docker-compose.yaml
+**/dist

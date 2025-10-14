@@ -1,0 +1,22 @@
+{
+    "version": "beta-dev",
+    "name": "Message Queue",
+    "label": "messageQueue",
+    "type": "action",
+    "description": "Publish messages to a topic (queue, subject, or channel) in a message queue",
+    "io": {
+        "inputs": [
+            {
+                "id": "messageQueueInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {},
+    "dependencies": {}
+}

@@ -1,0 +1,177 @@
+{
+  "id": "2c1220a9-b439-4b44-9b4a-6aab39d8c9cc",
+  "name": "Hydroponics Data Collector",
+  "edges": [
+    {
+      "id": "ee2ZSpASyjg-q8X_JhQcdEp_pe21UPAZMqMQhp_LJm",
+      "from": {
+        "ioId": "mqttOutput",
+        "nodeId": "nRqnGBJCFPOrMXpsgrJhcTIXqaNShfPiruDMYznxUtF"
+      },
+      "to": {
+        "ioId": "transformInput",
+        "nodeId": "n5TojUYU2Sj9UyzdTKKQ2GAlCk_Fpik_ide-utgIzGB"
+      }
+    },
+    {
+      "id": "e7dgV9g6DpoaiB0nwhnYn3IqxsIlHrKVKDaOZSceUs",
+      "from": {
+        "ioId": "transformOutput",
+        "nodeId": "n5TojUYU2Sj9UyzdTKKQ2GAlCk_Fpik_ide-utgIzGB"
+      },
+      "to": {
+        "ioId": "inputData",
+        "nodeId": "nkU5X3Mt4Ap6FkbwqivDvrc4Rpv4euq_mMNwlHIk7Jv"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "nRqnGBJCFPOrMXpsgrJhcTIXqaNShfPiruDMYznxUtF",
+      "metadata": {
+        "io": {
+          "inputs": [
+            {
+              "id": "passThrough",
+              "dataType": ["bytes"],
+              "allowedEdge": [
+                "channel"
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "mqttOutput",
+              "dataType": ["signal"],
+              "allowedEdge": [
+                "processing",
+                "action",
+                "conditional",
+                "custom"
+              ]
+            }
+          ]
+        },
+        "name": "MQTT Source Client",
+        "type": "source",
+        "label": "mqtt",
+        "config": {
+          "mqttClient::thing": "20edf43f-20b4-42bb-90b3-39ba333e891a",
+          "topic": "hydroponics/measurements",
+          "qos": 0
+        },
+        "version": "beta-dev",
+        "description": "Connect to an MQTT server and listen to a specific topic",
+        "dependencies": {
+          "things": [
+            {
+              "internal": false,
+              "thingId": "20edf43f-20b4-42bb-90b3-39ba333e891a",
+              "fieldName": "mqttClient::thing"
+            }
+          ],
+          "structs": []
+        }
+      },
+      "coordinates": {
+        "x": 180,
+        "y": 120
+      }
+    },
+    {
+      "id": "n5TojUYU2Sj9UyzdTKKQ2GAlCk_Fpik_ide-utgIzGB",
+      "metadata": {
+        "io": {
+          "inputs": [
+            {
+              "id": "transformInput",
+              "dataType": ["bytes"],
+              "allowedEdge": [
+                "*"
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "transformOutput",
+              "dataType": ["bytes"],
+              "allowedEdge": [
+                "*"
+              ]
+            }
+          ]
+        },
+        "name": "Transform",
+        "type": "processing",
+        "label": "transform",
+        "config": {
+          "mapping": {
+            "humidity": "adc0",
+            "temperature": "adc1"
+          },
+          "inputStruct": {
+            "adc0": "float",
+            "adc1": "float",
+            "adc3": "float",
+            "adc4": "float",
+            "adc5": "float",
+            "adc6": "float",
+            "::IOTEA_STRUCT_ID::": "3eace9b0-a255-4b9f-874c-9f31ec104db0"
+          },
+          "outputStruct": {
+            "humidity": "float",
+            "temperature": "float",
+            "::IOTEA_STRUCT_ID::": "53cd15d6-ae1b-496f-820c-41e1945de6c7"
+          }
+        },
+        "version": "beta-dev",
+        "description": "Map data fields from one struct to another",
+        "dependencies": {
+          "things": [],
+          "structs": []
+        }
+      },
+      "coordinates": {
+        "x": 180,
+        "y": 330
+      }
+    },
+    {
+      "id": "nkU5X3Mt4Ap6FkbwqivDvrc4Rpv4euq_mMNwlHIk7Jv",
+      "metadata": {
+        "io": {
+          "inputs": [
+            {
+              "id": "inputData",
+              "dataType": ["string"],
+              "allowedEdge": [
+                "*"
+              ]
+            }
+          ],
+          "outputs": []
+        },
+        "name": "InfluxDB",
+        "type": "action",
+        "label": "influxdb",
+        "config": {
+          "org": "iotea",
+          "token": "my-secret-influxdb2-token",
+          "bucket": "hydroponics-measurements",
+          "databaseUrl": "http://influxdb:8086"
+        },
+        "version": "beta-dev",
+        "description": "Stores data into an InfluxDB bucket",
+        "dependencies": {
+          "things": [],
+          "structs": []
+        }
+      },
+      "coordinates": {
+        "x": 180,
+        "y": 570
+      }
+    }
+  ],
+  "lifetime": "single"
+}

@@ -1,0 +1,11 @@
+.post {
+  @apply rounded bg-gray-50 border border-gray-100 shadow mb-4 flex overflow-hidden;
+
+  .postCover {
+    @apply transition w-full h-full object-cover rounded shadow;
+  }
+}
+
+.featuredPost {
+  @apply border-primary;
+}

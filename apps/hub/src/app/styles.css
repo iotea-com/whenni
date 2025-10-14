@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 dark:bg-gray-900;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-title font-black text-gray-800;
+  }
+
+  .dark h1, h2, h3, h4, h5, h6 {
+    @apply text-gray-100;
+  }
+
+  h2 {
+    @apply font-extrabold;
+  }
+
+  h3, h4 {
+    @apply font-bold;
+  }
+
+  h5, h6 {
+    @apply font-semibold;
+  }
+
+  p {
+    @apply text-gray-600;
+  }
+
+  .dark p {
+    @apply text-gray-300;
+  }
+
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 15px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    border: 2px transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full border-4 border-solid border-transparent;
+    background-clip: content-box;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700;
+  }
+}
+
+@layer utilities {
+  @keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(
+        to right,
+        #e0e0e0 0%,
+        #f0f0f0 50%,
+        #e0e0e0 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  .dark .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(
+        to right,
+        #4c4c4c 0%,
+        #2e2e2e 50%,
+        #4c4c4c  100%
+    );
+    background-size: 200% 100%;
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@iotea/hub/*": ["apps/hub/src/*"],
+      "@iotea/libs/engine/channels/*": ["libs/engine/channels/*"],
+      "@iotea/libs/engine/dependencies/*": ["libs/engine/dependencies/*"],
+      "@iotea/libs/engine/nodes/*": ["libs/engine/nodes/*"],
+      "@iotea/libs/frontend/*": ["libs/frontend/src/*"],
+      "@iotea/libs/http/*": ["libs/http/*"],
+      "@iotea/libs/iotea-js/*": ["libs/iotea-js/*"],
+      "@iotea/site/*": ["apps/site/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

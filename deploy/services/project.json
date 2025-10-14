@@ -1,0 +1,87 @@
+{
+	"name": "services",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "deploy/services",
+	"projectType": "application",
+	"targets": {
+		"build-local": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "nx run services:containerize-local",
+				"cwd": "{workspaceRoot}"
+			}
+		},
+		"containerize-local": {
+			"executor": "@nx-tools/nx-container:build",
+			"options": {
+				"file": "deploy/services/local/build/emqx/Dockerfile",
+				"context": "{workspaceRoot}",
+				"cwd": "{projectRoot}",
+				"push": false,
+				"load": true,
+				"tags": [
+					"iotea-emqx:latest"
+				],
+				"platforms": []
+			}
+		},
+		"start": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "{projectRoot}/production",
+				"parallel": false
+			},
+			"defaultConfiguration": "local",
+			"configurations": {
+				"local": {
+					"cwd": "{workspaceRoot}",
+					"commands": [
+						{
+							"command": "nx run services:build-local"
+						},
+						{
+							"command": "bash -c 'cd deploy/services/local && chmod +x ctl.sh && ./ctl.sh up {args.profile}'"
+						}
+					]
+				}
+			}
+		},
+		"update": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "{projectRoot}/production",
+				"parallel": false
+			},
+			"defaultConfiguration": "local",
+			"configurations": {
+				"local": {
+					"cwd": "{workspaceRoot}",
+					"commands": [
+						{
+							"command": "bash -c 'cd deploy/services/local && chmod +x ctl.sh && ./ctl.sh up {args.profile}'"
+						}
+					]
+				}
+			}
+		},
+		"stop": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "{projectRoot}/production",
+				"parallel": false
+			},
+			"defaultConfiguration": "local",
+			"configurations": {
+				"local": {
+					"cwd": "{workspaceRoot}",
+					"commands": [
+						{
+							"command": "bash -c 'cd deploy/services/local && chmod +x ctl.sh && ./ctl.sh down {args.profile}'"
+						}
+					]
+				}
+			}
+		}
+	},
+	"tags": []
+}

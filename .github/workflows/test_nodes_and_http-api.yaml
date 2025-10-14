@@ -1,0 +1,90 @@
+name: Nodes tests and HTTP API tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/test_nodes_and_http-api.yaml'
+      - 'libs/http/**'
+      - 'libs/engine/**'
+      - 'libs/iotea-js/**'
+      - 'services/http-api/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/test_nodes_and_http-api.yaml'
+      - 'libs/http/**'
+      - 'libs/engine/**'
+      - 'libs/iotea-js/**'
+      - 'services/http-api/**'
+
+jobs:
+  test-nodes-and-http-api-and-upload-coverage:
+    # TODO: change to arm64 when Codecov supports it: https://github.com/codecov/codecov-action/issues/1554
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set the USR_MONOREPO_ROOT environment variable
+      - name: Set USR_MONOREPO_ROOT
+        run: echo "USR_MONOREPO_ROOT=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+
+      - name: Set Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install # will run `yarn install` command
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '>=1.22'
+        id: go
+
+      - name: Generate Prisma client
+        run: yarn nx generate-client db
+
+      - name: Setup nodes builder environment
+        run: cp libs/engine/nodes/builder/.env.example libs/engine/nodes/builder/.env.local
+
+      - name: Build nodes builder container
+        run: yarn nx build-container nodes --skip-nx-cache
+
+      - name: Validate nodes
+        run: yarn nx validate nodes --skip-nx-cache
+
+      - name: Create Docker network
+        run: docker network create services_network
+
+      - name: Start supporting services
+        run: yarn nx start services -c local
+
+      - name: Test nodes
+        run: yarn nx test nodes -c all --skip-nx-cache
+
+      - name: Stop supporting services
+        run: yarn nx stop services -c local
+
+      - name: Test HTTP-API
+        run: yarn nx test http-api
+
+      - name: Test IOTEA.js
+        run: yarn nx test iotea-js && ls -la . && ls ./coverage/libs/iotea-js 
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files:
+            ./services/http-api/coverage.out
+            ./coverage/libs/iotea-js/cobertura-coverage.json
+            ./libs/nodes/v1/test/coverage/all.out

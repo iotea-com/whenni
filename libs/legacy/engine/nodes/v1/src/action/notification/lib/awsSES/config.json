@@ -1,0 +1,51 @@
+{
+    "version": "beta-dev",
+    "name": "AWS SES",
+    "label": "aws-ses",
+    "type": "action",
+    "description": "Sends email messages to email address",
+    "io": {
+        "inputs": [
+            {
+                "id": "notificationInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "awsSES::thing": "__IOTEA_IGNORE__",
+        "sender": "example@gmail.com",
+        "receiver": "example2@gmail.com",
+        "subject": "some-subject",
+        "input::model": {
+            "humidity":    "float",
+            "temperature": "float"
+        },
+        "templateMessage": "templateMessage",
+        "defaultValues": {
+            "humidity": 60.45
+        }
+
+    },
+    "dependencies": {
+        "models": [
+            {
+                "internal": false,
+                "modelId": "__IOTEA_IGNORE__",
+                "fieldName": "input::model"
+            }
+        ],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "awsSES::thing"
+            }
+        ]
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "version": "beta-dev",
+    "name": "File Storage",
+    "label": "fileStorage",
+    "type": "action",
+    "description": "Save data as files in static file storage",
+    "io": {
+        "inputs": [
+            {
+                "id": "fileStorageInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json",
+                    "file"
+                ]
+            }
+        ],
+        "outputs": []
+    },
+    "config": {}
+}

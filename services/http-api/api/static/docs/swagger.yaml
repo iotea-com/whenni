@@ -1,0 +1,1608 @@
+basePath: /v1
+definitions:
+  apiKeysAdd.parse.RequestBody:
+    properties:
+      name:
+        type: string
+      permissionSetId:
+        type: string
+    type: object
+  billingUpdate.Address:
+    properties:
+      city:
+        type: string
+      countryCode:
+        type: string
+      line1:
+        type: string
+      line2:
+        type: string
+      postalCode:
+        type: string
+      state:
+        type: string
+    required:
+    - city
+    - countryCode
+    - line1
+    - postalCode
+    - state
+    type: object
+  billingUpdate.BillingDetails:
+    properties:
+      address:
+        $ref: '#/definitions/billingUpdate.Address'
+      email:
+        type: string
+      phone:
+        type: string
+    required:
+    - address
+    - email
+    - phone
+    type: object
+  billingUpdate.parse.RequestBody:
+    properties:
+      billingDetails:
+        $ref: '#/definitions/billingUpdate.BillingDetails'
+    type: object
+  channelId.Output:
+    type: object
+  channelsCreate.parse.RequestBody:
+    properties:
+      config:
+        additionalProperties: {}
+        type: object
+      name:
+        type: string
+    type: object
+  models.Attribute:
+    properties:
+      arrayObjectAttributes:
+        additionalProperties:
+          $ref: '#/definitions/models.Attribute'
+        type: object
+      id:
+        type: string
+      key:
+        type: string
+      parentId:
+        description: Present if this attribute is a child of another attribute
+        type: string
+      protected:
+        type: boolean
+      required:
+        type: boolean
+      subtype:
+        type: string
+      type:
+        enum:
+        - string
+        - number
+        - boolean
+        - array
+        - object
+        type: string
+    required:
+    - id
+    - key
+    - type
+    type: object
+  modelsCreate.parse.RequestBody:
+    properties:
+      attributes:
+        additionalProperties:
+          $ref: '#/definitions/models.Attribute'
+        type: object
+      name:
+        type: string
+    type: object
+  organizationsCreate.parse.RequestBody:
+    properties:
+      name:
+        type: string
+    type: object
+  organizationsMembersAdd.parse.RequestBody:
+    properties:
+      userId:
+        type: string
+    type: object
+  organizationsMembersRemove.parse.RequestBody:
+    properties:
+      userId:
+        type: string
+    type: object
+  organizationsUpdate.parse.RequestBody:
+    type: object
+  permissionsAdd.parse.RequestBody:
+    properties:
+      name:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+    type: object
+  permissionsRemove.parse.RequestBody:
+    properties:
+      permissionSetId:
+        type: string
+    type: object
+  permissionsUpdate.parse.RequestBody:
+    properties:
+      name:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+    type: object
+  policiesUpdate.Policy:
+    properties:
+      allowedPublishTopics:
+        items:
+          type: string
+        type: array
+      allowedSubscriptionTopics:
+        items:
+          type: string
+        type: array
+    required:
+    - allowedPublishTopics
+    - allowedSubscriptionTopics
+    type: object
+  policiesUpdate.parse.RequestBody:
+    properties:
+      policy:
+        $ref: '#/definitions/policiesUpdate.Policy'
+      revoke:
+        type: boolean
+    type: object
+  spacesCreate.parse.RequestBody:
+    properties:
+      name:
+        type: string
+    type: object
+  things.ThingCategory:
+    enum:
+    - KAFKA_CLUSTER
+    - KAFKA_PRODUCER
+    - KAFKA_CONSUMER
+    - NATS_SERVER
+    - NATS_CLIENT
+    - MONGODB_SERVER
+    - AWS_SNS_ENDPOINT
+    - AWS_SES_ENDPOINT
+    - SENDGRID_CLIENT
+    - HTTP_SERVER
+    - INFLUXDB_DATABASE
+    - MQTT_BROKER
+    - MQTT_CLIENT
+    - S3_BUCKET
+    - MINIO_BUCKET
+    type: string
+    x-enum-varnames:
+    - KafkaClusterThingCategory
+    - KafkaProducerThingCategory
+    - KafkaConsumerThingCategory
+    - NatsServerThingCategory
+    - NatsClientThingCategory
+    - MongoDbServerThingCategory
+    - AwsSNSThingCategory
+    - AwsSESThingCategory
+    - SendgridClientThingCategory
+    - HttpServerThingCategory
+    - InfluxDbDatabaseThingCategory
+    - MqttBrokerThingCategory
+    - MqttClientThingCategory
+    - S3BucketThingCategory
+    - MinioBucketThingCategory
+  thingsCreate.parse.RequestBody:
+    properties:
+      attributes:
+        additionalProperties: {}
+        type: object
+      category:
+        $ref: '#/definitions/things.ThingCategory'
+      name:
+        type: string
+    type: object
+  thingsHealthcheck.Input:
+    properties:
+      attributes:
+        additionalProperties: {}
+        type: object
+      bearerToken:
+        type: string
+      spaceId:
+        type: string
+      thingCategory:
+        type: string
+    required:
+    - attributes
+    - bearerToken
+    - spaceId
+    - thingCategory
+    type: object
+  thingsUpdate.parse.RequestBody:
+    properties:
+      attributes:
+        additionalProperties: {}
+        type: object
+      name:
+        type: string
+    type: object
+host: localhost:9001
+info:
+  contact: {}
+  description: Bringing connectivity and automation to everyone, everywhere.
+  title: IOTEA
+  version: alpha-v1.0
+paths:
+  /api-keys:
+    get:
+      consumes:
+      - application/json
+      description: Given an organization ID and a space ID (if intending to list API
+        keys in a space), lists all of the API keys belonging to the organization
+        or space.
+      parameters:
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      - description: Space ID
+        in: query
+        name: spaceId
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Results Per Page
+        in: query
+        name: resultsPerPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: List the API keys in an organization or space
+      tags:
+      - api-keys
+    post:
+      consumes:
+      - application/json
+      description: Given an API key name, a permission set, an organization ID, and
+        a space ID (if intending to create an API key in a space), creates a new API
+        key for programmatic use.
+      parameters:
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      - description: Space ID
+        in: query
+        name: spaceId
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/apiKeysAdd.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Create an API key
+      tags:
+      - api-keys
+  /api-keys/{apiKeyId}:
+    delete:
+      consumes:
+      - application/json
+      description: Given an API key ID, deletes the API key.
+      parameters:
+      - description: API Key ID
+        in: path
+        name: apiKeyId
+        required: true
+        type: string
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      - description: Space ID
+        in: query
+        name: spaceId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an API key
+      tags:
+      - api-keys
+  /billing/{orgId}:
+    get:
+      consumes:
+      - application/json
+      description: Given an organization ID, retrieves the billing details of the
+        organization.
+      parameters:
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get the billing details of an organization
+      tags:
+      - billing
+    put:
+      consumes:
+      - application/json
+      description: Given an organization ID and a full billing details object, update
+        the billing details of that organization.
+      parameters:
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/billingUpdate.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Update the billing details of an organization
+      tags:
+      - billing
+  /certificates/{certificateId}:
+    get:
+      consumes:
+      - application/json
+      description: Given a valid space ID and certificate ID, retrieves the certificate
+        bundle.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Certificate ID
+        in: path
+        name: certificateId
+        required: true
+        type: string
+      produces:
+      - application/zip
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get a certificate bundle
+      tags:
+      - certificates
+  /channels:
+    get:
+      consumes:
+      - application/json
+      description: Given a space ID, list the channels.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Results per page
+        in: query
+        name: resultsPerPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: List channels
+      tags:
+      - channels
+    post:
+      consumes:
+      - application/json
+      description: Given a channel name and a configuration, create a new channel.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/channelsCreate.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      summary: Create a channel
+      tags:
+      - channels
+  /channels/{channelId}:
+    delete:
+      consumes:
+      - application/json
+      description: Given a channel ID, delete a channel. Channel must be unpublished
+        before it can be deleted.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a channel
+      tags:
+      - channels
+    get:
+      consumes:
+      - application/json
+      description: Given a channel ID, retrieve the channel's details.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get a channel
+      tags:
+      - channels
+  /channels/{channelId}/config:
+    patch:
+      consumes:
+      - application/json
+      description: Given a channel ID and a configuration, update the channel's configuration.
+        If the channel is currently published, it will need to be unpublished and
+        published again for these changes to take effect.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Update a channel configuration
+      tags:
+      - channels
+  /channels/{channelId}/executions:
+    get:
+      consumes:
+      - application/json
+      description: Given a channel ID, list the channel executions for that channel.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Results per page
+        in: query
+        name: resultsPerPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: List channel executions
+      tags:
+      - channels
+      - channel-executions
+  /channels/{channelId}/executions/{channelExecutionId}:
+    get:
+      consumes:
+      - application/json
+      description: Given a channel execution ID, retrieve the details of that channel
+        execution.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      - description: Channel Execution ID
+        in: path
+        name: channelExecutionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get a channel execution
+      tags:
+      - channels
+      - channel-executions
+  /channels/{channelId}/publish:
+    patch:
+      consumes:
+      - application/json
+      description: Given a channel ID, publish a channel. The channel must have a
+        valid configuration to successfully publish. Publishing happens asynchronously.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Publish a channel
+      tags:
+      - channels
+  /channels/{channelId}/status:
+    get:
+      consumes:
+      - application/json
+      description: Given a channel ID, check whether channel is published, unpublished,
+        or initializing.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Check channel status
+      tags:
+      - channels
+  /channels/{channelId}/unpublish:
+    patch:
+      consumes:
+      - application/json
+      description: Given a channel ID, unpublish a channel. Unpublishing happens asynchronously.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Unpublish a channel
+      tags:
+      - channels
+  /channels/{channelId}/validate:
+    patch:
+      consumes:
+      - application/json
+      description: Given a channel ID and a channel configuration, validate that the
+        configuration is valid.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Validate a channel configuration
+      tags:
+      - channels
+  /models:
+    get:
+      consumes:
+      - application/json
+      description: Given a space ID, list all of the models in the space.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Results per page
+        in: query
+        name: resultsPerPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: List models
+      tags:
+      - models
+    post:
+      consumes:
+      - application/json
+      description: Given a space ID, a name, and a schema, create a new model.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/modelsCreate.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Create a model
+      tags:
+      - models
+  /models/{modelId}:
+    delete:
+      consumes:
+      - application/json
+      description: Given a model ID, delete it.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Model ID
+        in: path
+        name: modelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a model
+      tags:
+      - models
+    get:
+      consumes:
+      - application/json
+      description: Given a model ID, retrieve the details of that model.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Model ID
+        in: path
+        name: modelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get a model
+      tags:
+      - models
+    put:
+      consumes:
+      - application/json
+      description: Given a model ID, update the details of that model.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Model ID
+        in: path
+        name: modelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Update a model
+      tags:
+      - models
+  /organizations:
+    post:
+      consumes:
+      - application/json
+      description: Given a name, creates a new organization. Happy connecting!
+      parameters:
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/organizationsCreate.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Create an organization
+      tags:
+      - organizations
+  /organizations/{orgId}:
+    delete:
+      consumes:
+      - application/json
+      description: Given an organization ID, deletes the organization.
+      parameters:
+      - description: Organization ID
+        in: path
+        name: orgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an organization
+      tags:
+      - organizations
+    get:
+      consumes:
+      - application/json
+      description: Given an organization ID, retrieves the details of a specific organization.
+      parameters:
+      - description: Organization ID
+        in: path
+        name: orgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get an organization
+      tags:
+      - organizations
+    put:
+      consumes:
+      - application/json
+      description: Given a full organization object, update the details of that organization.
+      parameters:
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/organizationsUpdate.parse.RequestBody'
+      - description: Organization ID
+        in: path
+        name: orgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Update an organization
+      tags:
+      - organizations
+  /organizations/{orgId}/members:
+    delete:
+      consumes:
+      - application/json
+      description: Given a valid organization ID and user ID, removes a member from
+        an organization.
+      parameters:
+      - description: Organization ID
+        in: path
+        name: orgId
+        required: true
+        type: string
+      - description: Remove user request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/organizationsMembersRemove.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Remove a member from an organization
+      tags:
+      - organizations
+    get:
+      description: Given a valid organization ID, view the members of the organization.
+      parameters:
+      - description: Organization ID
+        in: path
+        name: orgId
+        required: true
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Results per page
+        in: query
+        name: resultsPerPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: List the members of an organization
+      tags:
+      - organizations
+    post:
+      consumes:
+      - application/json
+      description: Given a valid organization ID and user ID, adds a member to an
+        organization.
+      parameters:
+      - description: Organization ID
+        in: path
+        name: orgId
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/organizationsMembersAdd.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Add a member to an organization
+      tags:
+      - organizations
+  /permissions:
+    delete:
+      consumes:
+      - application/json
+      description: Given a permission set ID, remove a permission set from a space.
+      parameters:
+      - description: Org ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/permissionsRemove.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Remove a permission set
+      tags:
+      - permissions
+    get:
+      consumes:
+      - application/json
+      description: Given a scope ID, list the permission sets in the scope.
+      parameters:
+      - description: Organization ID
+        in: query
+        name: orgId
+        type: string
+      - description: Space ID
+        in: query
+        name: spaceId
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Results per page
+        in: query
+        name: resultsPerPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      summary: List permission sets
+      tags:
+      - permissions
+    post:
+      consumes:
+      - application/json
+      description: Given a name and a list of permissions, create a new permission
+        set. If a space ID is provided, the provided permissions are expected to be
+        space permissions.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        type: string
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/permissionsAdd.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      summary: Create a permission set
+      tags:
+      - permissions
+  /permissions/{permissionSetId}:
+    put:
+      consumes:
+      - application/json
+      description: Given a permission set and a list of permissions, update an existing
+        permission set. If a space ID is provided, the provided permissions are expected
+        to be space permissions.
+      parameters:
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      - description: Space ID
+        in: query
+        name: spaceId
+        type: string
+      - description: Permission Set ID
+        in: path
+        name: permissionSetId
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/permissionsUpdate.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Update a permission set
+      tags:
+      - permissions
+  /policies:
+    get:
+      consumes:
+      - application/json
+      description: Given a space ID, list all of the policies in the space.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Results per page
+        in: query
+        name: resultsPerPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: List x.509 policies
+      tags:
+      - policies
+  /policies/{certificateId}:
+    get:
+      consumes:
+      - application/json
+      description: Given a certificate ID, retrieves the attached policy for that
+        certificate.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Certificate ID
+        in: path
+        name: certificateId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get an x.509 policy
+      tags:
+      - policies
+    put:
+      consumes:
+      - application/json
+      description: Given a certificate ID and a policy, update the policy for a certificate.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Certificate ID
+        in: path
+        name: certificateId
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/policiesUpdate.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Update an x.509 policy
+      tags:
+      - policies
+  /spaces:
+    post:
+      consumes:
+      - application/json
+      description: Given a name and an organization ID, creates a new space.
+      parameters:
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/spacesCreate.parse.RequestBody'
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      summary: Create a space
+      tags:
+      - spaces
+  /spaces/{spaceId}:
+    delete:
+      consumes:
+      - application/json
+      description: Given a space ID, deletes the space. All channels must be unpublished
+        before the space can be deleted.
+      parameters:
+      - description: Space ID
+        in: path
+        name: spaceId
+        required: true
+        type: string
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a space
+      tags:
+      - spaces
+    get:
+      consumes:
+      - application/json
+      description: Given a space ID and an organization ID, retrieves the details
+        of a specific space.
+      parameters:
+      - description: Space ID
+        in: path
+        name: spaceId
+        required: true
+        type: string
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get a space
+      tags:
+      - spaces
+    put:
+      consumes:
+      - application/json
+      description: Given a full space object, update the details of that space.
+      parameters:
+      - description: Space ID
+        in: path
+        name: spaceId
+        required: true
+        type: string
+      - description: Organization ID
+        in: query
+        name: orgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Update a space
+      tags:
+      - spaces
+  /things:
+    get:
+      consumes:
+      - application/json
+      description: Given a space, list the things in a space. Optionally filter by
+        thing category.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Thing Category
+        in: query
+        name: thingCategory
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Results per page
+        in: query
+        name: resultsPerPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: List things
+      tags:
+      - things
+    post:
+      consumes:
+      - application/json
+      description: Given a space ID, name, category, and attributes, creates a new
+        thing in a space.
+      parameters:
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/thingsCreate.parse.RequestBody'
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      summary: Create a thing
+      tags:
+      - things
+  /things/{thingId}:
+    delete:
+      consumes:
+      - application/json
+      description: Given a thing ID, permanently delete a thing.
+      parameters:
+      - description: Thing ID
+        in: path
+        name: thingId
+        required: true
+        type: string
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a thing
+      tags:
+      - things
+    get:
+      consumes:
+      - application/json
+      description: Given a thing ID, retrieve the details of a thing.
+      parameters:
+      - description: Thing ID
+        in: path
+        name: thingId
+        required: true
+        type: string
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get a thing
+      tags:
+      - things
+    put:
+      consumes:
+      - application/json
+      description: Given a thing ID, name, and attributes, update the details of that
+        thing.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Thing ID
+        in: path
+        name: thingId
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/thingsUpdate.parse.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Update a thing
+      tags:
+      - things
+  /things/healthcheck:
+    patch:
+      consumes:
+      - application/json
+      description: Given a thing category and attributes, healthcheck that thing.
+      parameters:
+      - description: Space ID
+        in: query
+        name: spaceId
+        required: true
+        type: string
+      - description: Thing Category
+        in: query
+        name: thingCategory
+        required: true
+        type: string
+      - description: Attributes
+        in: body
+        name: attributes
+        required: true
+        schema:
+          $ref: '#/definitions/thingsHealthcheck.Input'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Healthcheck thing attributes
+      tags:
+      - things
+  /trigger/http/{channelId}:
+    post:
+      consumes:
+      - application/json
+      description: Given a channel ID, triggers an HTTP source node if available.
+      parameters:
+      - description: Body
+        in: body
+        name: request
+        schema:
+          additionalProperties: true
+          type: object
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/channelId.Output'
+      security:
+      - ApiKeyAuth: []
+      summary: Trigger an HTTP source node
+      tags:
+      - trigger
+  /users/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Given a user ID, retrieves the user's details.
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Get a user
+      tags:
+      - users
+  /users/search:
+    post:
+      consumes:
+      - application/json
+      description: Given a search query, searches for users. If an organization ID
+        is provided, it will exclude users in that organization.
+      parameters:
+      - description: Organization ID
+        in: query
+        name: orgId
+        type: string
+      - description: Search query
+        in: query
+        name: q
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: Search for users
+      tags:
+      - users
+schemes:
+- https
+- http
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

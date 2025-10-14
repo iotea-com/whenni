@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background: #fefefe;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-title font-black text-gray-800;
+  }
+
+  h2 {
+    @apply font-extrabold;
+  }
+
+  h3, h4 {
+    @apply font-bold;
+  }
+
+  h5, h6 {
+    @apply font-semibold;
+  }
+
+  p {
+    @apply text-gray-700;
+  }
+}

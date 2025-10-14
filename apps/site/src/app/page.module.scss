@@ -1,0 +1,192 @@
+$vertical-word-count: 8;
+
+#header {
+  @apply pb-20;
+  min-height: 600px;
+}
+
+.dotGrid {
+  background: url('/img/dot-grid.webp') repeat;
+  background-size: 125px;
+}
+
+.scrollingWordsBox {
+  @apply overflow-hidden border-b-8 w-fit;
+  height: 6.75rem;
+  border-color: rgba(0, 255, 0, .5);
+  
+  ul {
+    padding: 0;
+    animation: wordVerticalScroll #{$vertical-word-count * 2.5}s infinite;
+    animation-delay: 2s;
+
+    li {
+      height: 6.75rem;
+      list-style: none; 
+    }
+  }
+}
+
+.performanceGrid {
+  @apply relative grid grid-cols-1 lg:grid-cols-2 mt-10 max-w-6xl mx-auto;
+
+  &::after {
+    content: '';
+    background: linear-gradient(to bottom, white, #ffffff11);
+    height: calc(100% + 2.5rem);
+    @apply absolute bottom-0 hidden lg:block;
+    width: 2px;
+    left: calc(50% - 4px);
+  }
+  
+  .performanceSection {
+    @apply p-6 border-t-2;
+    border-color: #ffffff3b;
+  
+    &:nth-child(1),
+    &:nth-child(2) {
+      @apply border-t-0;
+    }
+  
+    @media (max-width: 1024px) {
+      &:nth-child(2) {
+        @apply border-t-2;
+      }
+    }
+  
+    h3 {
+      @apply text-white;
+    }
+  
+    p {
+      @apply text-gray-300;
+    }
+
+    .throughputGrid {
+      display: grid;
+      grid-template-columns: repeat(24, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 3px;
+      margin-top: 1rem;
+      width: 100%;
+      position: relative;
+    }
+    
+    .throughputDot {
+      background-color: white;
+      border-radius: 100%;
+      width: 100%;
+      aspect-ratio: 1;
+      opacity: 0.2;
+      animation: throughputPulse 10s infinite;
+      animation-delay: calc(var(--delay) * 0.1s);
+    }
+
+    .realtimeGraphic {
+      @apply w-full h-1 bg-gray-300 rounded-full my-10;
+
+      &::before {
+        content: '';
+        @apply absolute top-1/2 -translate-y-1/2 left-0 w-3 h-3 bg-gray-100 rounded-full z-10;
+      }
+
+      &::after {
+        content: '';
+        @apply absolute top-1/2 -translate-y-1/2 right-0 w-3 h-3 bg-gray-100 rounded-full z-10;
+      }
+    }
+
+    .realtimeGraphicAnimatedLine {
+      @apply absolute top-1/2 -translate-y-1/2 left-0 h-1 bg-green-500 rounded-full;
+      animation: realtimeGraphicAnimatedLine 4s infinite ease-in;
+    }
+  }
+}
+
+@keyframes realtimeGraphicAnimatedLine {
+  0% {
+    width: 0%;
+  }
+
+  5% {
+    width: 100%;
+  }
+
+  50% {
+    width: 100%;
+  }
+  
+  55% {
+    width: 0%;
+  }
+
+  100% {
+    width: 0%;
+  }
+}
+
+@keyframes throughputPulse {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 0.2;
+    transform: scale(0.98);
+  }
+}
+
+@media (max-width: 1024px) {
+  .scrollingWordsBox {
+    height: 5.5rem;
+
+    ul {
+      li {
+        height: 5.5rem;
+      }
+    }
+  }
+}
+
+.logoTicker {
+  @apply flex gap-8 relative my-8 p-4 w-fit;
+  animation: logoTickerHorizontalScroll 60s infinite linear;
+
+  li {
+    @apply rounded-md;
+    height: 40px;
+    width: 40px;
+  }
+}
+
+.logoTicker.reverse {
+  animation-direction: reverse;
+}
+
+.logoTicker.long {
+  animation-duration: 90s;
+}
+
+// scrollUp
+@keyframes wordVerticalScroll {
+  @for $i from 1 to ($vertical-word-count) {
+    #{(100% / $vertical-word-count) * $i} {
+      transform: translateY((-100% / $vertical-word-count) * $i);
+    }
+  }
+}
+
+// logoTicker
+@keyframes logoTickerHorizontalScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  
+  100% {
+    transform: translateX(-50%);
+  }
+}

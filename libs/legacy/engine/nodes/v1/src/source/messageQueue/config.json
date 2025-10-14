@@ -1,0 +1,32 @@
+{
+  "version": "beta-dev",
+  "name": "Message Queue",
+  "label": "messageQueue",
+  "type": "source",
+  "description": "Subscribe to messages from a topic (queue, subject, or channel) in a message queue",
+  "io": {
+    "inputs": [
+      {
+        "id": "passThrough",
+        "allowedEdge": [
+          "channel"
+        ],
+        "dataType": [
+          "bytes"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "id": "trigger",
+        "allowedEdge": [
+          "*"
+        ],
+        "dataType": [
+          "bytes"
+        ]
+      }
+    ]
+  },
+  "config": {}
+}

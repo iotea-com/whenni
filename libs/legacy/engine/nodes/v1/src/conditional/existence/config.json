@@ -1,0 +1,62 @@
+{
+    "version": "beta-dev",
+    "name": "Existence",
+    "label": "existence",
+    "type": "conditional",
+    "description": "Ensure that a specific field exists in the input data",
+    "io": {
+        "inputs": [
+            {
+                "id": "existenceInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "id": "Fail",
+                "allowedEdge": [
+                    "processing",
+                    "action",
+                    "conditional",
+                    "custom"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            },
+            {
+                "id": "Pass",
+                "allowedEdge": [
+                    "processing",
+                    "action",
+                    "conditional",
+                    "custom"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "model::model": "__IOTEA_IGNORE__",
+        "conditions": [],
+        "logicalOperator": "OR"
+    },
+    "dependencies": {
+        "models": [
+            {
+                "modelId": "__IOTEA_IGNORE__",
+                "fieldName": "model::model"
+            }
+        ],
+        "things": []
+    }
+}

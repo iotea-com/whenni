@@ -1,0 +1,22 @@
+# Config file for Air in TOML format
+
+# Working directory
+root = "/iotea/services/http-api"
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -buildvcs=false -o ./tmp/http-api /iotea/services/http-api/main.go"
+# The binary file that results from the build command.
+bin = "tmp/http-api"
+
+# How to run your application.
+full_bin = "./tmp/http-api" 
+log = "air_errors.log"
+include_ext = ["go", "yaml"]
+exclude_dir = ["tmp", "node_modules", "deploy"]
+
+[log]
+time = true
+
+[misc]
+clean_on_exit = true

@@ -1,0 +1,23 @@
+{
+    "version": "beta-dev",
+    "name": "Time Series Database",
+    "label": "timeSeriesDb",
+    "type": "action",
+    "description": "Query and store data points in a time series database",
+    "io": {
+        "inputs": [
+            {
+                "id": "timeSeriesDbInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            }
+        ]
+    },
+    "config": {},
+    "dependencies": {}
+}

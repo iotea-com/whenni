@@ -1,0 +1,51 @@
+{
+    "version": "beta-dev",
+    "name": "MQTT",
+    "label": "mqtt",
+    "type": "source",
+    "description": "Subscribe to messages from an MQTT topic",
+    "io": {
+        "inputs": [
+            {
+                "id": "passThrough",
+                "allowedEdge": [
+                    "channel"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "id": "mqttOutput",
+                "allowedEdge": [
+                    "processing",
+                    "action",
+                    "conditional",
+                    "custom"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "mqttClient::thing": "__IOTEA_IGNORE__",
+        "topic": "test/topic",
+        "qos": 0
+    },
+    "dependencies": {
+        "models": [],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "mqttClient::thing"
+            }
+        ]
+    }
+}

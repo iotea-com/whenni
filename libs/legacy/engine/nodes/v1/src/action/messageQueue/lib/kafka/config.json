@@ -1,0 +1,34 @@
+{
+    "version": "beta-dev",
+    "name": "Message Queue Publisher",
+    "label": "messageQueue",
+    "type": "action",
+    "description": "Sends messages to a supported message queueing system",
+    "io": {
+        "inputs": [
+            {
+                "id": "messageQueueInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "kafkaProducer::thing": "__IOTEA_IGNORE__",
+        "topic": ""
+    },
+    "dependencies": {
+        "models": [],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "kafkaProducer::thing"
+            }
+        ]
+    }
+}

@@ -1,0 +1,76 @@
+package environmentsStart
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/gofiber/fiber/v2"
+	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	pb "github.com/iotea-com/iotea/libs/protocols/devenv"
+	"github.com/iotea-com/iotea/prisma/db"
+	devenvService "github.com/iotea-com/iotea/services/http-api/services/devenv"
+	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"go.opentelemetry.io/otel"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
+)
+
+// Assuming DevEnvServiceClient is your generated client for the service
+type DevEnvServiceClient interface {
+	StartEnvironment(ctx context.Context, in *pb.StartRequest, opts ...grpc.CallOption) (*db.DevEnvironmentModel, error)
+}
+
+func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+
+	tracer := otel.Tracer("devenv")
+	_, span := tracer.Start(request.Context, "execute")
+	defer span.End()
+	span.AddEvent("Starting execution")
+
+	dbCtx, _ := otel.Tracer("prisma").Start(request.Context, "Get DevEnvironment")
+	res, err := prisma.Client.DevEnvironment.FindUnique(
+		db.DevEnvironment.EnvironmentID.Equals(request.Input.EnvironmentID),
+	).Exec(dbCtx)
+	if err != nil {
+		log.Fatalf("Error fetching status: %v", err)
+	}
+
+	if res.State != "stopped" {
+		err := fiber.NewError(fiber.StatusConflict, "Environment is not in 'stopped' state. Please wait.")
+		return nil, err
+	}
+
+	// Prepare request
+	grpcRequest := &pb.StartRequest{
+		EnvironmentID: request.Input.EnvironmentID,
+		Region:        request.Input.Region,
+		SpaceId:       request.Input.SpaceId,
+	}
+
+	// Contacting the gRPC service
+	if devenvService.Client == nil {
+		errMsg := "DevEnv API is currently not reachable"
+		span.AddEvent(errMsg)
+		return nil, fiber.NewError(500, errMsg)
+	}
+
+	devenvServiceClient := *devenvService.DevEnvServiceClient
+	response, err := devenvServiceClient.Start(request.Context, grpcRequest)
+	if err != nil {
+		st, ok := status.FromError(err)
+		if ok {
+			span.AddEvent(fmt.Sprintf("internal server error: %v", err))
+			return nil, fiber.NewError(http.StatusInternalServerError, st.Message())
+		}
+		span.AddEvent(fmt.Sprintf("error contacting gRPC service: %v", err))
+		return nil, err
+	}
+
+	span.AddEvent("successfully started environment")
+
+	return &Output{
+		Message: response.Message,
+	}, nil
+}

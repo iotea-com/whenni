@@ -1,0 +1,22 @@
+{
+    "version": "beta-dev",
+    "name": "Log",
+    "label": "log",
+    "type": "action",
+    "description": "Record data to channel execution logs for monitoring and debugging",
+    "io": {
+        "inputs": [
+            {
+                "id": "logInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {},
+    "dependencies": {}
+}

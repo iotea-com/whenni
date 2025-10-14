@@ -1,0 +1,137 @@
+{
+  "name": "nodes-legacy",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/engine/nodes/v1",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "chmod +x libs/engine/nodes/builder/ctl.sh && ./libs/engine/nodes/builder/ctl.sh build nodes"
+          }
+        ],
+        "cwd": "{workspaceRoot}",
+        "parallel": false
+      },
+      "defaultConfiguration": "local",
+      "configurations": {
+        "local": {
+          "commands": [
+            {
+              "command": "chmod +x libs/engine/nodes/builder/ctl.sh && ./libs/engine/nodes/builder/ctl.sh build nodes --env=local"
+            }
+          ],
+          "cwd": "{workspaceRoot}",
+          "parallel": false
+        },
+        "staging": {
+          "commands": [
+            {
+              "command": "chmod +x libs/engine/nodes/builder/ctl.sh && ./libs/engine/nodes/builder/ctl.sh build nodes --env=staging"
+            }
+          ],
+          "cwd": "{workspaceRoot}",
+          "parallel": false
+        },
+        "production": {
+          "commands": [
+            {
+              "command": "chmod +x libs/engine/nodes/builder/ctl.sh && ./libs/engine/nodes/builder/ctl.sh build nodes --env=production"
+            }
+          ],
+          "cwd": "{workspaceRoot}",
+          "parallel": false
+        }
+      }
+    },
+    "validate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "chmod +x ctl.sh && ./ctl.sh validate"
+          }
+        ],
+        "cwd": "{projectRoot}/builder",
+        "parallel": false
+      }
+    },
+    "build-container": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "chmod +x ctl.sh && ./ctl.sh build container"
+          }
+        ],
+        "cwd": "{projectRoot}/builder",
+        "parallel": false
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "chmod +x v1/test/ctl.sh"
+          }
+        ],
+        "cwd": "{projectRoot}"
+      },
+      "defaultConfiguration": "all",
+      "configurations": {
+        "all": {
+          "commands": [
+            {
+              "command": "./v1/test/ctl.sh all"
+            }
+          ],
+          "cwd": "{projectRoot}"
+        },
+        "source": {
+          "commands": [
+            {
+              "command": "./v1/test/ctl.sh source"
+            }
+          ],
+          "cwd": "{projectRoot}"
+        },
+        "processing": {
+          "commands": [
+            {
+              "command": "./v1/test/ctl.sh processing"
+            }
+          ],
+          "cwd": "{projectRoot}"
+        },
+        "action": {
+          "commands": [
+            {
+              "command": "./v1/test/ctl.sh action"
+            }
+          ],
+          "cwd": "{projectRoot}"
+        },
+        "conditional": {
+          "commands": [
+            {
+              "command": "./v1/test/ctl.sh conditional"
+            }
+          ],
+          "cwd": "{projectRoot}"
+        },
+        "custom": {
+          "commands": [
+            {
+              "command": "./v1/test/ctl.sh custom"
+            }
+          ],
+          "cwd": "{projectRoot}"
+        }
+      }
+    }
+  },
+  "tags": []
+}

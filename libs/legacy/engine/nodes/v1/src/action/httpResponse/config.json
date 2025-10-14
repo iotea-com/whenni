@@ -1,0 +1,41 @@
+{
+    "version": "beta-dev",
+    "name": "HTTP Response",
+    "label": "httpResponse",
+    "type": "action",
+    "description": "Respond to the HTTP source node's request",
+    "io": {
+        "inputs": [
+            {
+                "id": "httpResponseInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "id": "httpResponseOutput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "responseCode": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    },
+    "dependencies": {
+        "models": [],
+        "things": []
+    }
+}

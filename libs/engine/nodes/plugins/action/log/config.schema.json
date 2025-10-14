@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/iotea-com/iotea/libs/engine/nodes/src/action/log/0.1.0/config.schema.json",
+  "title": "ActionLogConfig",
+  "type": "object",
+  "properties": {
+    "message": {
+      "type": "string",
+      "description": "The message to log",
+      "required": true
+    },
+    "templateModel": {
+      "type": "string",
+      "description": "The ID of the model to use if the message includes dynamic content",
+      "required": false
+    }
+  },
+  "$defs": {}
+}

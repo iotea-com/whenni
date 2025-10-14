@@ -1,0 +1,208 @@
+networks:
+  services_network:
+    name: services_network
+    driver: bridge
+  iotea_network:
+    name: iotea_network
+    driver: bridge
+    external: true
+
+volumes:
+  iotea_node_modules_volume:
+  iotea_go_modules_volume:
+  grafana_plugins_volume:
+  clickhouse_data_volume:
+  postgres_data_volume:
+  redis_data_volume:
+  minio_data_volume:
+  nats-data:
+
+
+services:
+  http-api:
+    profiles:
+      - run
+    image: iotea-http-api:local
+    ports:
+      - "9001:9001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - iotea_network
+      - services_network
+    env_file:
+      - .env
+    environment:
+      - ENVIRONMENT=local # Override the .env environment variable
+    user: root
+    depends_on:
+      - vault
+      - platform-otel-collector
+      - db
+      - redis
+    restart: "no"
+
+  nats:
+    profiles:
+      - dev
+      - run
+    image: nats:latest
+    command: [ "--js", "--http_port=8222" ] # Enable JetStream and monitoring
+    ports:
+      - "4222:4222" # Client port
+      - "8222:8222" # HTTP monitoring
+    networks:
+      - iotea_network
+    volumes:
+      - nats-data:/data # Persist JetStream data
+    environment:
+      - JS_MAX_MEMORY=-1 # Unlimited memory
+      - JS_MAX_STORE=-1 # Unlimited storage
+      - JS_MAX_STREAMS=-1 # Unlimited streams
+      - JS_MAX_CONSUMERS=-1 # Unlimited consumers
+
+  vault:
+    profiles:
+      - dev
+      - run
+    image: iotea-vault:latest
+    ports:
+      - "8200:8200"
+    volumes:
+      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/vault/config/vault.hcl:/vault/config/vault.hcl
+      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/vault/storage:/mnt/vault/storage
+      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/vault/file:/mnt/vault/file
+    # IPC_LOCK causes an issue with Vault sealing on MacOS
+    # cap_add:
+    #   - IPC_LOCK
+    networks:
+      - iotea_network
+      - services_network
+
+  platform-otel-collector:
+    profiles:
+      - dev
+      - run
+    image: otel/opentelemetry-collector-contrib:latest
+    command: [ "--config", "/etc/platform-otel-collector-config.yaml" ]
+    # ports: # enable if you want to connect to this collector from localhost
+    #   - 4317:4317 # OTLP gRPC - change this to another port if you want to enable both collectors locally
+    volumes:
+      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/otel/platform-otel-collector-config.yaml:/etc/platform-otel-collector-config.yaml
+    networks:
+      - iotea_network
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+
+  clickhouse:
+    profiles:
+      - dev
+      - run
+    image: clickhouse/clickhouse-server:latest
+    ports:
+      - "9003:9000" # enable if you want to connect to clickhouse via the native protocol from localhost
+      - "8123:8123" # enabled for ch-ui containers https://ch-ui.caioricciuti.com (these don't currently work in docker-compose https://github.com/caioricciuti/ch-ui/issues/42)
+    volumes:
+      - clickhouse_data_volume:/var/lib/clickhouse
+      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/clickhouse/init/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - iotea_network
+    environment:
+      - CLICKHOUSE_DB=platform
+      - CLICKHOUSE_USER=iotea
+      - CLICKHOUSE_PASSWORD=iotea
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  grafana:
+    profiles:
+      - dev
+      - run
+    image: grafana/grafana:latest
+    volumes:
+      - grafana_plugins_volume:/var/lib/grafana/plugins
+      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      - GF_PLUGINS_DIR=/var/lib/grafana/plugins
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
+      - GF_DASHBOARDS_MIN_REFRESH_INTERVAL=500ms
+    entrypoint: /bin/sh
+    command: -c " grafana cli plugins install grafana-clickhouse-datasource || true && sleep 5 && grafana-server --homepath=/usr/share/grafana"
+    ports:
+      - "3000:3000"
+    networks:
+      - iotea_network
+      - services_network
+    depends_on:
+      - platform-otel-collector
+
+  storage:
+    profiles:
+      - dev
+      - run
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: iotea
+      MINIO_ROOT_PASSWORD: ioteastorage!
+    ports:
+      - "8675:8675"
+      - "8676:8676"
+    command: server /data --address ":8675" --console-address ":8676"
+    volumes:
+      - minio_data_volume:/data
+    networks:
+      - iotea_network
+
+  db:
+    profiles:
+      - dev
+      - run
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: iotea
+      POSTGRES_PASSWORD: iotea
+      POSTGRES_DB: iotea
+      POSTGRES_MAX_CONNECTIONS: 200 # Default is usually 100
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=200"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_volume:/var/lib/postgresql/data
+    networks:
+      - iotea_network
+
+  redis:
+    profiles:
+      - dev
+      - run
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_volume:/data
+      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      - iotea_network
+
+  inbucket:
+    profiles:
+      - dev
+      - run
+    image: inbucket/inbucket:latest
+    ports:
+      - "9000:9000"
+      - "2500:2500"
+    networks:
+      - iotea_network

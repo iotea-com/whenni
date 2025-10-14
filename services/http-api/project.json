@@ -1,0 +1,118 @@
+{
+  "name": "http-api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "services/http-api",
+  "projectType": "application",
+  "targets": {
+    "get-build-info": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "parallel": false,
+        "commands": [
+          "echo \"# Build environment variables\" > .env.build",
+          "echo \"INPUT_BUILD_ARGS=\\\"GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)\" >> .env.build",
+          "echo \"GIT_COMMIT=$(git rev-parse --short=7 HEAD)\" >> .env.build",
+          "if [ \"$(git status --porcelain | wc -l | xargs)\" -gt \"0\" ]; then echo \"GIT_DIRTY=yes\" >> .env.build; else echo \"GIT_DIRTY=no\" >> .env.build; fi",
+          "echo \"BUILD_CREATOR=$(git config user.name || echo \"unknown\")\\\"\" >> .env.build"
+        ]
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "local",
+      "dependsOn": [
+        "get-build-info"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}"
+      },
+      "configurations": {
+        "local": {
+          "command": "nx run http-api:containerize -c local"
+        },
+        "staging": {
+          "command": "nx run http-api:containerize -c staging"
+        },
+        "production": {
+          "command": "nx run http-api:containerize -c production"
+        }
+      }
+    },
+    "push": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}"
+      },
+      "defaultConfiguration": "staging",
+      "configurations": {
+        "staging": {
+          "command": "docker push 378120902656.dkr.ecr.us-west-2.amazonaws.com/http-api:staging"
+        },
+        "production": {
+          "command": "docker push 378120902656.dkr.ecr.us-west-2.amazonaws.com/http-api:latest"
+        }
+      }
+    },
+    "containerize": {
+      "executor": "@nx-tools/nx-container:build",
+      "defaultConfiguration": "local",
+      "options": {
+        "context": "{workspaceRoot}",
+        "cwd": "{workspaceRoot}",
+        "file": "services/http-api/deploy/Dockerfile",
+        "push": false,
+        "load": true
+      },
+      "configurations": {
+        "local": {
+          "tags": [
+            "iotea-http-api:local"
+          ],
+          "platforms": []
+        },
+        "staging": {
+          "tags": [
+            "378120902656.dkr.ecr.us-west-2.amazonaws.com/http-api:staging"
+          ]
+        },
+        "production": {
+          "tags": [
+            "378120902656.dkr.ecr.us-west-2.amazonaws.com/http-api:latest"
+          ],
+          "platforms": [
+            "linux/arm64"
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx-go/nx-go:serve",
+      "defaultConfiguration": "development",
+      "options": {
+        "dev": true
+      },
+      "configurations": {
+        "development": {
+          "dev": true
+        },
+        "production": {
+          "dev": false
+        }
+      }
+    },
+    "test": {
+      "outputs": [
+        "{projectRoot}/services/http-api/coverage.out"
+      ],
+      "command": "ENVIRONMENT=test go test -v ./services/http-api/... -cover -race -coverprofile=./services/http-api/coverage.out"
+    },
+    "compile-openapi": {
+      "command": "swag init -g ./services/http-api/main.go -ot yaml -o services/http-api/api/static/docs"
+    }
+  },
+  "tags": []
+}

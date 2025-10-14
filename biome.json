@@ -1,0 +1,41 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"root": true,
+	"files": {
+		"includes": [
+			"apps/**/*.tsx",
+			"apps/**/*.ts",
+			"!apps/**/cypress/**/*.tsx",
+			"!apps/**/cypress/**/*.ts",
+			"libs/frontend/**/*.tsx",
+			"libs/frontend/**/*.ts",
+			"libs/iotea-js/**/*.tsx",
+			"libs/iotea-js/**/*.ts",
+			"!apps/**/.next/**"
+		]
+	},
+	"formatter": {
+		"indentWidth": 2,
+		"lineWidth": 100
+	},
+	"linter": {
+		"rules": {
+			"recommended": false,
+			"correctness": {
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error"
+			}
+		},
+		"includes": ["**", "!**/node_modules", "!**/.yarn"]
+	},
+	"javascript": {
+		"formatter": {
+			"jsxQuoteStyle": "double",
+			"trailingCommas": "all",
+			"semicolons": "asNeeded",
+			"arrowParentheses": "always",
+			"quoteStyle": "single",
+			"indentStyle": "space"
+		}
+	}
+}

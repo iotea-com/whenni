@@ -1,0 +1,20 @@
+{
+  "name": "protocols",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/protocols",
+  "projectType": "application",
+  "targets": {
+    "create": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          {
+            "command": "pwd && chmod +x ctl.sh && ./ctl.sh"
+          }
+        ]
+      }
+    }
+  },
+  "tags": []
+}

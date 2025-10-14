@@ -1,0 +1,15 @@
+{
+  "name": "log",
+  "label": "Log",
+  "version": "0.1.0",
+  "description": "Record data to channel execution logs for monitoring and debugging",
+  "category": "action",
+  "inputs": [
+    {
+      "id": "in",
+      "label": "Input"
+    }
+  ],
+  "outputs": [],
+  "runtime": "jvm"
+}

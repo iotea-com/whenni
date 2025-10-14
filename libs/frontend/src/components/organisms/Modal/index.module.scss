@@ -1,0 +1,13 @@
+.modalWrapper {
+  @apply fixed top-0 bottom-0 left-0 right-0 flex items-center justify-end z-40;
+  background: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .7));
+}
+
+.modal {
+  @apply relative flex flex-col border-green-500 bg-gray-50 dark:bg-gray-900 overflow-y-scroll h-full pl-7 pr-4 py-8;
+  min-width: 400px;
+
+  .closeButton {
+    @apply absolute -top-4 -left-4 text-gray-500 hover:text-green-300 transition cursor-pointer;
+  }
+}

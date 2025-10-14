@@ -1,0 +1,62 @@
+{
+    "version": "beta-dev",
+    "name": "Threshold",
+    "label": "threshold",
+    "type": "conditional",
+    "description": "Evaluate conditions and route data based on specified rules",
+    "io": {
+        "inputs": [
+            {
+                "id": "thresholdInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "id": "Fail",
+                "allowedEdge": [
+                    "processing",
+                    "action",
+                    "conditional",
+                    "custom"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            },
+            {
+                "id": "Pass",
+                "allowedEdge": [
+                    "processing",
+                    "action",
+                    "conditional",
+                    "custom"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "model::model": "__IOTEA_IGNORE__",
+        "conditions": [],
+        "logicalOperator": "OR"
+    },
+    "dependencies": {
+        "models": [
+            {
+                "modelId": "__IOTEA_IGNORE__",
+                "fieldName": "model::model"
+            }
+        ],
+        "things": []
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "version": "beta-dev",
+    "name": "Minio Write",
+    "label": "minio",
+    "type": "action",
+    "description": "Writes data to a Minio bucket",
+    "io": {
+        "inputs": [
+            {
+                "id": "fileStorageInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json",
+                    "file"
+                ]
+            }
+        ],
+        "outputs": []
+    },
+    "config": {
+        "minioBucket::thing": "__IOTEA_IGNORE__",
+        "key": "test-file", 
+        "keyValues": ["uuid"]
+    },
+    "dependencies": {
+        "models": [],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "minioBucket:thing"
+            }
+        ]
+    }
+}

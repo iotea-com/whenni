@@ -1,0 +1,21 @@
+syntax = "proto3";
+package devmonitor;
+option go_package = "https://github.com/iotea-com/IoTea/libs/protocols/monitor";
+
+service DevMonitorService {
+  // KeepAlive is initiated by a client on connection. When the client stream closes,
+  // the server will send a KeepAlive response to all the clients.
+  rpc KeepAlive(stream KeepAliveRequest) returns (stream KeepAliveResponse) {};
+  // Restarts all services connected to the dev monitor.
+  rpc RestartServices(RestartServicesRequest) returns (RestartServicesResponse) {};
+}
+
+message KeepAliveRequest{}
+message KeepAliveResponse{
+  bool reset = 1;
+}
+
+message RestartServicesRequest{}
+message RestartServicesResponse{
+  bool reset = 1;
+}

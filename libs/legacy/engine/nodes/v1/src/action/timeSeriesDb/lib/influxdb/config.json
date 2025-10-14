@@ -1,0 +1,35 @@
+{
+    "version": "beta-dev",
+    "name": "Time Series Database",
+    "label": "timeSeriesDb",
+    "type": "action",
+    "description": "Saves a data point to a time series database bucket",
+    "io": {
+        "inputs": [
+            {
+                "id": "timeSeriesDbInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "influxdbDatabase::thing": "__IOTEA_IGNORE__",
+        "bucket": "test"
+    },
+    "dependencies": {
+        "models": [],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "influxdbDatabase::thing"
+            }
+        ]
+    }
+}

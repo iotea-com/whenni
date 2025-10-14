@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/iotea-com/iotea/libs/engine/nodes/src/conditional/threshold/0.1.0/config.schema.json",
+  "title": "ConditionalThresholdConfig",
+  "type": "object",
+  "properties": {
+    "logicalOperator": {
+      "type": "string",
+      "description": "The logical operator to use for evaluating multiple conditions",
+      "required": true,
+      "enum": ["AND", "OR"]
+    },
+    "conditions": {
+      "type": "array",
+      "description": "The threshold conditions to evaluate",
+      "items": {
+        "$ref": "#/$defs/condition"
+      }
+    }
+  },
+  "$defs": {
+    "condition": {
+      "type": "object",
+      "properties": {
+        "attributeId": {
+          "type": "string",
+          "description": "The ID of the attribute to evaluate"
+        },
+        "operator": {
+          "type": "string",
+          "description": "The operator to use for evaluating the condition",
+          "enum": ["greater-than", "less-than", "equal-to", "less-than-equal-to", "greater-than-equal-to", "not-equal-to"]
+        },
+        "value": {
+          "type": "number",
+          "description": "The value to compare against"
+        }
+      }
+    }
+  }
+}

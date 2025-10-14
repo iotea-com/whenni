@@ -1,0 +1,61 @@
+{
+    "version": "beta-dev",
+    "name": "String Compare",
+    "label": "stringCompare",
+    "type": "conditional",
+    "description": "Compare a string attribute in the input data to a value",
+    "io": {
+        "inputs": [
+            {
+                "id": "stringCompareInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "id": "Fail",
+                "allowedEdge": [
+                    "processing",
+                    "action",
+                    "conditional",
+                    "custom"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            },
+            {
+                "id": "Pass",
+                "allowedEdge": [
+                    "processing",
+                    "action",
+                    "conditional",
+                    "custom"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "model::model": "__IOTEA_IGNORE__",
+        "comparisons": []
+    },
+    "dependencies": {
+        "models": [
+            {
+                "modelId": "__IOTEA_IGNORE__",
+                "fieldName": "model::model"
+            }
+        ],
+        "things": []
+    }
+}

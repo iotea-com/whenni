@@ -1,0 +1,38 @@
+{
+    "version": "beta-dev",
+    "name": "S3 Write",
+    "label": "s3",
+    "type": "action",
+    "description": "Writes data to s3 bucket",
+    "io": {
+        "inputs": [
+            {
+                "id": "fileStorageInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json",
+                    "file"
+                ]
+            }
+        ],
+        "outputs": []
+    },
+    "config": {
+        "s3bucket::thing": "__IOTEA_IGNORE__",
+        "key": "test-file", 
+        "keyValues": ["time"]
+    },
+    "dependencies": {
+        "models": [],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "s3bucket::thing"
+            }
+        ]
+    }
+}

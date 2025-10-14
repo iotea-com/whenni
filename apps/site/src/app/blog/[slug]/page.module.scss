@@ -1,0 +1,31 @@
+#article {
+  h1 {
+    @apply text-4xl mb-4;
+  }
+
+  .content {
+    > h1, > h2, > h3, > p, > ul, > ol, > blockquote, > pre, > div {
+      @apply my-4;
+    }
+
+    table {
+      @apply w-full;
+    }
+
+    h2 {
+      @apply text-2xl;
+    }
+
+    h3 {
+      @apply text-lg;
+    }
+
+    blockquote {
+      @apply border-l border-gray-400 pl-3 text-gray-700;
+    }
+
+    a {
+      @apply text-green-700 underline;
+    }
+  }
+}

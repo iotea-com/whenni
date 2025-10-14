@@ -1,0 +1,27 @@
+$vertical-word-count: 8;
+
+.scrollingWordsBox {
+  @apply overflow-hidden border-b-2 w-fit ml-1;
+  height: 1.75rem;
+  border-color: rgba(0, 255, 0, .5);
+  
+  ul {
+    padding: 0;
+    animation: wordVerticalScroll #{$vertical-word-count * 2.5}s infinite;
+    animation-delay: 2s;
+
+    li {
+      height: 1.75rem;
+      list-style: none; 
+    }
+  }
+}
+
+// scrollUp
+@keyframes wordVerticalScroll {
+  @for $i from 1 to ($vertical-word-count) {
+    #{(100% / $vertical-word-count) * $i} {
+      transform: translateY((-100% / $vertical-word-count) * $i);
+    }
+  }
+}

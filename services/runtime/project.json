@@ -1,0 +1,36 @@
+{
+  "name": "runtime",
+  "root": "services/runtime",
+  "sourceRoot": "services/runtime",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "commands": ["./gradlew buildRuntime"],
+        "parallel": false
+      },
+      "outputs": ["{projectRoot}/build"]
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{workspaceRoot}/services/runtime/build/install/runtime",
+        "commands": ["bin/main"],
+        "envFile": ".env"
+      },
+      "dependsOn": ["build"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "services/runtime",
+        "commands": ["./gradlew test"]
+      },
+      "outputs": ["{projectRoot}/build/test-results"]
+    }
+  },
+  "tags": ["kotlin", "runtime"],
+  "implicitDependencies": ["nodes"]
+}

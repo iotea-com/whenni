@@ -1,0 +1,43 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "types": [
+      "jest",
+      "node"
+    ],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
+  },
+  "include": [
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx",
+    "../../apps/iotea-com/.next/types/**/*.ts",
+    "../../apps/iotea-com/dist/.next/types/**/*.ts",
+    "../../apps/site/dist/.next/types/**/*.ts",
+    "../../libs/frontend/src/components/organisms/Modal/NewsletterModal/NewsletterModal.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+, "../../libs/frontend/src/components/templates/NotionBlockRenderer/index.tsx"  ],
+  "exclude": [
+    "node_modules",
+    "jest.config.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ]
+}

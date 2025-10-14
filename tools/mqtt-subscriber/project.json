@@ -1,0 +1,20 @@
+{
+  "name": "mqtt-sub",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tools/mqtt-pub",
+  "projectType": "application",
+  "targets": {
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          {
+            "command": "go run main.go --tls={args.tls} --topic={args.topic}"
+          }
+        ]
+      }
+    }
+  },
+  "tags": []
+}

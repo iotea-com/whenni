@@ -1,0 +1,43 @@
+{
+    "version": "beta-dev",
+    "name": "AWS SNS",
+    "label": "aws-sns",
+    "type": "action",
+    "description": "Sends SMS notification to user",
+    "io": {
+        "inputs": [
+            {
+                "id": "notificationInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "awsSNS::thing": "__IOTEA_IGNORE__",
+        "topicARN": "some-ARN",
+        "input::model": "string",
+        "templateMessage": "templateMessage",
+        "defaultValues": "default" 
+    },
+    "dependencies": {
+        "models": [
+            {
+                "internal": false,
+                "modelId": "__IOTEA_IGNORE__",
+                "fieldName": "input::model"
+            }
+        ],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "awsSNS::thing"
+            }
+        ]
+    }
+}

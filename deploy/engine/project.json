@@ -1,0 +1,144 @@
+{
+	"name": "engine",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "deploy/engine",
+	"projectType": "application",
+	"targets": {
+		"build-local": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "nx run engine:containerize-local",
+				"cwd": "{workspaceRoot}"
+			}
+		},
+		"containerize-local": {
+			"executor": "@nx-tools/nx-container:build",
+			"options": {
+				"file": "deploy/engine/local/build/vault/Dockerfile",
+				"context": "{workspaceRoot}",
+				"cwd": "{projectRoot}",
+				"push": false,
+				"load": true,
+				"tags": [
+					"iotea-vault:latest"
+				],
+				"platforms": []
+			}
+		},
+		"dev": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": []
+			},
+			"configurations": {
+				"up": {
+					"commands": [
+						{
+							"command": "nx run engine:stop -c local"
+						},
+						{
+							"command": "nx run engine:build-local"
+						},
+						{
+							"command": "bash -c 'cd deploy/engine && docker compose -f local/docker-compose.yaml --profile dev up --build -d'"
+						},
+						{
+							"command": "bash -c 'cd deploy/engine/local && chmod +x ctl.sh && ./ctl.sh'"
+						}
+					],
+					"cwd": "{workspaceRoot}",
+					"parallel": false
+				},
+				"stop": {
+					"commands": [
+						{
+							"command": "docker compose -f local/docker-compose.yaml --profile dev stop"
+						}
+					],
+					"cwd": "{projectRoot}"
+				},
+				"down": {
+					"commands": [
+						{
+							"command": "docker compose -f local/docker-compose.yaml --profile dev down"
+						}
+					],
+					"cwd": "{projectRoot}"
+				},
+				"restart": {
+					"commands": [
+						{
+							"command": "docker exec local-dev-container-1 /bin/bash -c 'export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nx restart dev-monitor'"
+						}
+					],
+					"cwd": "{projectRoot}"
+				}
+			}
+		},
+		"start": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "{projectRoot}/production",
+				"parallel": false
+			},
+			"defaultConfiguration": "local",
+			"configurations": {
+				"local": {
+					"cwd": "{workspaceRoot}",
+					"commands": [
+						{
+							"command": "docker network create iotea_network || true"
+						},
+						{
+							"command": "nx run engine:build-local"
+						},
+						{
+							"command": "bash -c 'cd deploy/engine && docker compose -f local/docker-compose.yaml --profile run up --build -d'"
+						}
+					]
+				}
+			}
+		},
+		"update": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "{projectRoot}/production",
+				"parallel": false
+			},
+			"defaultConfiguration": "local",
+			"configurations": {
+				"local": {
+					"cwd": "{workspaceRoot}",
+					"parallel": false,
+					"commands": [
+						{
+							"command": "nx run-many --target=build --projects=http-api -c local --skip-nx-cache"
+						},
+						{
+							"command": "bash -c 'cd deploy/engine && docker compose -f local/docker-compose.yaml --profile run up --build -d'"
+						}
+					]
+				}
+			}
+		},
+		"stop": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "{projectRoot}/production",
+				"parallel": false
+			},
+			"defaultConfiguration": "local",
+			"configurations": {
+				"local": {
+					"cwd": "{workspaceRoot}",
+					"commands": [
+						{
+							"command": "bash -c 'cd deploy/engine && docker compose -f local/docker-compose.yaml --profile run down'"
+						}
+					]
+				}
+			}
+		}
+	},
+	"tags": []
+}

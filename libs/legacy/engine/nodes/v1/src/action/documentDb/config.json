@@ -1,0 +1,33 @@
+{
+    "version": "beta-dev",
+    "name": "Document Database",
+    "label": "documentDb",
+    "type": "action",
+    "description": "Query and store data in a document database",
+    "io": {
+        "inputs": [
+            {
+                "id": "documentDbInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "id": "documentDbOutput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {},
+    "dependencies": {}
+}

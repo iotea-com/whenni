@@ -1,0 +1,54 @@
+{
+    "version": "beta-dev",
+    "name": "Data Transform",
+    "label": "transform",
+    "type": "processing",
+    "description": "Convert or modify input data into a specified output format",
+    "io": {
+        "inputs": [
+            {
+                "id": "transformInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "id": "transformOutput",
+                "allowedEdge": [
+                    "processing",
+                    "action",
+                    "conditional",
+                    "custom"
+                ],
+                "dataType": [
+                    "bytes",
+                    "json"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "inputModel::model": "__IOTEA_IGNORE__",
+        "outputModel::model": "__IOTEA_IGNORE__",
+        "mapping": "__IOTEA_IGNORE__"
+    },
+    "dependencies": {
+        "models": [
+            {
+                "modelId": "__IOTEA_IGNORE__",
+                "fieldName": "inputModel::model"
+            },
+            {
+                "modelId": "__IOTEA_IGNORE__",
+                "fieldName": "outputModel::model"
+            }
+        ],
+        "things": []
+    }
+}

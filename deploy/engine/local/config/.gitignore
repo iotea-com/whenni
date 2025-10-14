@@ -1,0 +1,6 @@
+postgres/data
+minio/data
+grafana/plugins
+clickhouse/data
+vault/storage
+vault/file

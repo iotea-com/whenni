@@ -1,0 +1,54 @@
+{
+  "eslint.nodePath": ".yarn/sdks",
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "go.testEnvVars": {
+    "ENVIRONMENT": "test"
+  },
+  "go.testTimeout": "30s",
+  "go.testFlags": [
+    "-v"
+  ],
+  "files.watcherExclude": {
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/.nx": true,
+    "**/.pnp.*": true,
+    "**/.yarn": true,
+  },
+  "search.exclude": {
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/.nx": true,
+    "**/.pnp.*": true,
+    "**/.yarn": true,
+  },
+  "files.readonlyInclude": {
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/.nx": true,
+    "**/.pnp.*": true,
+    "**/.yarn": true,
+  },
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "editor.tabSize": 2
+}

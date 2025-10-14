@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/iotea-com/iotea/libs/engine/channels/config.schema.json",
+  "title": "ChannelConfig",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "coordinates": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    }
+    "metadata": {
+      "version": { "type": "string" },
+      "name": { "type": "string" },
+      "label": { "type": "string" },
+      "type": { "type": "string" },
+      "description": { "type": "string" },
+      "io": {
+        "inputs": { "type": "array", "items": { "type": "object", } },
+        "outputs": { "type": "array", "items": { "type": "object" } }
+      }
+      "config": { "type": "object" },
+      "dependencies": {
+        "models": { "type": "array", "items": { "type": "object" } },
+        "things": { "type": "array", "items": { "type": "object" } }
+      }
+    }
+  },
+  "$defs": {
+    "input": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": ["value"],
+      "additionalProperties": true
+    }
+  }
+}

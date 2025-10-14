@@ -1,0 +1,24 @@
+{
+  "name": "threshold",
+  "label": "Threshold",
+  "version": "0.1.0",
+  "description": "Evaluate conditions and route data based on specified rules",
+  "category": "conditional",
+  "inputs": [
+    {
+      "id": "in",
+      "label": "Input"
+    }
+  ],
+  "outputs": [
+    {
+      "id": "pass",
+      "label": "Pass"
+    },
+    {
+      "id": "fail",
+      "label": "Fail"
+    }
+  ],
+  "runtime": "jvm"
+}

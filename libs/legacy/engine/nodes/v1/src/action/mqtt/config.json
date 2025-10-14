@@ -1,0 +1,35 @@
+{
+    "version": "beta-dev",
+    "name": "MQTT",
+    "label": "mqtt",
+    "type": "action",
+    "description": "Publish messages to an MQTT topic",
+    "io": {
+        "inputs": [
+            {
+                "id": "mqttInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "mqttClient::thing": "__IOTEA_IGNORE__",
+        "topic": "test/topic",
+        "qos": 0
+    },
+    "dependencies": {
+        "models": [],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "mqttClient::thing"
+            }
+        ]
+    }
+}

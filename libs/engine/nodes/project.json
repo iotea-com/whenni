@@ -1,0 +1,32 @@
+{
+  "name": "nodes",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/engine/nodes",
+  "projectType": "library",
+  "targets": {
+    "gen": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "development",
+      "options": {
+        "cwd": "{projectRoot}/tools/codegen",
+        "command": "go run ."
+      },
+      "configurations": {
+        "development": {
+          "dev": true
+        },
+        "production": {
+          "dev": false
+        }
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "commands": ["./gradlew clean distNodes"]
+      }
+    }
+  },
+  "tags": ["kotlin", "api"]
+}

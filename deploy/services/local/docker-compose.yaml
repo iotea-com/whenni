@@ -1,0 +1,129 @@
+networks:
+  services_network:
+    name: services_network
+    external: true
+
+volumes:
+  influxdb_data:
+  kafka_data:
+
+
+services:
+  emqx:
+    profiles: [ "source", "action" ]
+    image: iotea-emqx:latest
+    ports:
+      - "8883:8883" # MQTTS
+      # - "8084:8084" # WSS # TODO: enabled WSS in production
+      - "18083:18083" # Web UI
+    volumes:
+      # We mount from the host's path
+      - ${USR_MONOREPO_ROOT}/deploy/services/local/config/emqx/emqx.conf:/opt/emqx/etc/emqx.conf
+    networks:
+      - services_network
+
+  # TODO: deprecate use of 1883 in tests when certificates are more streamlined
+  mosquitto:
+    profiles: [ "source", "action" ]
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+    volumes:
+      # We mount from the host's path
+      - ${USR_MONOREPO_ROOT}/deploy/services/local/config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    command: mosquitto -c /mosquitto/config/mosquitto.conf
+    networks:
+      - services_network
+
+  influxdb:
+    profiles: [ "action" ]
+    image: influxdb:latest
+    ports:
+      - "8086:8086" # HTTP API port
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: admin12345
+      DOCKER_INFLUXDB_INIT_ORG: iotea
+      DOCKER_INFLUXDB_INIT_BUCKET: default
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: my-secret-influxdb2-token
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    networks:
+      - services_network
+
+  minio:
+    image: minio/minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9005:9005"
+      - "9006:9006"
+    command: server /data --address ":9005" --console-address ":9006"
+    networks:
+      - services_network
+
+  kafka:
+    profiles: [ "source", "action" ]
+    image: docker.io/bitnami/kafka:latest
+    ports:
+      - "9094:9094"
+    volumes:
+      - kafka_data:/bitnami
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://127.0.0.1:9094
+    networks:
+      - services_network
+
+  kafka-ui:
+    profiles: [ "source", "action" ]
+    image: provectuslabs/kafka-ui
+    ports:
+      - "9093:8080"
+    environment:
+      - DYNAMIC_CONFIG_ENABLED=true
+      - KAFKA_CLUSTERS_0_NAME=kafka_local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    networks:
+      - services_network
+    depends_on:
+      - kafka
+
+  nats-service:
+    profiles: [ "source", "action" ]
+    image: nats:latest
+    ports:
+      - "4444:4222"
+    networks:
+      - services_network
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: local
+    networks:
+      - services_network
+
+  mongo-ui:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: local
+      ME_CONFIG_MONGODB_URL: mongodb://root:local@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+    networks:
+      - services_network

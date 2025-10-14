@@ -1,0 +1,38 @@
+.nodeCard {
+  @apply flex flex-col items-center justify-center bg-gray-100 border border-green-500 rounded-lg transition select-none shadow cursor-pointer;
+
+  .icon {
+    @apply text-gray-800;
+  }
+  
+  p {
+    @apply text-xs text-gray-500;
+  }
+}
+
+.nodeCard.muted {
+  @apply bg-gray-50 border-gray-200 shadow-none;
+
+  .icon {
+    @apply text-gray-500;
+  }
+
+  p {
+    @apply text-xs text-gray-400;
+  }
+}
+
+.nodeCard:hover {
+  @apply bg-gray-100 border-green-500;
+  transform: scale(1.1);
+}
+
+.nodeCard.muted:hover {
+  .icon {
+    @apply text-gray-800;
+  }
+  
+  p {
+    @apply text-xs text-gray-500;
+  }
+}

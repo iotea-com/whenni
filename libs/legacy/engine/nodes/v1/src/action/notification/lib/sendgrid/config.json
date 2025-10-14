@@ -1,0 +1,47 @@
+{
+    "version": "beta-dev",
+    "name": "Sendgrid",
+    "label": "sendgrid",
+    "type": "action",
+    "description": "Sends email messages to email address via Sendgrid.",
+    "io": {
+        "inputs": [
+            {
+                "id": "notificationInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "sendgridClient::thing": "__IOTEA_IGNORE__",
+        "sender": "example@gmail.com",
+        "sendAs": "example@gmail.com",
+        "receiver": "example2@gmail.com",
+        "subject": "some-subject",
+        "input::model": {},
+        "templateMessage": "templateMessage",
+        "defaultValues": {}
+
+    },
+    "dependencies": {
+        "models": [
+            {
+                "internal": false,
+                "modelId": "__IOTEA_IGNORE__",
+                "fieldName": "input::model"
+            }
+        ],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "sendgridClient::thing"
+            }
+        ]
+    }
+}

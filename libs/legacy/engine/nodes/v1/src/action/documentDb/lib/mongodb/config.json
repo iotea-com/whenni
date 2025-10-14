@@ -1,0 +1,56 @@
+{
+    "version": "beta-dev",
+    "name": "MongoDB",
+    "label": "mongoDb",
+    "type": "action",
+    "description": "Sends MQL queries to a MongoDB server.",
+    "io": {
+        "inputs": [
+            {
+                "id": "documentDbInput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "id": "documentDbOutput",
+                "allowedEdge": [
+                    "*"
+                ],
+                "dataType": [
+                    "bytes"
+                ]
+            }
+        ]
+    },
+    "config": {
+        "mongoDbServer::thing": "__IOTEA_IGNORE__",
+        "database": "",
+        "collection": "",
+        "input::model": {},
+        "filter": "filter",
+        "document": "document",
+        "defaultValues": {}
+    },
+    "dependencies": {
+        "models": [
+            {
+                "internal": false,
+                "modelId": "__IOTEA_IGNORE__",
+                "fieldName": "input::model"
+            }
+        ],
+        "things": [
+            {
+                "internal": false,
+                "thingId": "__IOTEA_IGNORE__",
+                "fieldName": "mongoDbServer::thing"
+            }
+        ]
+    }
+}

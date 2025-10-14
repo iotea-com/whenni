@@ -1,0 +1,29 @@
+[versions]
+kotlin = "2.0.0"
+junit  = "5.10.2"
+mockk  = "1.13.12"
+logback = "1.5.6"
+micrometer = "1.13.1"
+shadow = "8.1.1"
+netty = "4.1.111.Final"
+commons-math3 = "3.6.1"
+guava = "33.4.6-jre"
+klaxon = "5.6"
+
+[libraries]
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
+netty-all = { module = "io.netty:netty-all", version.ref = "netty" }
+commons-math3 = { module = "org.apache.commons:commons-math3", version.ref = "commons-math3" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+klaxon = { module = "com.beust:klaxon", version.ref = "klaxon" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+application = { id = "application" }
+java-library = { id = "java-library" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
