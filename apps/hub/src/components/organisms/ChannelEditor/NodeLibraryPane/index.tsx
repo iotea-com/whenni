@@ -48,7 +48,7 @@ const NodeLibraryPane: FC = () => {
 
   return (
     <div className="flex flex-col w-full min-w-56 overflow-y-scroll overflow-x-hidden">
-      <h2 className="uppercase text-gray-500 dark:text-gray-100 font-bold text-xs mb-2 pt-[1px]">
+      <h2 className="uppercase text-gray-500 dark:text-gray-100 font-bold text-xs mb-2 pt-px">
         Nodes
       </h2>
       <div className="flex relative w-full items-bottom mb-2">
@@ -61,7 +61,7 @@ const NodeLibraryPane: FC = () => {
           spellCheck="false"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="outline-none border-0 border-b bg-transparent transition border-gray-400 hover:border-gray-800 focus:border-gray-800 text-xs mt-0 grow"
+          className="outline-hidden border-0 border-b bg-transparent transition border-gray-400 hover:border-gray-800 focus:border-gray-800 text-xs mt-0 grow"
         />
         {searchQuery && searchQuery.length > 0 && (
           <RemixIcon

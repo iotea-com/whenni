@@ -193,7 +193,7 @@ const ListTable: FC<PropsWithChildren<Props>> = ({
                   onClick={() => handlePageChange(p)}
                   disabled={p === page}
                   variant="underline"
-                  className={p === page ? '!text-gray-900' : ''}
+                  className={p === page ? 'text-gray-900!' : ''}
                 >
                   {p}
                 </Button>

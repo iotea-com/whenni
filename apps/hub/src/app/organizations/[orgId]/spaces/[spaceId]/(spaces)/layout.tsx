@@ -95,7 +95,7 @@ const Layout = async ({ children, params }) => {
                 href={`/organizations/${orgId}`}
                 className="flex items-center gap-1 transition text-gray-700 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-200"
               >
-                <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-sm">
+                <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xs">
                   <RemixIcon icon={riUserCommunityFill} size={'sm'} />
                 </div>
                 {organization?.name ?? 'Error'}
@@ -105,7 +105,7 @@ const Layout = async ({ children, params }) => {
                 href={`/organizations/${orgId}/spaces/${spaceId}`}
                 className="flex items-center gap-1 transition text-gray-700 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-200"
               >
-                <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-sm">
+                <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xs">
                   <RemixIcon icon={riCircleLine} size={'sm'} />
                 </div>
                 <SpaceSelectDropdown

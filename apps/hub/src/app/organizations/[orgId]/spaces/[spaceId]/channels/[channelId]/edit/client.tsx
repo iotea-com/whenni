@@ -526,7 +526,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
             href={`/organizations/${orgId}`}
             className="flex items-center gap-1 transition text-gray-700 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-200"
           >
-            <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-sm">
+            <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xs">
               <RemixIcon icon={riUserCommunityFill} size={'sm'} />
             </div>
             {organization?.name}
@@ -536,14 +536,14 @@ const ChannelByIdEditClientPage: FC<Props> = ({
             href={`/organizations/${orgId}/spaces/${spaceId}`}
             className="flex items-center gap-1 transition text-gray-700 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-200"
           >
-            <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-sm">
+            <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xs">
               <RemixIcon icon={riCircleLine} size={'sm'} />
             </div>
             {space?.name}
           </Link>
           <span>/</span>
           <div className="flex items-center gap-1">
-            <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-sm">
+            <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xs">
               <RemixIcon icon={riGitForkFill} size={'sm'} className="rotate-180" />
             </div>
             <Link
@@ -809,7 +809,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
         <Modal id="exportChannel" showAccept={false}>
           <div
             style={{ maxWidth: 500, maxHeight: 500 }}
-            className="overflow-scroll bg-gray-900 text-sm text-gray-200 rounded p-3"
+            className="overflow-scroll bg-gray-900 text-sm text-gray-200 rounded-sm p-3"
           >
             <pre className="relative">
               <RemixIcon
@@ -886,7 +886,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
         <AnimatePresence>
           {nodeLibraryOpen && (
             <motion.div
-              className="absolute top-5 left-5 pl-8 pr-2 py-3 w-fit max-w-[300px] bg-gray-50 dark:bg-gray-900 rounded border border-green-700 dark:border-green-300 z-20 overflow-y-scroll"
+              className="absolute top-5 left-5 pl-8 pr-2 py-3 w-fit max-w-[300px] bg-gray-50 dark:bg-gray-900 rounded-sm border border-green-700 dark:border-green-300 z-20 overflow-y-scroll"
               style={{ boxShadow: '3px 3px 6px 0 rgba(0, 0, 0, 0.03)', maxHeight: '80%' }}
               initial={{ opacity: 0, scale: 0, transformOrigin: 'top left' }}
               animate={{ opacity: 1, scale: 1, transformOrigin: 'top left' }}

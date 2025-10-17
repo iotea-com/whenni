@@ -203,7 +203,7 @@ const ChannelExecutionsTable: FC<Props> = ({
                               <Button
                                 key={status}
                                 variant="transparent"
-                                className="text-sm !border-primary"
+                                className="text-sm border-primary!"
                                 onClick={() => handleStatusFilterChange(status)}
                               >
                                 {status}

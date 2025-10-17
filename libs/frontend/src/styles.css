@@ -1,0 +1,238 @@
+@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&display=swap')
+layer(base);
+
+@import 'tailwindcss';
+
+@source './**/*.{js,ts,jsx,tsx}';
+
+@custom-variant dark (&:is([data-theme='dark'] *));
+
+@theme {
+  --color-*: initial;
+  --color-primary: #37de4b;
+  --color-primary-hover: #37ce4b;
+  --color-secondary: #263728;
+  --color-secondary-hover: #0b1f0f;
+  --color-accent: #d7fbdb;
+
+  --color-green-50: #ebfded;
+  --color-green-100: #d7fbdb;
+  --color-green-200: #aff7b7;
+  --color-green-300: #87f293;
+  --color-green-400: #5fee6f;
+  --color-green-500: #37de4b;
+  --color-green-600: #2cbb3c;
+  --color-green-700: #218c2d;
+  --color-green-800: #165e1e;
+  --color-green-900: #0b2c0f;
+  --color-green-950: #0b2f0f;
+
+  --color-red-50: #fcedeb;
+  --color-red-100: #f8dad7;
+  --color-red-200: #f2b5af;
+  --color-red-300: #eb9087;
+  --color-red-400: #e56b5f;
+  --color-red-500: #de4637;
+  --color-red-600: #b2382c;
+  --color-red-700: #852a21;
+  --color-red-800: #591c16;
+  --color-red-900: #2c0e0b;
+
+  --color-orange-50: #fff8f0;
+  --color-orange-100: #ffedd6;
+  --color-orange-200: #ffd8a8;
+  --color-orange-300: #ffc078;
+  --color-orange-400: #ffa94d;
+  --color-orange-500: #ff922b;
+  --color-orange-600: #fd7e14;
+  --color-orange-700: #f76707;
+  --color-orange-800: #e8590c;
+  --color-orange-900: #d9480f;
+  --color-orange-950: #c03900;
+
+  --color-blue-50: #f1f8fe;
+  --color-blue-100: #e3effb;
+  --color-blue-200: #c0e0f7;
+  --color-blue-300: #88c7f1;
+  --color-blue-400: #3da5e6;
+  --color-blue-500: #2190d6;
+  --color-blue-600: #1372b6;
+  --color-blue-700: #115b93;
+  --color-blue-800: #124e7a;
+  --color-blue-900: #144266;
+  --color-blue-950: #0e2a43;
+
+  --color-violet-50: #f6f0fe;
+  --color-violet-100: #ece1fd;
+  --color-violet-200: #d5bffb;
+  --color-violet-300: #b28df7;
+  --color-violet-400: #8b58f0;
+  --color-violet-500: #6e34e8;
+  --color-violet-600: #5a24d0;
+  --color-violet-700: #481dab;
+  --color-violet-800: #3b1889;
+  --color-violet-900: #321473;
+  --color-violet-950: #21094e;
+
+  --color-yellow-50: #fffbeb;
+  --color-yellow-100: #fef3c7;
+  --color-yellow-200: #fde68a;
+  --color-yellow-300: #fcd34d;
+  --color-yellow-400: #fbbf24;
+  --color-yellow-500: #f59e0b;
+  --color-yellow-600: #d97706;
+  --color-yellow-700: #b45309;
+  --color-yellow-800: #92400e;
+  --color-yellow-900: #78350f;
+  --color-yellow-950: #4b2607;
+
+  --color-gray-50: #fcfcfd;
+  --color-gray-100: #f5f5f6;
+  --color-gray-200: #dbdbde;
+  --color-gray-300: #c9cacd;
+  --color-gray-400: #b7b8bd;
+  --color-gray-500: #a5a6aa;
+  --color-gray-600: #848587;
+  --color-gray-700: #636465;
+  --color-gray-800: #424244;
+  --color-gray-900: #212122;
+  --color-gray-950: #101011;
+
+  --color-teal-50: #f0fdfa;
+  --color-teal-100: #ccfbf1;
+  --color-teal-200: #99f6e4;
+  --color-teal-300: #5eead4;
+  --color-teal-400: #2dd4bf;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
+  --color-teal-700: #0f766e;
+  --color-teal-800: #115e59;
+  --color-teal-900: #134e4a;
+  --color-teal-950: #042f2e;
+
+  --color-info: #37de4b;
+  --color-success: #37de4b;
+  --color-warning: #de8a37;
+  --color-error: #de6237;
+  --color-white: #ffffff;
+  --color-black: #011804;
+  --color-transparent: transparent;
+
+  --font-*: initial;
+  --font-sans:
+    Schibsted Grotesk, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-title:
+    Schibsted Grotesk, ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #e0e0e0 0%, #f0f0f0 50%, #e0e0e0 100%);
+  background-size: 200% 100%;
+
+  .dark & {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(
+      to right,
+      #4c4c4c 0%,
+      #2e2e2e 50%,
+      #4c4c4c 100%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+@utility dark {
+  & .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(
+      to right,
+      #4c4c4c 0%,
+      #2e2e2e 50%,
+      #4c4c4c 100%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 dark:bg-gray-900;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-title font-black text-gray-800;
+  }
+
+  .dark h1, h2, h3, h4, h5, h6 {
+    @apply text-gray-100;
+  }
+
+  h2 {
+    @apply font-extrabold;
+  }
+
+  h3, h4 {
+    @apply font-bold;
+  }
+
+  h5, h6 {
+    @apply font-semibold;
+  }
+
+  p {
+    @apply text-gray-600;
+  }
+
+  .dark p {
+    @apply text-gray-300;
+  }
+
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 15px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    border: 2px transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full border-4 border-solid border-transparent;
+    background-clip: content-box;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700;
+  }
+}
+
+@layer utilities {
+  @keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+  }
+}

@@ -114,28 +114,28 @@ const ChannelEditor: FC<Props> = ({ hooks }) => {
         onDrop={handleDrop}
         width={editorSize.width}
         height={editorSize.height}
-        className="grow focus:outline-none overflow-hidden relative"
+        className="grow focus:outline-hidden overflow-hidden relative"
       />
 
       <div className="absolute left-8 bottom-6 flex flex-col gap-1">
         <div className="flex gap-2">
           <Button
             variant="transparent"
-            className="!p-1 !bg-gray-50 dark:!bg-gray-900 !border-gray-400 hover:!border-green-600 !text-gray-500 hover:!text-green-600"
+            className="p-1! bg-gray-50! dark:bg-gray-900! border-gray-400! hover:border-green-600! text-gray-500! hover:text-green-600!"
             onClick={() => (zoom < 1.5 ? setZoom(zoom + 0.25) : noop)}
           >
             <RemixIcon icon={riZoomInLine} />
           </Button>
           <Button
             variant="transparent"
-            className="!p-1 !bg-gray-50 dark:!bg-gray-900 !border-gray-400 hover:!border-green-600 !text-gray-500 hover:!text-green-600"
+            className="p-1! bg-gray-50! dark:bg-gray-900! border-gray-400! hover:border-green-600! text-gray-500! hover:text-green-600!"
             onClick={() => (zoom > 0.5 ? setZoom(zoom - 0.25) : noop)}
           >
             <RemixIcon icon={riZoomOutLine} />
           </Button>
           <Button
             variant="transparent"
-            className="!p-1 !bg-gray-50 dark:!bg-gray-900 !border-gray-400 hover:!border-green-600 !text-gray-500 hover:!text-green-600"
+            className="p-1! bg-gray-50! dark:bg-gray-900! border-gray-400! hover:border-green-600! text-gray-500! hover:text-green-600!"
             onClick={() => {
               setPan(0, 0)
               setZoom(1)

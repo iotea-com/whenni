@@ -66,7 +66,7 @@ const Layout = async ({ children, params }) => {
         <main className="overflow-y-scroll overflow-y-scroll grow">
           <header className="flex border-b border-gray-200 dark:border-gray-800 px-8 py-4 h-14">
             <div className="flex gap-2 items-center w-full text-gray-700 dark:text-gray-300 text-sm">
-              <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-sm">
+              <div className="w-5 h-5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xs">
                 <RemixIcon icon={riUserCommunityFill} size={'sm'} />
               </div>
               <OrgSelectDropdown organizations={organizations ?? []} currentOrg={organization} />

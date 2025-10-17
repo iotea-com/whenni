@@ -1,7 +1,7 @@
 .bulletListItem {
   @apply text-gray-800 list-disc px-2 pb-1;
 
-  // Add padding to the content but exclude nested lists
+  /* Add padding to the content but exclude nested lists */
   > :not(ul) {
     @apply pb-1;
   }

@@ -55,7 +55,7 @@ const SearchBar: FC<Props> = ({
         onChange={(e) => setSearch(e.target.value)}
         value={search}
         placeholder={placeholder}
-        className={`${className} w-full px-8 py-1 border-b bg-transparent transition outline-none border-gray-200 hover:border-gray-300 focus:border-gray-700 text-sm text-gray-700`}
+        className={`${className} w-full px-8 py-1 border-b bg-transparent transition outline-hidden border-gray-200 hover:border-gray-300 focus:border-gray-700 text-sm text-gray-700`}
       />
     </div>
   )

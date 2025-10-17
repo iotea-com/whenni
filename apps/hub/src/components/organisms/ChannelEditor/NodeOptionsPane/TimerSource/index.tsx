@@ -458,7 +458,7 @@ const TimerSourceOptions: FC = () => {
         Advanced
         <RemixIcon
           icon={riArrowDownSFill}
-          className={`transition ml-[1px] ${showAdvanced ? 'rotate-180' : ''}`}
+          className={`transition ml-px ${showAdvanced ? 'rotate-180' : ''}`}
         />
       </span>
 

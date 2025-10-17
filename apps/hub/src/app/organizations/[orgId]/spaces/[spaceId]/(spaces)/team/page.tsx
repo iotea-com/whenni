@@ -151,7 +151,7 @@ const TeamPage = async ({ params, searchParams }) => {
       <CreatePermissionSetModal orgId={orgId} spaceId={spaceId} />
       <Container className="mb-4">
         <section
-          className="relative bg-gray-50 rounded py-5 px-10 border border-gray-200 dark:bg-gray-900 dark:border-gray-800"
+          className="relative bg-gray-50 rounded-sm py-5 px-10 border border-gray-200 dark:bg-gray-900 dark:border-gray-800"
           style={{ boxShadow: '3px 3px 10px 0 rgba(0, 0, 0, 0.03)' }}
         >
           <div className="absolute top-8 right-10 mb-1 flex items-end gap-2">
@@ -174,7 +174,7 @@ const TeamPage = async ({ params, searchParams }) => {
       </Container>
       <Container className="mb-4">
         <section
-          className="relative bg-gray-50 rounded py-5 px-10 border border-gray-200 dark:bg-gray-900 dark:border-gray-800"
+          className="relative bg-gray-50 rounded-sm py-5 px-10 border border-gray-200 dark:bg-gray-900 dark:border-gray-800"
           style={{ boxShadow: '3px 3px 10px 0 rgba(0, 0, 0, 0.03)' }}
         >
           {Number(totalApiKeys) > 0 && (
@@ -214,7 +214,7 @@ const TeamPage = async ({ params, searchParams }) => {
       </Container>
       <Container className="mb-4">
         <section
-          className="relative bg-gray-50 rounded py-5 px-10 border border-gray-200 dark:bg-gray-900 dark:border-gray-800"
+          className="relative bg-gray-50 rounded-sm py-5 px-10 border border-gray-200 dark:bg-gray-900 dark:border-gray-800"
           style={{ boxShadow: '3px 3px 10px 0 rgba(0, 0, 0, 0.03)' }}
         >
           <div className="absolute top-8 right-10 mb-1 flex items-end gap-2">

@@ -176,7 +176,7 @@ const TagMenu: FC<Props> = ({ spaceId, onClose, onSubmit, subject, setSubject, t
                 {tag.name}
                 <button
                   type="button"
-                  className="w-4 h-4 flex items-center justify-center transition hover:bg-gray-400 hover:dark:bg-gray-600 rounded-full text-xs hover:bg-gray-500 dark:hover:bg-gray-500"
+                  className="w-4 h-4 flex items-center justify-center transition hover:bg-gray-400 dark:hover:bg-gray-600 rounded-full text-xs hover:bg-gray-500 dark:hover:bg-gray-500"
                   onClick={() => handleClickRemoveTag(tag.id)}
                 >
                   <RemixIcon icon={riCloseLine} size="sm" />
@@ -187,7 +187,7 @@ const TagMenu: FC<Props> = ({ spaceId, onClose, onSubmit, subject, setSubject, t
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 text-sm min-w-[100px] bg-transparent border-none focus:outline-none"
+              className="flex-1 text-sm min-w-[100px] bg-transparent border-none focus:outline-hidden"
               placeholder="Add tags..."
             />
           </div>
@@ -195,21 +195,21 @@ const TagMenu: FC<Props> = ({ spaceId, onClose, onSubmit, subject, setSubject, t
             {availableTags.map((tag) => (
               <div
                 key={tag.id}
-                className="px-2 py-1 cursor-pointer text-sm text-gray-800 dark:text-gray-200 transition rounded block border border-transparent hover:bg-green-100 dark:hover:bg-green-800 hover:border-green-200 dark:hover:border-green-700 hover:text-green-700 dark:hover:text-green-300"
+                className="px-2 py-1 cursor-pointer text-sm text-gray-800 dark:text-gray-200 transition rounded-sm block border border-transparent hover:bg-green-100 dark:hover:bg-green-800 hover:border-green-200 dark:hover:border-green-700 hover:text-green-700 dark:hover:text-green-300"
                 onClick={() => handleClickAvailableTag(spaceId, tag.id)}
               >
                 {tag.name}
               </div>
             ))}
             {shouldShowCreateTag && isCreateTagLoading && (
-              <div className="px-2 py-1 cursor-pointer text-sm text-gray-800 dark:text-gray-200 transition rounded block">
+              <div className="px-2 py-1 cursor-pointer text-sm text-gray-800 dark:text-gray-200 transition rounded-sm block">
                 <RemixIcon icon={riLoader2Line} className="animate-spin" size="sm" />
               </div>
             )}
             {shouldShowCreateTag && !isCreateTagLoading && (
               <div
                 onClick={() => handleNewTag()}
-                className="px-2 py-1 cursor-pointer text-sm text-gray-800 dark:text-gray-200 transition rounded block border border-transparent hover:bg-green-100 dark:hover:bg-green-800 hover:border-green-200 dark:hover:border-green-700 hover:text-green-700 dark:hover:text-green-300"
+                className="px-2 py-1 cursor-pointer text-sm text-gray-800 dark:text-gray-200 transition rounded-sm block border border-transparent hover:bg-green-100 dark:hover:bg-green-800 hover:border-green-200 dark:hover:border-green-700 hover:text-green-700 dark:hover:text-green-300"
               >
                 Create {search} <RemixIcon icon={riAddLine} size="sm" />
               </div>
