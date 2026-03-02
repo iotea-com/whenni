@@ -7,9 +7,9 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/certificates"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/certificates"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 
 	mqttPolicies "github.com/iotea-com/iotea/libs/http/policies"
 	"github.com/iotea-com/iotea/libs/id"

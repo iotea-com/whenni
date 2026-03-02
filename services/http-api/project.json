@@ -63,7 +63,7 @@
       "options": {
         "context": "{workspaceRoot}",
         "cwd": "{workspaceRoot}",
-        "file": "services/http-api/deploy/Dockerfile",
+        "file": "services/http-api/deploy/development/Dockerfile",
         "push": false,
         "load": true
       },
@@ -72,12 +72,14 @@
           "tags": [
             "iotea-http-api:local"
           ],
-          "platforms": []
+          "platforms": [],
+          "file": "services/http-api/deploy/development/Dockerfile"
         },
         "staging": {
           "tags": [
             "378120902656.dkr.ecr.us-west-2.amazonaws.com/http-api:staging"
-          ]
+          ],
+          "file": "services/http-api/deploy/production/Dockerfile"
         },
         "production": {
           "tags": [
@@ -85,22 +87,21 @@
           ],
           "platforms": [
             "linux/arm64"
-          ]
+          ],
+          "file": "services/http-api/deploy/production/Dockerfile"
         }
       }
     },
     "serve": {
-      "executor": "@nx-go/nx-go:serve",
+      "executor": "nx:run-commands",
       "defaultConfiguration": "development",
       "options": {
-        "dev": true
+        "cwd": "{projectRoot}",
+        "command": "air"
       },
       "configurations": {
         "development": {
-          "dev": true
-        },
-        "production": {
-          "dev": false
+          "command": "air"
         }
       }
     },

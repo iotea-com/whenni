@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	ioteachannel "github.com/iotea-com/iotea/libs/engine/channels"
 	"github.com/iotea-com/iotea/libs/id"
+	ioteachannel "github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	"github.com/iotea-com/iotea/prisma/db"
 	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
 	thingsDelete "github.com/iotea-com/iotea/services/http-api/api/v1/things/delete"

@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/docker/docker/client"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
-	"github.com/iotea-com/iotea/libs/engine/environment"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
+	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/libs/secrets"
 	"github.com/iotea-com/iotea/prisma/db"
 )
@@ -48,14 +48,14 @@ func resolveHttpServerDependency(
 			if err := handleDevEnvServer(&server); err != nil {
 				return fmt.Errorf("could not handle local server setup: %v", err)
 			}
-		case environment.Local:
-			if err := handleDockerServer(&server); err != nil {
-				return fmt.Errorf("could not handle docker container setup: %v", err)
-			}
-		case environment.Production, environment.Staging:
-			if err := handleK8sServer(&server); err != nil {
-				return fmt.Errorf("could not handle k8s server setup: %v", err)
-			}
+		// case environment.Local:
+		// 	if err := handleDockerServer(&server); err != nil {
+		// 		return fmt.Errorf("could not handle docker container setup: %v", err)
+		// 	}
+		// case environment.Production, environment.Staging:
+		// 	if err := handleK8sServer(&server); err != nil {
+		// 		return fmt.Errorf("could not handle k8s server setup: %v", err)
+		// 	}
 		default:
 			return fmt.Errorf("unknown environment: %v", env)
 		}

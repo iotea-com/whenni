@@ -2,7 +2,7 @@ package channelsValidate
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/channels"
+	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
 )
 
 type Input struct {

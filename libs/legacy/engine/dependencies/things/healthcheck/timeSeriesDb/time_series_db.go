@@ -6,7 +6,7 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 
 	"fmt"
 )

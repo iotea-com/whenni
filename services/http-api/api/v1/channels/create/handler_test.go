@@ -9,9 +9,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/id"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"github.com/iotea-com/iotea/prisma/db"
 	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
 	channelsCreate "github.com/iotea-com/iotea/services/http-api/api/v1/channels/create"

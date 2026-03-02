@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/certificates"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/certificates"
 	"github.com/iotea-com/iotea/libs/secrets"
 )
 

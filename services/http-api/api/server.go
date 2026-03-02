@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/swagger"
-	"github.com/iotea-com/iotea/libs/engine/environment"
+	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/services/http-api/api/healthcheck"
 	v1 "github.com/iotea-com/iotea/services/http-api/api/v1"
 	"github.com/iotea-com/iotea/services/http-api/config"

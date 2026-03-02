@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	ioteachannels "github.com/iotea-com/iotea/libs/engine/channels"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	ioteachannels "github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/services/prisma"
 	"github.com/iotea-com/iotea/services/http-api/util"

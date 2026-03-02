@@ -10,9 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/engine/dependencies/models"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/id"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
 	"github.com/iotea-com/iotea/prisma/db"
 	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
 	modelsUpdate "github.com/iotea-com/iotea/services/http-api/api/v1/models/update"

@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/models"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
 	"go.opentelemetry.io/otel/attribute"
 )
 
