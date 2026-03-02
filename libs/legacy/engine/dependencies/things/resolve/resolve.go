@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/iotea-com/iotea/libs/engine/channels"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
-	"github.com/iotea-com/iotea/libs/engine/environment"
+	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
+	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/libs/secrets"
 	"github.com/iotea-com/iotea/prisma/db"
 )

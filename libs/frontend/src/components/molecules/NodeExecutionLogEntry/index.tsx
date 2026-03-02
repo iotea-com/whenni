@@ -73,7 +73,7 @@ const NodeExecutionLogEntry: FC<{
   })()
 
   return (
-    <div className={`mt-2 rounded transition border ${borderColor} w-full`}>
+    <div className={`mt-2 rounded-sm transition border ${borderColor} w-full`}>
       <div
         key={nodeExecutionLog.timestamp}
         className={`transition ${open ? 'border-b' : ''} ${borderColor} p-4 cursor-pointer flex`}

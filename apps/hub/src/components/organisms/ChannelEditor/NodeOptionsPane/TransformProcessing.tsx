@@ -284,7 +284,7 @@ const TransformNodeModal: FC<TransformModalProps> = ({
             const defaultValue = transformation.get(value) ?? '__IOTEA_IGNORE__'
 
             return (
-              <div key={value} className="grid grid-cols-[1fr,auto,1fr] items-center gap-4">
+              <div key={value} className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
                 <div className="text-right font-medium">{key}</div>
                 <RemixIcon icon={riArrowLeftLine} className="text-gray-500" />
                 <FormFieldSelect

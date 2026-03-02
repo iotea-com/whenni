@@ -19,7 +19,7 @@ const RichTextBlock = ({
       annotations?.italic ? 'italic' : '',
       annotations?.strikethrough ? 'line-through' : '',
       annotations?.underline ? 'underline' : '',
-      annotations?.code ? 'font-mono bg-gray-100 px-1 rounded' : '',
+      annotations?.code ? 'font-mono bg-gray-100 px-1 rounded-sm' : '',
     ]
       .filter(Boolean)
       .join(' ')

@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
 	"github.com/iotea-com/iotea/libs/id"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"github.com/iotea-com/iotea/prisma/db"
 	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
 	thingsCreate "github.com/iotea-com/iotea/services/http-api/api/v1/things/create"

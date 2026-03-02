@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/channels"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
+	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )

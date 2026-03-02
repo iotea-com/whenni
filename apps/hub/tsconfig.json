@@ -29,7 +29,11 @@
     "**/*.jsx",
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "../../apps/hub/dist/.next/types/**/*.ts"
+    "../../apps/hub/dist/.next/types/**/*.ts",
+    "../../libs/frontend/**/*.ts",
+    "../../libs/frontend/**/*.tsx",
+    "../../libs/iotea-js/**/*.ts",
+    "../../libs/iotea-js/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/engine/dependencies/models"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
 	"github.com/stretchr/testify/require"
 )
 

@@ -52,7 +52,7 @@ const SecretsPage = async ({ params }) => {
       <CreateSecretModal spaceId={spaceId} />
       <Container>
         <section
-          className="relative bg-gray-50 rounded py-5 px-10 border border-gray-200 dark:bg-gray-900 dark:border-gray-800"
+          className="relative bg-gray-50 rounded-sm py-5 px-10 border border-gray-200 dark:bg-gray-900 dark:border-gray-800"
           style={{ boxShadow: '3px 3px 10px 0 rgba(0, 0, 0, 0.03)' }}
         >
           {Number(secrets.length) > 0 && (

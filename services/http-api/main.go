@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/iotea-com/iotea/libs/engine/observability"
+	"github.com/iotea-com/iotea/libs/legacy/engine/observability"
 	pbDevenv "github.com/iotea-com/iotea/libs/protocols/devenv"
 	"github.com/iotea-com/iotea/services/http-api/api"
 	"github.com/iotea-com/iotea/services/http-api/config"

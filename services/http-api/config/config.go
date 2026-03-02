@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
-	"github.com/iotea-com/iotea/libs/engine/environment"
-	"github.com/iotea-com/iotea/libs/engine/observability"
+	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
+	"github.com/iotea-com/iotea/libs/legacy/engine/observability"
 	"github.com/iotea-com/iotea/libs/secrets"
 	"github.com/iotea-com/iotea/prisma/db"
 	clickhouseService "github.com/iotea-com/iotea/services/http-api/services/clickhouse"

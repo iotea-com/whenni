@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -61,7 +61,7 @@ func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 		Input: Input{
 			BearerToken:    *bearerToken,
 			SpaceId:        spaceId,
-			ThingCategory:  thingCategory,
+			ThingCategory:  thingCategory,w
 			Page:           page,
 			ResultsPerPage: resultsPerPage,
 			Filter:         searchFilter,

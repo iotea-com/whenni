@@ -67,14 +67,14 @@ const SpaceSelectDropDown: FC<Props> = ({ organization, currentSpaceId }) => {
         </div>
         {isDropDownOpen && (
           <>
-            <div className="absolute top-8 -left-4 py-3 rounded border p-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 z-10 w-full">
+            <div className="absolute top-8 -left-4 py-3 rounded-sm border p-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 z-10 w-full">
               {organization.spaces.map((space) => {
                 const { name: spaceName, id: spaceId } = space
 
                 if (spaceId == currentSpaceId)
                   return (
                     <div
-                      className="my-1 cursor-pointer transition bg-green-100 dark:bg-green-700 text-green-700 dark:text-white border border-green-200 dark:border-green-400 py-1 px-4 rounded"
+                      className="my-1 cursor-pointer transition bg-green-100 dark:bg-green-700 text-green-700 dark:text-white border border-green-200 dark:border-green-400 py-1 px-4 rounded-sm"
                       key={spaceId}
                     >
                       {spaceName}
@@ -84,7 +84,7 @@ const SpaceSelectDropDown: FC<Props> = ({ organization, currentSpaceId }) => {
                 return (
                   <Link
                     key={spaceId}
-                    className="my-1 cursor-pointer transition rounded block border border-transparent hover:bg-green-100 dark:hover:bg-green-800 hover:border-green-200 dark:hover:border-green-700 hover:text-green-700 dark:hover:text-green-300 py-1 px-4"
+                    className="my-1 cursor-pointer transition rounded-sm block border border-transparent hover:bg-green-100 dark:hover:bg-green-800 hover:border-green-200 dark:hover:border-green-700 hover:text-green-700 dark:hover:text-green-300 py-1 px-4"
                     href={`/organizations/${organization.id}/spaces/${spaceId}`}
                   >
                     {spaceName}

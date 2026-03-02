@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 )
 
 func HttpServer(attrs *things.HttpServer) error {

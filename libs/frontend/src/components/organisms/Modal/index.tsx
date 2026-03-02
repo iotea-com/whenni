@@ -3,7 +3,7 @@
 import useModal, { closeModal } from '@iotea/libs/frontend/hooks/useModal'
 import { CSSProperties, FC, PropsWithChildren, useRef } from 'react'
 
-import styles from './index.module.scss'
+import styles from './index.module.css'
 import noop from '@iotea/libs/frontend/util/noop'
 import Button from '../../atoms/Button'
 import { RemixIcon, riCloseLine } from '@mwarnerdotme/react-remixicon'

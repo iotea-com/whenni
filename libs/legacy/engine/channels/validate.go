@@ -8,15 +8,15 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	httpActionNodeConfig "github.com/iotea-com/iotea/libs/engine/nodes/v1/src/action/http/config"
-	mqttActionNodeConfig "github.com/iotea-com/iotea/libs/engine/nodes/v1/src/action/mqtt/config"
-	booleanConditionalNodeConfig "github.com/iotea-com/iotea/libs/engine/nodes/v1/src/conditional/boolean/config"
-	existenceConditionalNodeConfig "github.com/iotea-com/iotea/libs/engine/nodes/v1/src/conditional/existence/config"
-	stringCompareConditionalNodeConfig "github.com/iotea-com/iotea/libs/engine/nodes/v1/src/conditional/stringCompare/config"
-	thresholdConditionalNodeConfig "github.com/iotea-com/iotea/libs/engine/nodes/v1/src/conditional/threshold/config"
-	transformProcessingNodeConfig "github.com/iotea-com/iotea/libs/engine/nodes/v1/src/processing/transform/config"
-	mqttSourceNodeConfig "github.com/iotea-com/iotea/libs/engine/nodes/v1/src/source/mqtt/config"
-	timerSourceNodeConfig "github.com/iotea-com/iotea/libs/engine/nodes/v1/src/source/timer/config"
+	httpActionNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/action/http/config"
+	mqttActionNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/action/mqtt/config"
+	booleanConditionalNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/conditional/boolean/config"
+	existenceConditionalNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/conditional/existence/config"
+	stringCompareConditionalNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/conditional/stringCompare/config"
+	thresholdConditionalNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/conditional/threshold/config"
+	transformProcessingNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/processing/transform/config"
+	mqttSourceNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/source/mqtt/config"
+	timerSourceNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/source/timer/config"
 
 	"github.com/iotea-com/iotea/libs/val"
 )

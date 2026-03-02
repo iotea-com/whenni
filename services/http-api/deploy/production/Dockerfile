@@ -89,11 +89,8 @@ WORKDIR /iotea
 RUN go mod download
 
 # Copy the rest of the project
-COPY ./libs/engine/environment ./libs/engine/environment
-COPY ./libs/engine/observability ./libs/engine/observability
 COPY ./libs/engine/dependencies ./libs/engine/dependencies
 COPY ./libs/engine/channels ./libs/engine/channels
-COPY ./libs/engine/nodes/v1 ./libs/engine/nodes/v1
 COPY ./libs/protocols ./libs/protocols
 COPY ./libs/http ./libs/http
 COPY ./libs/val ./libs/val

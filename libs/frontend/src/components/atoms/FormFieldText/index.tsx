@@ -5,7 +5,7 @@ import noop from '@iotea/libs/frontend/util/noop'
 
 type Props = {
   name: string
-  variant?: 'primary' | 'secondary' | 'outline'
+  variant?: 'primary' | 'secondary' | 'outline-solid'
   inputType?: 'text' | 'password' | 'number' | 'email'
   min?: string
   max?: string
@@ -53,17 +53,17 @@ const FormFieldText: FC<Props> = ({
       }
     })()
 
-    const sharedClasses = `border-[1px] rounded-sm px-6 py-3 text-sm ${inputFieldWidth}`
+    const sharedClasses = `border rounded-xs px-6 py-3 text-sm ${inputFieldWidth}`
 
     const variantClasses = (() => {
       switch (variant) {
-        case 'outline':
-          return `bg-transparent text-gray-100 border-gray-100 transition outline-none focus:border-green-700`
+        case 'outline-solid':
+          return `bg-transparent text-gray-100 border-gray-100 transition outline-hidden focus:border-green-700`
         case 'secondary':
           return ``
         case 'primary':
         default:
-          return `border-gray-300 text-gray-800 dark:text-gray-200 transition outline-none focus:border-green-700 ${backgroundColor}`
+          return `border-gray-300 text-gray-800 dark:text-gray-200 transition outline-hidden focus:border-green-700 ${backgroundColor}`
       }
     })()
 
@@ -77,7 +77,7 @@ const FormFieldText: FC<Props> = ({
 
     let variantClasses = (() => {
       switch (variant) {
-        case 'outline':
+        case 'outline-solid':
           return `bg-black text-gray-400`
         case 'secondary':
           return ``

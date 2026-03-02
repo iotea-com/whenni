@@ -1,7 +1,7 @@
 .numberListItem {
   @apply text-gray-800 list-decimal px-2 pb-1;
 
-  // Add padding to the content but exclude nested lists
+  /* Add padding to the content but exclude nested lists */
   > :not(ol) {
     @apply pb-1;
   }

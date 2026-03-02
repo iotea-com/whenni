@@ -49,17 +49,17 @@ const Callout = ({ title, description, variant, className }: Props) => {
   const titleColor = (() => {
     switch (variant) {
       case 'info':
-        return '!text-blue-700'
+        return 'text-blue-700!'
       case 'warning':
-        return '!text-yellow-700'
+        return 'text-yellow-700!'
       case 'error':
-        return '!text-red-700'
+        return 'text-red-700!'
     }
   })()
 
   return (
     <div
-      className={`flex w-fit py-4 pl-4 pr-6 rounded overflow-hidden border border-${borderColor} ${backgroundColor} ${className ? className : ''}`}
+      className={`flex w-fit py-4 pl-4 pr-6 rounded-sm overflow-hidden border border-${borderColor} ${backgroundColor} ${className ? className : ''}`}
     >
       <div>
         <RemixIcon icon={icon} className={`mr-3 text-${borderColor}`} />

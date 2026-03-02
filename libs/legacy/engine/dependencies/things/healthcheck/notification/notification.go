@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
 	"github.com/aws/aws-sdk-go/service/sns"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"github.com/sendgrid/sendgrid-go"
 )
 

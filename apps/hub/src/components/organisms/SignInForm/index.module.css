@@ -1,5 +1,7 @@
+@reference "../../../app/styles.css";
+
 .wrapper {
-  @apply flex flex-col max-w-md w-full;
+  @apply flex flex-col w-full;
 }
 
 .signinForm {

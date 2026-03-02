@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/iotea-com/iotea/libs/engine/channels"
+	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	"github.com/iotea-com/iotea/prisma/db"
 )
 

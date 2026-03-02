@@ -104,7 +104,7 @@ const CreatePermissionSetModal: FC<Props> = ({ orgId, spaceId }) => {
               <h3 className="mb-1 font-semibold">{namespace}</h3>
               <div
                 key={namespace}
-                className="px-6 py-4 mb-4 border border-gray-200 dark:border-gray-700 rounded-sm"
+                className="px-6 py-4 mb-4 border border-gray-200 dark:border-gray-700 rounded-xs"
               >
                 <FormFieldSelect
                   name={namespace}

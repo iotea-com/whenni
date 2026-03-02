@@ -319,7 +319,7 @@ const BooleanNodeModal: FC<BooleanModalProps> = ({
                     onClick={() => handleRemoveCondition(index)}
                   />
                   <h2 className="text-xs mb-1 mt-2">Condition {index + 1}</h2>
-                  <div className="border border-green-500 rounded px-6 py-3">
+                  <div className="border border-green-500 rounded-sm px-6 py-3">
                     <FormFieldSelect
                       name={`condition${index}.field`}
                       label="Field"

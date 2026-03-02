@@ -62,7 +62,7 @@ const BetaSignupModal: FC<Props> = ({}) => {
         <div className="flex">
           <FormFieldText
             backgroundColor="bg-gray-50"
-            className="!my-0 grow"
+            className="my-0! grow"
             name="email"
             label="Email Address"
             inputType="email"

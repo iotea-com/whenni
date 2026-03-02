@@ -1,3 +1,5 @@
+@reference "../../../app/styles.css";
+
 .wrapper {
   @apply flex flex-col max-w-md w-full;
 }

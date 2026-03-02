@@ -8,6 +8,7 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  transpilePackages: ['@iotea/libs/frontend'],
 }
 
 const plugins = [withNx]

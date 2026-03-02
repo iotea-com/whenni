@@ -1,4 +1,4 @@
-import styles from './index.module.scss'
+import styles from './index.module.css'
 import getAccessToken, { getSession } from '@iotea/hub/util/getAccessToken'
 import { redirect } from 'next/navigation'
 // import CallbackUrlRedirect from './CallbackUrlRedirect'

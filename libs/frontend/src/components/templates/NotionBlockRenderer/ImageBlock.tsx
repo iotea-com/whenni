@@ -5,7 +5,7 @@ import { ImageBlockObjectResponse } from '@notionhq/client/build/src/api-endpoin
 const ImageModal = ({ imageUrl, caption }: { imageUrl: string; caption?: string }) => {
   return (
     <dialog
-      className="backdrop:bg-gray-900 backdrop:bg-opacity-90 outline-none border-none rounded open:flex open:items-center open:justify-center"
+      className="backdrop:bg-gray-900 backdrop:bg-opacity-90 outline-hidden border-none rounded-sm open:flex open:items-center open:justify-center"
       onClick={(e) => {
         e.currentTarget.close()
       }}

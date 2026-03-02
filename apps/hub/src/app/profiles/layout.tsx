@@ -1,7 +1,7 @@
 import { RemixIcon, riHome4Line, riUser3Line } from '@mwarnerdotme/react-remixicon'
 import Image from 'next/image'
 import Link from 'next/link'
-import styles from './layout.module.scss'
+import styles from './layout.module.css'
 import getAccessToken, { getSession } from '@iotea/hub/util/getAccessToken'
 import FeedbackButton from '@iotea/hub/components/molecules/FeedbackButton'
 

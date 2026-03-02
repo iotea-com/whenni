@@ -25,7 +25,7 @@ const ToastNotification: FC<Props> = ({ keyName, title, body, level }) => {
 
   return (
     <div
-      className={`toastNotification relative border-l-4 pl-4 ${borderColor} w-80 bg-gray-50 dark:bg-gray-900 rounded-sm px-4 pt-2 pb-4 shadow-md`}
+      className={`toastNotification relative border-l-4 pl-4 ${borderColor} w-80 bg-gray-50 dark:bg-gray-900 rounded-xs px-4 pt-2 pb-4 shadow-md`}
     >
       <RemixIcon
         icon={riCloseFill}

@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { FC, FormEventHandler, useEffect, useState } from 'react'
-import styles from './index.module.scss'
+import styles from './index.module.css'
 import Button from '@iotea/libs/frontend/components/atoms/Button'
 import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
 import Link from 'next/link'

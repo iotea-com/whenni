@@ -287,7 +287,7 @@ const ChannelsTable: FC<Props> = ({
                             <Button
                               key={tag.id}
                               variant="transparent"
-                              className="text-sm !border-primary"
+                              className="text-sm border-primary!"
                               onClick={() => handleTagFilterChange(tag.id)}
                             >
                               {tag.name}

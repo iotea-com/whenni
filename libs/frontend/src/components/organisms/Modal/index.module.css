@@ -1,3 +1,5 @@
+@reference "../../../styles.css";
+
 .modalWrapper {
   @apply fixed top-0 bottom-0 left-0 right-0 flex items-center justify-end z-40;
   background: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .7));

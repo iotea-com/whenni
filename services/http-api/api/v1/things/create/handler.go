@@ -2,7 +2,7 @@ package thingsCreate
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"github.com/iotea-com/iotea/prisma/db"
 )
 

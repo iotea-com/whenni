@@ -2,7 +2,7 @@ package trigger
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/environment"
+	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/services/http-api/api/middleware"
 	"github.com/iotea-com/iotea/services/http-api/api/v1/trigger/http/channelId"
 	"github.com/iotea-com/iotea/services/http-api/config"

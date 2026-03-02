@@ -3,10 +3,10 @@ package channelsValidate
 import (
 	"fmt"
 
-	"github.com/iotea-com/iotea/libs/engine/channels"
-	resolveModels "github.com/iotea-com/iotea/libs/engine/dependencies/models/resolve"
-	resolveThings "github.com/iotea-com/iotea/libs/engine/dependencies/things/resolve"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
+	resolveModels "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models/resolve"
+	resolveThings "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/resolve"
 	"github.com/iotea-com/iotea/services/http-api/services/prisma"
 	"go.opentelemetry.io/otel/attribute"
 )

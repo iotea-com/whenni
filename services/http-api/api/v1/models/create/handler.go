@@ -2,7 +2,7 @@ package modelsCreate
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/models"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
 	"github.com/iotea-com/iotea/prisma/db"
 )
 

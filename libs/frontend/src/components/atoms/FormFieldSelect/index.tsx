@@ -21,7 +21,7 @@ type Option = {
 
 type Props = {
   name: string
-  variant?: 'primary' | 'secondary' | 'outline' | 'cards'
+  variant?: 'primary' | 'secondary' | 'outline-solid' | 'cards'
   options: Option[]
   optional?: boolean
   label: string
@@ -187,17 +187,17 @@ const FormFieldSelect: FC<Props> = ({
       }
     })()
 
-    const sharedClasses = `border-[1px] rounded-sm px-6 py-3 h-auto appearance-none cursor-pointer ${inputFieldWidth}`
+    const sharedClasses = `border rounded-xs px-6 py-3 h-auto appearance-none cursor-pointer ${inputFieldWidth}`
 
     const variantClasses = (() => {
       switch (variant) {
-        case 'outline':
-          return `bg-transparent text-gray-700 border-gray-300 active:border-green-700 focus:border-green-700 outline-none`
+        case 'outline-solid':
+          return `bg-transparent text-gray-700 border-gray-300 active:border-green-700 focus:border-green-700 outline-hidden`
         case 'secondary':
           return ``
         case 'primary':
         default:
-          return `border-gray-300 text-gray-700 bg-transparent active:border-green-700 focus:border-green-700 outline-none`
+          return `border-gray-300 text-gray-700 bg-transparent active:border-green-700 focus:border-green-700 outline-hidden`
       }
     })()
 
@@ -211,7 +211,7 @@ const FormFieldSelect: FC<Props> = ({
 
     const variantClasses = (() => {
       switch (variant) {
-        case 'outline':
+        case 'outline-solid':
           return `text-gray-400 ${backgroundColor}`
         case 'secondary':
           return ``
@@ -255,7 +255,7 @@ const FormFieldSelect: FC<Props> = ({
             return (
               <div
                 key={option.value}
-                className={`max-w-56 transition px-4 py-2 bg-gray-50 dark:bg-gray-900 rounded-sm border border-gray-200 dark:border-gray-700 select-none cursor-pointer hover:text-green-800 hover:border-green-300 hover:bg-green-50 ${isSelected ? 'bg-green-50 border-green-300 text-green-800 dark:text-green-200' : ''}`}
+                className={`max-w-56 transition px-4 py-2 bg-gray-50 dark:bg-gray-900 rounded-xs border border-gray-200 dark:border-gray-700 select-none cursor-pointer hover:text-green-800 hover:border-green-300 hover:bg-green-50 ${isSelected ? 'bg-green-50 border-green-300 text-green-800 dark:text-green-200' : ''}`}
                 onClick={() => handleOptionClick(option)}
               >
                 <div className="flex items-center justify-between gap-1">
@@ -383,7 +383,7 @@ const FormFieldSelect: FC<Props> = ({
           id="dropdown-list"
           role="listbox"
           aria-multiselectable={multiple}
-          className={`absolute left-0 right-0 p-2 flex flex-col gap-1 top-full mt-1 ${backgroundColor} border border-gray-300 dark:border-gray-700 rounded-sm max-h-60 overflow-y-auto z-50`}
+          className={`absolute left-0 right-0 p-2 flex flex-col gap-1 top-full mt-1 ${backgroundColor} border border-gray-300 dark:border-gray-700 rounded-xs max-h-60 overflow-y-auto z-50`}
         >
           {options.map((option) => {
             const isSelected = selectedOptions.some((opt) => opt.value === option.value)

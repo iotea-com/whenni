@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/channels"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	channelService "github.com/iotea-com/iotea/libs/protocols/channels"
 	pbChannel "github.com/iotea-com/iotea/libs/protocols/channels"
 	"github.com/iotea-com/iotea/prisma/db"

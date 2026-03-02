@@ -137,7 +137,7 @@ const UpdateOrgPermissionSetModal: FC<Props> = ({
       return (
         <div key={namespace}>
           <h3 className="mb-1 font-semibold">{namespace}</h3>
-          <div className="px-6 py-4 mb-4 border border-gray-200 dark:border-gray-700 rounded-sm">
+          <div className="px-6 py-4 mb-4 border border-gray-200 dark:border-gray-700 rounded-xs">
             <FormFieldSelect
               name={namespace}
               label="Select permissions"

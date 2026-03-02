@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )

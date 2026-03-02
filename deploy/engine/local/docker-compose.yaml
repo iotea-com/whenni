@@ -17,7 +17,6 @@ volumes:
   minio_data_volume:
   nats-data:
 
-
 services:
   http-api:
     profiles:
@@ -26,6 +25,7 @@ services:
     ports:
       - "9001:9001"
     volumes:
+      - ${USR_MONOREPO_ROOT}:/whenni
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - iotea_network
@@ -47,7 +47,7 @@ services:
       - dev
       - run
     image: nats:latest
-    command: [ "--js", "--http_port=8222" ] # Enable JetStream and monitoring
+    command: ["--js", "--http_port=8222"] # Enable JetStream and monitoring
     ports:
       - "4222:4222" # Client port
       - "8222:8222" # HTTP monitoring
@@ -84,7 +84,7 @@ services:
       - dev
       - run
     image: otel/opentelemetry-collector-contrib:latest
-    command: [ "--config", "/etc/platform-otel-collector-config.yaml" ]
+    command: ["--config", "/etc/platform-otel-collector-config.yaml"]
     # ports: # enable if you want to connect to this collector from localhost
     #   - 4317:4317 # OTLP gRPC - change this to another port if you want to enable both collectors locally
     volumes:
@@ -192,7 +192,7 @@ services:
     volumes:
       - redis_data_volume:/data
       - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/redis/redis.conf:/usr/local/etc/redis/redis.conf
-    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
       - iotea_network
 

@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/iotea-com/iotea/libs/engine/dependencies/things"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 )
 
 func MqttBroker(attrs *things.MqttBroker) error {
