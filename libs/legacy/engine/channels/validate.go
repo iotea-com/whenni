@@ -1,24 +1,9 @@
 package channels
 
 import (
-	"encoding/json"
 	"fmt"
 	"slices"
 	"strings"
-
-	"github.com/go-playground/validator/v10"
-
-	httpActionNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/action/http/config"
-	mqttActionNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/action/mqtt/config"
-	booleanConditionalNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/conditional/boolean/config"
-	existenceConditionalNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/conditional/existence/config"
-	stringCompareConditionalNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/conditional/stringCompare/config"
-	thresholdConditionalNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/conditional/threshold/config"
-	transformProcessingNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/processing/transform/config"
-	mqttSourceNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/source/mqtt/config"
-	timerSourceNodeConfig "github.com/iotea-com/iotea/libs/legacy/engine/nodes/v1/src/source/timer/config"
-
-	"github.com/iotea-com/iotea/libs/val"
 )
 
 type ValidationError struct {
@@ -175,189 +160,189 @@ func (c *Channel) Validate() *ValidationError {
 func (n *Node) ValidateConfig() []string {
 	validationErrors := []string{}
 
-	v := validator.New()
-	v.RegisterValidation("valid_paths", val.IsValidPaths)
-	v.RegisterValidation("mqtt_topic", val.MqttTopic)
+	// v := validator.New()
+	// v.RegisterValidation("valid_paths", val.IsValidPaths)
+	// v.RegisterValidation("mqtt_topic", val.MqttTopic)
 
 	// Detect the type of node
 	nodeType := n.Metadata.Type
 	switch nodeType {
-	case "source":
-		switch n.Metadata.Label {
-		case "http":
-			// The attributes for the HTTP source node are populated
-			// by the resolve package in the orchestrator service.
-			// We can't validate here because the attributes don't exist yet.
-			break
-		case "mqtt":
-			// Convert the generic node config to the mqtt node config
-			mqttSourceNodeConfig := mqttSourceNodeConfig.MqttSourceNodeConfig{}
-			err := json.Unmarshal(n.Metadata.Config, &mqttSourceNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// case "source":
+	// 	switch n.Metadata.Label {
+	// 	case "http":
+	// 		// The attributes for the HTTP source node are populated
+	// 		// by the resolve package in the orchestrator service.
+	// 		// We can't validate here because the attributes don't exist yet.
+	// 		break
+	// 	case "mqtt":
+	// 		// Convert the generic node config to the mqtt node config
+	// 		mqttSourceNodeConfig := mqttSourceNodeConfig.MqttSourceNodeConfig{}
+	// 		err := json.Unmarshal(n.Metadata.Config, &mqttSourceNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the mqtt node config
-			err = v.Struct(mqttSourceNodeConfig)
-			if err != nil {
-				for _, err := range err.(validator.ValidationErrors) {
-					validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-				}
-			}
-		case "messageQueue":
-			// TODO: implement subnode validation
-			break
-		case "timer":
-			// Convert the generic node config to the timer node config
-			timerSourceNodeConfig := timerSourceNodeConfig.TimerSourceNodeConfig{}
-			err := json.Unmarshal(n.Metadata.Config, &timerSourceNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// 		// Validate the mqtt node config
+	// 		err = v.Struct(mqttSourceNodeConfig)
+	// 		if err != nil {
+	// 			for _, err := range err.(validator.ValidationErrors) {
+	// 				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 			}
+	// 		}
+	// 	case "messageQueue":
+	// 		// TODO: implement subnode validation
+	// 		break
+	// 	case "timer":
+	// 		// Convert the generic node config to the timer node config
+	// 		timerSourceNodeConfig := timerSourceNodeConfig.TimerSourceNodeConfig{}
+	// 		err := json.Unmarshal(n.Metadata.Config, &timerSourceNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the timer node config
-			err = v.Struct(timerSourceNodeConfig)
-			if err != nil {
-				for _, err := range err.(validator.ValidationErrors) {
-					validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-				}
-			}
-		}
-	case "processing":
-		switch n.Metadata.Label {
-		case "transform":
-			// Convert the generic node config to the transform node config
-			transformProcessingNodeConfig := transformProcessingNodeConfig.TransformProcessingNodeConfig{}
-			err := json.Unmarshal(n.Metadata.Config, &transformProcessingNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// 		// Validate the timer node config
+	// 		err = v.Struct(timerSourceNodeConfig)
+	// 		if err != nil {
+	// 			for _, err := range err.(validator.ValidationErrors) {
+	// 				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 			}
+	// 		}
+	// 	}
+	// case "processing":
+	// 	switch n.Metadata.Label {
+	// 	case "transform":
+	// 		// Convert the generic node config to the transform node config
+	// 		transformProcessingNodeConfig := transformProcessingNodeConfig.TransformProcessingNodeConfig{}
+	// 		err := json.Unmarshal(n.Metadata.Config, &transformProcessingNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the transform node config
-			err = v.Struct(transformProcessingNodeConfig)
-			if err != nil {
-				for _, err := range err.(validator.ValidationErrors) {
-					validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-				}
-			}
-		}
-	case "conditional":
-		switch n.Metadata.Label {
-		case "threshold":
-			// Convert the generic node config to the threshold node config
-			thresholdConditionalNodeConfig := thresholdConditionalNodeConfig.ThresholdConditionalNodeConfig{}
-			err := json.Unmarshal(n.Metadata.Config, &thresholdConditionalNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// 		// Validate the transform node config
+	// 		err = v.Struct(transformProcessingNodeConfig)
+	// 		if err != nil {
+	// 			for _, err := range err.(validator.ValidationErrors) {
+	// 				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 			}
+	// 		}
+	// 	}
+	// case "conditional":
+	// 	switch n.Metadata.Label {
+	// 	case "threshold":
+	// 		// Convert the generic node config to the threshold node config
+	// 		thresholdConditionalNodeConfig := thresholdConditionalNodeConfig.ThresholdConditionalNodeConfig{}
+	// 		err := json.Unmarshal(n.Metadata.Config, &thresholdConditionalNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the threshold node config
-			err = v.Struct(thresholdConditionalNodeConfig)
-			if err != nil {
-				for _, err := range err.(validator.ValidationErrors) {
-					validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-				}
-			}
-		case "existence":
-			// Convert the generic node config to the existence node config
-			existenceConditionalNodeConfig := existenceConditionalNodeConfig.ExistenceConditionalNodeConfig{}
-			err := json.Unmarshal(n.Metadata.Config, &existenceConditionalNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// 		// Validate the threshold node config
+	// 		err = v.Struct(thresholdConditionalNodeConfig)
+	// 		if err != nil {
+	// 			for _, err := range err.(validator.ValidationErrors) {
+	// 				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 			}
+	// 		}
+	// 	case "existence":
+	// 		// Convert the generic node config to the existence node config
+	// 		existenceConditionalNodeConfig := existenceConditionalNodeConfig.ExistenceConditionalNodeConfig{}
+	// 		err := json.Unmarshal(n.Metadata.Config, &existenceConditionalNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the existence node config
-			err = v.Struct(existenceConditionalNodeConfig)
-			if err != nil {
-				for _, err := range err.(validator.ValidationErrors) {
-					validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-				}
-			}
-		case "stringCompare":
-			// Convert the generic node config to the string compare node config
-			stringCompareConditionalNodeConfig := stringCompareConditionalNodeConfig.StringCompareConditionalNodeConfig{}
-			err := json.Unmarshal(n.Metadata.Config, &stringCompareConditionalNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// 		// Validate the existence node config
+	// 		err = v.Struct(existenceConditionalNodeConfig)
+	// 		if err != nil {
+	// 			for _, err := range err.(validator.ValidationErrors) {
+	// 				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 			}
+	// 		}
+	// 	case "stringCompare":
+	// 		// Convert the generic node config to the string compare node config
+	// 		stringCompareConditionalNodeConfig := stringCompareConditionalNodeConfig.StringCompareConditionalNodeConfig{}
+	// 		err := json.Unmarshal(n.Metadata.Config, &stringCompareConditionalNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the string compare node config
-			err = v.Struct(stringCompareConditionalNodeConfig)
-			if err != nil {
-				for _, err := range err.(validator.ValidationErrors) {
-					validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-				}
-			}
-		case "boolean":
-			// Convert the generic node config to the boolean node config
-			booleanConditionalNodeConfig := booleanConditionalNodeConfig.BooleanConditionalNodeConfig{}
-			err := json.Unmarshal(n.Metadata.Config, &booleanConditionalNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// 		// Validate the string compare node config
+	// 		err = v.Struct(stringCompareConditionalNodeConfig)
+	// 		if err != nil {
+	// 			for _, err := range err.(validator.ValidationErrors) {
+	// 				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 			}
+	// 		}
+	// 	case "boolean":
+	// 		// Convert the generic node config to the boolean node config
+	// 		booleanConditionalNodeConfig := booleanConditionalNodeConfig.BooleanConditionalNodeConfig{}
+	// 		err := json.Unmarshal(n.Metadata.Config, &booleanConditionalNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the boolean node config
-			err = v.Struct(booleanConditionalNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// 		// Validate the boolean node config
+	// 		err = v.Struct(booleanConditionalNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the boolean node config
-			err = v.Struct(booleanConditionalNodeConfig)
-			if err != nil {
-				for _, err := range err.(validator.ValidationErrors) {
-					validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-				}
-			}
-		}
-	case "action":
-		switch n.Metadata.Label {
-		case "http":
-			// Convert the generic node config to the http action node config
-			httpActionNodeConfig := httpActionNodeConfig.HttpActionNodeConfig{}
-			err := json.Unmarshal(n.Metadata.Config, &httpActionNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// 		// Validate the boolean node config
+	// 		err = v.Struct(booleanConditionalNodeConfig)
+	// 		if err != nil {
+	// 			for _, err := range err.(validator.ValidationErrors) {
+	// 				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 			}
+	// 		}
+	// 	}
+	// case "action":
+	// 	switch n.Metadata.Label {
+	// 	case "http":
+	// 		// Convert the generic node config to the http action node config
+	// 		httpActionNodeConfig := httpActionNodeConfig.HttpActionNodeConfig{}
+	// 		err := json.Unmarshal(n.Metadata.Config, &httpActionNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the http node config
-			err = v.Struct(httpActionNodeConfig)
-			if err != nil {
-				for _, err := range err.(validator.ValidationErrors) {
-					validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-				}
-			}
-		case "mqtt":
-			// Convert the generic node config to the mqtt action node config
-			mqttActionNodeConfig := mqttActionNodeConfig.MqttActionNodeConfig{}
-			err := json.Unmarshal(n.Metadata.Config, &mqttActionNodeConfig)
-			if err != nil {
-				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-			}
+	// 		// Validate the http node config
+	// 		err = v.Struct(httpActionNodeConfig)
+	// 		if err != nil {
+	// 			for _, err := range err.(validator.ValidationErrors) {
+	// 				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 			}
+	// 		}
+	// 	case "mqtt":
+	// 		// Convert the generic node config to the mqtt action node config
+	// 		mqttActionNodeConfig := mqttActionNodeConfig.MqttActionNodeConfig{}
+	// 		err := json.Unmarshal(n.Metadata.Config, &mqttActionNodeConfig)
+	// 		if err != nil {
+	// 			validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 		}
 
-			// Validate the mqtt node config
-			err = v.Struct(mqttActionNodeConfig)
-			if err != nil {
-				for _, err := range err.(validator.ValidationErrors) {
-					validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
-				}
-			}
-		case "messageQueue":
-			// TODO: implement subnode validation
-			break
-		case "fileStorage":
-			// TODO: implement subnode validation
-			break
-		case "timeSeriesDb":
-			// TODO: implement subnode validation
-			break
-		case "notification":
-			// TODO: implement subnode validation
-			break
-		case "documentDb":
-			// TODO: implement subnode validation
-			break
-		}
+	// 		// Validate the mqtt node config
+	// 		err = v.Struct(mqttActionNodeConfig)
+	// 		if err != nil {
+	// 			for _, err := range err.(validator.ValidationErrors) {
+	// 				validationErrors = append(validationErrors, fmt.Sprintf("Invalid config for node %s: %s.", n.Metadata.Name, err.Error()))
+	// 			}
+	// 		}
+	// 	case "messageQueue":
+	// 		// TODO: implement subnode validation
+	// 		break
+	// 	case "fileStorage":
+	// 		// TODO: implement subnode validation
+	// 		break
+	// 	case "timeSeriesDb":
+	// 		// TODO: implement subnode validation
+	// 		break
+	// 	case "notification":
+	// 		// TODO: implement subnode validation
+	// 		break
+	// 	case "documentDb":
+	// 		// TODO: implement subnode validation
+	// 		break
+	// 	}
 	default:
 		validationErrors = append(validationErrors, fmt.Sprintf("Invalid node type: %s.", nodeType))
 	}
