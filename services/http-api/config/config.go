@@ -7,13 +7,14 @@ import (
 	"strings"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
+	sqlcdb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/libs/legacy/engine/observability"
 	"github.com/iotea-com/iotea/libs/secrets"
-	"github.com/iotea-com/iotea/prisma/db"
 	clickhouseService "github.com/iotea-com/iotea/services/http-api/services/clickhouse"
-	postgresService "github.com/iotea-com/iotea/services/http-api/services/prisma"
 	ioteaSmtp "github.com/iotea-com/iotea/services/http-api/services/smtp"
+	sqlcService "github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
 )
@@ -231,27 +232,28 @@ func loadVaultSecrets() (*VaultConfig, error) {
 }
 
 func initDbClient(databaseUrl string) error {
-	// If running 'nx test', use a default mock client
-	environment := os.Getenv("ENVIRONMENT")
-	if environment == "test" {
-		client, _, _ := db.NewMock()
-		postgresService.Client = client
-		return nil
-	}
-
-	// Init prisma client
-	client := db.NewClient()
+	// TODO: replace deprecated prisma mock with sqlc mock
+	// // If running 'nx test', use a default mock client
+	// environment := os.Getenv("ENVIRONMENT")
+	// if environment == "test" {
+	// 	client, _, _ := db.NewMock()
+	// 	sqlcService.Client = client
+	// 	return nil
+	// }
 
 	// Connect
-	if err := client.Prisma.Connect(); err != nil {
-		return fmt.Errorf("could not connect to the database: %s", err)
+	pool, err := pgxpool.New(context.Background(), databaseUrl)
+	if err != nil {
+		return fmt.Errorf("could not create pgx pool: %s", err)
 	}
 
-	postgresService.Client = client
+	sqlcService.Pool = pool
+	sqlcService.Queries = sqlcdb.New(pool)
 	return nil
 }
 
 func initClickhouseClient(databaseHost string, databasePort int, databaseUsername string, databasePassword string, databaseName string) error {
+	// TODO: mock clickhouse connection
 	// If running 'nx test', use a default mock client
 	// environment := os.Getenv("ENVIRONMENT")
 	// if environment == "test" {

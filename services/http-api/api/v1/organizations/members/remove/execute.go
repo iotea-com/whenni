@@ -5,8 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -18,13 +17,11 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.UserId", request.Input.UserId),
 	)
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Delete member from space")
-	_, err := prisma.Client.OrganizationMember.FindUnique(
-		db.OrganizationMember.OrganizationIDUserID(
-			db.OrganizationMember.OrganizationID.Equals(request.Input.OrgId),
-			db.OrganizationMember.UserID.Equals(request.Input.UserId),
-		),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Delete member from organization")
+	member, err := sqlc.Queries.GetOrganizationMember(dbCtx, request.Input.OrgId, request.Input.UserId)
+	if err == nil {
+		err = sqlc.Queries.DeleteOrganizationMember(dbCtx, member.ID)
+	}
 
 	if err != nil {
 		errMessage := fmt.Sprintf("error deleting member in organization with ID %s from the database: %s", request.Input.OrgId, err)

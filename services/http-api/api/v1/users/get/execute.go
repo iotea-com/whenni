@@ -5,8 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -17,18 +16,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.UserId", request.Input.UserId),
 	)
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get profile")
-	user, err := prisma.Client.User.FindUnique(
-		db.User.ID.Equals(request.Input.UserId),
-	).Omit(
-		db.User.Password.Field(),
-	).With(
-		db.User.Organizations.Fetch().With(
-			db.OrganizationMember.Organization.Fetch().With(
-				db.Organization.Spaces.Fetch(),
-			),
-		),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get profile")
+	user, err := sqlc.Queries.GetUser(dbCtx, request.Input.UserId)
 
 	if err != nil {
 		if err.Error() == "ErrNotFound" {
@@ -51,7 +40,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		User: user,
+		User: &user,
 	}
 
 	return &output, nil

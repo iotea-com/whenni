@@ -5,16 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
-	"github.com/iotea-com/iotea/prisma/db"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
 type ResolveConfig struct {
-	Metadata     *channels.NodeMetadata // This is the node metadate we're going to attempt to populate models from the database into
-	PrismaClient *db.PrismaClient       // We use the database client to fetch the model from the database table
+	Metadata    *channels.NodeMetadata // This is the node metadate we're going to attempt to populate models from the database into
+	SqlcQueries *sqldb.Queries         // We use the database client to fetch the model from the database table
 }
 
 func ResolveInNode(config *ResolveConfig) error {
@@ -29,7 +29,7 @@ func ResolveInNode(config *ResolveConfig) error {
 		// For each model entry in the dependencies, verify that it's valid, fetch it from the database
 		// and then replace it into the metadata.Config field
 		for _, nodeModel := range config.Metadata.Dependencies.Models {
-			found, err := findAndUpdateJSON(context.Background(), unmarshalledConfig, nodeModel.FieldName, nodeModel.ModelId, config.PrismaClient)
+			found, err := findAndUpdateJSON(context.Background(), unmarshalledConfig, nodeModel.FieldName, nodeModel.ModelId, config.SqlcQueries)
 			if err != nil {
 				return err
 			}
@@ -49,25 +49,23 @@ func ResolveInNode(config *ResolveConfig) error {
 	return nil
 }
 
-func findAndUpdateJSON(ctx context.Context, modelDependencies map[string]any, key, value string, prismaClient *db.PrismaClient) (bool, error) {
+func findAndUpdateJSON(ctx context.Context, modelDependencies map[string]any, key, value string, sqlcQueries *sqldb.Queries) (bool, error) {
 	for k, v := range modelDependencies {
 		if k == key {
 			if val, ok := v.(string); ok && val == value {
-				return updateFromDatabase(ctx, modelDependencies, key, value, prismaClient)
+				return updateFromDatabase(ctx, modelDependencies, key, value, sqlcQueries)
 			}
 		}
 	}
 	return false, nil
 }
 
-func updateFromDatabase(ctx context.Context, data map[string]any, key, value string, prismaClient *db.PrismaClient) (bool, error) {
-	tracer := otel.Tracer("prisma")
+func updateFromDatabase(ctx context.Context, data map[string]any, key, value string, sqlcQueries *sqldb.Queries) (bool, error) {
+	tracer := otel.Tracer("sqlc")
 	dbCtx, dbSpan := tracer.Start(ctx, "Get model")
 	defer dbSpan.End()
 
-	model, err := prismaClient.Model.FindUnique(
-		db.Model.ID.Equals(value),
-	).Exec(dbCtx)
+	model, err := sqlcQueries.GetModel(dbCtx, value)
 	if err != nil {
 		dbSpan.SetAttributes(attribute.String("error", err.Error()))
 		return false, err

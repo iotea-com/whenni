@@ -9,9 +9,9 @@ ORDER BY name;
 
 -- name: CreateTag :one
 INSERT INTO app.tags (
-  name, space_id, created_by, updated_by
+  id, name, space_id, created_by, updated_by
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 )
 RETURNING *;
 
@@ -39,6 +39,20 @@ RETURNING *;
 DELETE FROM app.applied_tags
 WHERE id = $1;
 
+-- name: RemoveAppliedTagBySubject :exec
+DELETE FROM app.applied_tags
+WHERE tag_id = $1
+  AND (
+    thing_id = $2
+    OR channel_id = $2
+    OR model_id = $2
+  );
+
+-- name: CountAppliedTagsByTag :one
+SELECT COUNT(*)::bigint
+FROM app.applied_tags
+WHERE tag_id = $1;
+
 -- name: ListAppliedTagsByChannel :many
 SELECT 
   at.*,
@@ -62,3 +76,7 @@ SELECT
 FROM app.applied_tags at
 JOIN app.tags t ON at.tag_id = t.id
 WHERE at.thing_id = $1;
+
+-- name: ListAppliedTagsByTag :many
+SELECT * FROM app.applied_tags
+WHERE tag_id = $1;

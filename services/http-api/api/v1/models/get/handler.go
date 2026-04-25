@@ -2,7 +2,7 @@ package modelsGet
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/prisma/db"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 )
 
 type Input struct {
@@ -12,7 +12,7 @@ type Input struct {
 }
 
 type Output struct {
-	Model *db.ModelModel
+	Model *sqldb.AppModel
 }
 
 // @Summary Get a model

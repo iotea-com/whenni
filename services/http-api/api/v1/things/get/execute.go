@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -18,12 +18,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
 	)
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get thing")
-	thing, err := prisma.Client.Thing.FindUnique(
-		db.Thing.ID.Equals(request.Input.ThingId),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get thing")
+	thing, err := sqlc.Queries.GetThing(dbCtx, request.Input.ThingId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			err = fmt.Errorf("no thing found with ID %s", request.Input.ThingId)
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
@@ -58,7 +56,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Thing: thing,
+		Thing: &thing,
 	}
 
 	return &output, nil

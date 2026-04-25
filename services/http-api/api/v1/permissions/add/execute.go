@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -31,30 +31,21 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		request.Span.End()
 		return nil, err
 	}
-	var name *string
-	if request.Input.Name != "" {
-		name = &request.Input.Name
-	}
-
 	var spaceId *string
 	if request.Input.SpaceId != "" {
 		spaceId = &request.Input.SpaceId
 	}
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert permission set")
-	permissionSet, err := prisma.Client.PermissionSet.CreateOne(
-		db.PermissionSet.ID.Set(*permissionSetId),
-		db.PermissionSet.Name.Set(*name),
-		db.PermissionSet.CreatedBy.Set(request.GetActorId()),
-		db.PermissionSet.UpdatedBy.Set(request.GetActorId()),
-		db.PermissionSet.Organization.Link(
-			db.Organization.ID.Equals(request.Input.OrgId),
-		),
-		db.PermissionSet.Space.Link(
-			db.Space.ID.EqualsIfPresent(spaceId),
-		),
-		db.PermissionSet.Permissions.Set(request.Input.Permissions),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert permission set")
+	permissionSet, err := sqlc.Queries.CreatePermissionSet(dbCtx, sqldb.CreatePermissionSetParams{
+		ID:             *permissionSetId,
+		OrganizationID: request.Input.OrgId,
+		SpaceID:        spaceId,
+		Name:           request.Input.Name,
+		Permissions:    request.Input.Permissions,
+		CreatedBy:      request.GetActorId(),
+		UpdatedBy:      request.GetActorId(),
+	})
 
 	if err != nil {
 		dbSpan.SetAttributes(
@@ -68,7 +59,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		PermissionSet: permissionSet,
+		PermissionSet: &permissionSet,
 	}
 
 	return &output, nil

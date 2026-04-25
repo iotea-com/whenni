@@ -3,11 +3,11 @@ package spacesCreate
 import (
 	"fmt"
 
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
 	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -29,16 +29,15 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, err
 	}
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert space")
-	space, err := prisma.Client.Space.CreateOne(
-		db.Space.ID.Set(*spaceId),
-		db.Space.Name.Set(request.Input.Name),
-		db.Space.CreatedBy.Set(request.GetActorId()),
-		db.Space.UpdatedBy.Set(request.GetActorId()),
-		db.Space.Organization.Link(
-			db.Organization.ID.Equals(request.Input.OrgId),
-		),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert space")
+	space, err := sqlc.Queries.CreateSpace(
+		dbCtx,
+		*spaceId,
+		request.Input.OrgId,
+		request.Input.Name,
+		request.GetActorId(),
+		request.GetActorId(),
+	)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -60,20 +59,16 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, err
 	}
 
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Insert default permission set")
-	_, err = prisma.Client.PermissionSet.CreateOne(
-		db.PermissionSet.ID.Set(*defaultPermissionSetId),
-		db.PermissionSet.Name.Set("Default"),
-		db.PermissionSet.CreatedBy.Set(request.GetActorId()),
-		db.PermissionSet.UpdatedBy.Set(request.GetActorId()),
-		db.PermissionSet.Organization.Link(
-			db.Organization.ID.Equals(space.OrganizationID),
-		),
-		db.PermissionSet.Space.Link(
-			db.Space.ID.Equals(space.ID),
-		),
-		db.PermissionSet.Permissions.Set(ioteapermissions.DefaultMemberSpacePermissions),
-	).Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Insert default permission set")
+	_, err = sqlc.Queries.CreatePermissionSet(dbCtx, sqldb.CreatePermissionSetParams{
+		ID:             *defaultPermissionSetId,
+		OrganizationID: space.OrganizationID,
+		SpaceID:        &space.ID,
+		Name:           "Default",
+		Permissions:    ioteapermissions.DefaultMemberSpacePermissions,
+		CreatedBy:      request.GetActorId(),
+		UpdatedBy:      request.GetActorId(),
+	})
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -86,7 +81,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Space: space,
+		Space: &space,
 	}
 
 	return &output, nil

@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/id"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -22,7 +21,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Create channel entry
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert channel")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert channel")
 	channelId, err := id.Generator.NewChannelId()
 	if err != nil {
 		request.Span.SetAttributes(
@@ -38,16 +37,14 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	request.Input.Config["id"] = channelId
 	jsonConfig, _ := json.Marshal(request.Input.Config)
 
-	channel, err := prisma.Client.Channel.CreateOne(
-		db.Channel.ID.Set(*channelId),
-		db.Channel.Name.Set(request.Input.Name),
-		db.Channel.Config.Set(jsonConfig),
-		db.Channel.CreatedBy.Set(request.GetActorId()),
-		db.Channel.UpdatedBy.Set(request.GetActorId()),
-		db.Channel.Space.Link(
-			db.Space.ID.Equals(request.Input.SpaceId),
-		),
-	).Exec(dbCtx)
+	channel, err := sqlc.Queries.CreateChannel(dbCtx, sqldb.CreateChannelParams{
+		ID:        *channelId,
+		Name:      request.Input.Name,
+		SpaceID:   request.Input.SpaceId,
+		Config:    jsonConfig,
+		CreatedBy: request.GetActorId(),
+		UpdatedBy: request.GetActorId(),
+	})
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -60,26 +57,20 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Create draft internal HTTP server thing
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Insert internal HTTP server thing")
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Insert internal HTTP server thing")
 
 	// Set the thing ID to the same ID than the channel
 	thingId := channelId
-	now := util.GetCurrentTime()
-
-	_, err = prisma.Client.Thing.CreateOne(
-		db.Thing.ID.Set(*thingId),
-		db.Thing.Name.Set(request.Input.Name),
-		db.Thing.Attributes.Set(db.JSON{'{', '}'}),
-		db.Thing.CreatedBy.Set("internal"),
-		db.Thing.UpdatedBy.Set("internal"),
-		db.Thing.ThingCategory.Set(things.HttpServerThingCategory.String()),
-		db.Thing.Space.Link(
-			db.Space.ID.Equals(request.Input.SpaceId),
-		),
-		db.Thing.Internal.Set(true),
-		db.Thing.CreatedAt.Set(now),
-		db.Thing.UpdatedAt.Set(now),
-	).Exec(dbCtx)
+	_, err = sqlc.Queries.CreateThing(dbCtx, sqldb.CreateThingParams{
+		ID:            *thingId,
+		Name:          request.Input.Name,
+		SpaceID:       request.Input.SpaceId,
+		Attributes:    []byte("{}"),
+		Internal:      true,
+		ThingCategory: things.HttpServerThingCategory.String(),
+		CreatedBy:     "internal",
+		UpdatedBy:     "internal",
+	})
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -92,7 +83,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Channel: channel,
+		Channel: &channel,
 	}
 
 	return &output, nil

@@ -2,7 +2,7 @@ package apiKeysAdd
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/prisma/db"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 )
 
 type Input struct {
@@ -14,7 +14,7 @@ type Input struct {
 }
 
 type Output struct {
-	ApiKey *db.APIKeyModel
+	ApiKey *sqldb.AppApiKey
 }
 
 // @Summary Create an API key

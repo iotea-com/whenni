@@ -2,11 +2,11 @@ package tagsList
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/prisma/db"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 )
 
 type ExpandedTag struct {
-	Tag      *db.TagModel `json:"tag"`
+	Tag      sqldb.AppTag `json:"tag"`
 	Things   []string     `json:"things"`
 	Channels []string     `json:"channels"`
 	Models   []string     `json:"models"`

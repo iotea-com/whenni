@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -19,42 +19,41 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	spaceId := request.Input.SpaceId
 
-	// Get published channels for this space from the database
-	noPublishedChannels := false
-
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get channels")
-	channels, err := prisma.Client.Channel.FindMany(
-		db.Channel.SpaceID.Equals(spaceId),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get space")
+	_, err := sqlc.Queries.GetSpace(dbCtx, spaceId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
-			noPublishedChannels = true
-		} else {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
-				attribute.String("error.message", fmt.Sprintf("error getting channels from the database: %s", err)),
+				attribute.String("error.message", fmt.Sprintf("no space found with ID %s", spaceId)),
 			)
 			dbSpan.End()
-			return nil, err
+			return nil, fiber.NewError(fiber.StatusBadRequest)
 		}
+		dbSpan.SetAttributes(
+			attribute.String("error.type", "database"),
+			attribute.String("error.message", fmt.Sprintf("error getting space from the database: %s", err)),
+		)
+		dbSpan.End()
+		return nil, err
 	}
+	dbSpan.End()
 
-	publishedChannels := []string{}
-	for _, channel := range channels {
-		_, published := channel.PublishedAt()
-		if published {
-			publishedChannels = append(publishedChannels, channel.Name)
-		}
+	// Get published channels for this space from the database
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Get published channels")
+	publishedChannels, err := sqlc.Queries.ListPublishedChannels(dbCtx, spaceId)
+	if err != nil {
+		dbSpan.SetAttributes(
+			attribute.String("error.type", "database"),
+			attribute.String("error.message", fmt.Sprintf("error getting published channels from the database: %s", err)),
+		)
+		dbSpan.End()
+		return nil, err
 	}
-
-	if len(publishedChannels) <= 0 {
-		noPublishedChannels = true
-	}
-
 	dbSpan.End()
 
 	// Do not delete space if there are published channels
-	if !noPublishedChannels {
+	if len(publishedChannels) > 0 {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "context_validation"),
 			attribute.String("error.message", "delete space failed since there are published channels linked to the space"),
@@ -65,10 +64,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Delete models
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete models")
-	_, err = prisma.Client.Model.FindMany(
-		db.Model.SpaceID.Equals(spaceId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete models")
+	err = sqlc.Queries.DeleteModelsBySpace(dbCtx, spaceId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -81,10 +78,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Delete things
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete things")
-	_, err = prisma.Client.Thing.FindMany(
-		db.Thing.SpaceID.Equals(spaceId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete things")
+	err = sqlc.Queries.DeleteThingsBySpace(dbCtx, spaceId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -97,10 +92,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Delete certificates
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete certificates")
-	_, err = prisma.Client.Certificate.FindMany(
-		db.Certificate.SpaceID.Equals(spaceId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete certificates")
+	err = sqlc.Queries.DeleteCertificatesBySpace(dbCtx, spaceId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -113,10 +106,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Delete api keys
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete API keys")
-	_, err = prisma.Client.APIKey.FindMany(
-		db.APIKey.SpaceID.Equals(spaceId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete API keys")
+	err = sqlc.Queries.DeleteApiKeysBySpace(dbCtx, &spaceId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -129,10 +120,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Delete permission sets
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete permission sets")
-	_, err = prisma.Client.PermissionSet.FindMany(
-		db.PermissionSet.SpaceID.Equals(spaceId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete permission sets")
+	err = sqlc.Queries.DeletePermissionSetsBySpace(dbCtx, &spaceId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -145,10 +134,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Delete channels
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete channel")
-	_, err = prisma.Client.Channel.FindMany(
-		db.Channel.SpaceID.Equals(request.Input.SpaceId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete channels")
+	err = sqlc.Queries.DeleteChannelsBySpace(dbCtx, request.Input.SpaceId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -162,10 +149,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Delete space
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete space")
-	_, err = prisma.Client.Space.FindUnique(
-		db.Space.ID.Equals(spaceId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete space")
+	err = sqlc.Queries.DeleteSpace(dbCtx, spaceId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),

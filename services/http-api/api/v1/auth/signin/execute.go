@@ -7,12 +7,13 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
 	"github.com/iotea-com/iotea/services/http-api/services/smtp"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -33,12 +34,11 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	// Get the user from the database
 	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get user")
-	user, err := prisma.Client.User.FindUnique(
-		db.User.Email.Equals(request.Input.Email),
-	).Exec(dbCtx)
+	userEmail := request.Input.Email
+	user, err := sqlc.Queries.GetUserByEmail(dbCtx, &userEmail)
 
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "user_not_found"),
 				attribute.String("error.message", fmt.Sprintf("user with email %s not found", request.Input.Email)),
@@ -99,11 +99,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	return nil, fiber.NewError(fiber.StatusBadRequest, "Invalid login method")
 }
 
-func handleMagicLinkLogin(user *db.UserModel, appUrl string, ctx context.Context) error {
+func handleMagicLinkLogin(user sqldb.AppUser, appUrl string, ctx context.Context) error {
 	// Create a new magic link token
 	_, tokenSpan := otel.Tracer("prisma").Start(ctx, "Generate magic link token")
-	email, ok := user.Email()
-	if !ok {
+	if user.Email == nil || *user.Email == "" {
 		tokenSpan.SetAttributes(
 			attribute.String("error.type", "user_no_email"),
 			attribute.String("error.message", fmt.Sprintf("user '%s' has no email address", user.ID)),
@@ -127,23 +126,9 @@ func handleMagicLinkLogin(user *db.UserModel, appUrl string, ctx context.Context
 
 	// Store the token in the database
 	dbCtx, dbSpan := otel.Tracer("prisma").Start(ctx, "Store magic link token")
-	_, err = prisma.Client.AuthToken.CreateOne(
-		db.AuthToken.Token.Set(token),
-		db.AuthToken.Type.Set(db.AuthTokenTypeMagicLink),
-		db.AuthToken.ExpiresAt.Set(expiresAt.UTC()),
-		db.AuthToken.User.Link(db.User.ID.Equals(user.ID)),
-	).Exec(dbCtx)
+	_, err = sqlc.Queries.CreateAuthToken(dbCtx, user.ID, token, sqldb.AppAuthTokenTypeMAGICLINK, expiresAt.UTC())
 
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
-			dbSpan.SetAttributes(
-				attribute.String("error.type", "user_not_found"),
-				attribute.String("error.message", fmt.Sprintf("user '%s' not found", user.ID)),
-			)
-			dbSpan.End()
-			return errors.New("user not found")
-		}
-
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error getting user from the database: %s", err)),
@@ -158,7 +143,7 @@ func handleMagicLinkLogin(user *db.UserModel, appUrl string, ctx context.Context
 	_, smtpSpan := otel.Tracer("smtp").Start(ctx, "Send magic link email")
 	from := "auth@iotea.com"
 
-	to := []string{email}
+	to := []string{*user.Email}
 
 	const htmlBodyTemplate = `
 	<html>
@@ -214,20 +199,18 @@ func handleMagicLinkLogin(user *db.UserModel, appUrl string, ctx context.Context
 	return nil
 }
 
-func handleCredentialsLogin(user *db.UserModel, providedPassword string, ctx context.Context) (*string, *string, error) {
+func handleCredentialsLogin(user sqldb.AppUser, providedPassword string, ctx context.Context) (*string, *string, error) {
 	// Check if email is verified
-	_, isEmailVerified := user.EmailVerified()
-	if !isEmailVerified {
+	if !user.EmailVerified.Valid {
 		return nil, nil, errors.New("email is not verified")
 	}
 
 	// Match the provided password with the user's password
-	userPassword, ok := user.Password()
-	if !ok {
+	if user.Password == nil {
 		return nil, nil, errors.New("user password does not have a password")
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(providedPassword))
+	err := bcrypt.CompareHashAndPassword([]byte(*user.Password), []byte(providedPassword))
 	if err != nil {
 		return nil, nil, errors.New("incorrect password")
 	}
@@ -259,10 +242,7 @@ func handleCredentialsLogin(user *db.UserModel, providedPassword string, ctx con
 
 	// Clear old refresh tokens from the database
 	dbCtx, dbSpan := otel.Tracer("prisma").Start(ctx, "Clear old refresh tokens")
-	_, err = prisma.Client.AuthToken.FindMany(
-		db.AuthToken.UserID.Equals(user.ID),
-		db.AuthToken.Type.Equals(db.AuthTokenTypeRefresh),
-	).Delete().Exec(dbCtx)
+	err = sqlc.Queries.DeleteAuthTokensByUser(dbCtx, user.ID, sqldb.AppAuthTokenTypeREFRESH)
 
 	if err != nil {
 		dbSpan.SetAttributes(
@@ -277,12 +257,13 @@ func handleCredentialsLogin(user *db.UserModel, providedPassword string, ctx con
 
 	// Store the refresh token in the database
 	dbCtx, dbSpan = otel.Tracer("prisma").Start(ctx, "Store refresh token")
-	_, err = prisma.Client.AuthToken.CreateOne(
-		db.AuthToken.Token.Set(*refreshToken),
-		db.AuthToken.Type.Set(db.AuthTokenTypeRefresh),
-		db.AuthToken.ExpiresAt.Set(time.Now().Add(ioteahttputil.RefreshTokenExpiry).UTC()),
-		db.AuthToken.User.Link(db.User.ID.Equals(user.ID)),
-	).Exec(dbCtx)
+	_, err = sqlc.Queries.CreateAuthToken(
+		dbCtx,
+		user.ID,
+		*refreshToken,
+		sqldb.AppAuthTokenTypeREFRESH,
+		time.Now().Add(ioteahttputil.RefreshTokenExpiry).UTC(),
+	)
 
 	if err != nil {
 		dbSpan.SetAttributes(

@@ -2,7 +2,7 @@ package policiesGet
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/steebchen/prisma-client-go/runtime/types"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 )
 
 type Input struct {
@@ -12,8 +12,7 @@ type Input struct {
 }
 
 type Output struct {
-	Policy types.JSON `json:"policy"`
-	Revoke bool       `json:"revoke"`
+	Certificate *sqldb.AppCertificate `json:"certificate"`
 }
 
 // @Summary Get an x.509 policy

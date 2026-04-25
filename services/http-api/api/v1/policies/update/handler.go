@@ -2,8 +2,8 @@ package policiesUpdate
 
 import (
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	mqttPolicies "github.com/iotea-com/iotea/libs/http/policies"
-	"github.com/iotea-com/iotea/prisma/db"
 )
 
 type Input struct {
@@ -15,7 +15,7 @@ type Input struct {
 }
 
 type Output struct {
-	Certificate *db.CertificateModel
+	Certificate *sqldb.AppCertificate
 }
 
 // @Summary Update an x.509 policy

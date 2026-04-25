@@ -2,16 +2,21 @@ package organizationsUpdate
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/prisma/db"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 )
 
+type OrganizationPayload struct {
+	ID   string `json:"id" validate:"required"`
+	Name string `json:"name" validate:"required,min=3,max=30"`
+}
+
 type Input struct {
-	BearerToken  string               `validate:"required"`
-	Organization db.OrganizationModel `validate:"required"`
+	BearerToken  string              `validate:"required"`
+	Organization OrganizationPayload `validate:"required"`
 }
 
 type Output struct {
-	Organization *db.OrganizationModel `json:"organization"`
+	Organization *sqldb.AppOrganization `json:"organization"`
 }
 
 // @Summary Update an organization

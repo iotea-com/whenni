@@ -2,7 +2,7 @@ package permissionsAdd
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/prisma/db"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 )
 
 type Input struct {
@@ -14,7 +14,7 @@ type Input struct {
 }
 
 type Output struct {
-	PermissionSet *db.PermissionSetModel
+	PermissionSet *sqldb.AppPermission
 }
 
 // @Summary Create a permission set

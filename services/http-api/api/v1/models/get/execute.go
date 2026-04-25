@@ -3,9 +3,9 @@ package modelsGet
 import (
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -17,12 +17,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
 	)
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get model")
-	model, err := prisma.Client.Model.FindUnique(
-		db.Model.ID.Equals(request.Input.ModelId),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get model")
+	model, err := sqlc.Queries.GetModel(dbCtx, request.Input.ModelId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
 				attribute.String("error.message", fmt.Sprintf("no model found with ID %s", request.Input.ModelId)),
@@ -45,7 +43,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Model: model,
+		Model: &model,
 	}
 
 	return &output, nil

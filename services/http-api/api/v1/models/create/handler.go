@@ -2,8 +2,8 @@ package modelsCreate
 
 import (
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
-	"github.com/iotea-com/iotea/prisma/db"
 )
 
 type Input struct {
@@ -14,7 +14,7 @@ type Input struct {
 }
 
 type Output struct {
-	Model *db.ModelModel `json:"model"`
+	Model *sqldb.AppModel `json:"model"`
 }
 
 // @Summary Create a model

@@ -5,8 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -20,10 +19,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Delete the API key from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Delete API key")
-	_, err := prisma.Client.APIKey.FindUnique(
-		db.APIKey.ID.Equals(request.Input.ApiKeyId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Delete API key")
+	err := sqlc.Queries.DeleteApiKey(dbCtx, request.Input.ApiKeyId)
 
 	if err != nil {
 		dbSpan.SetAttributes(

@@ -10,6 +10,15 @@ WHERE email = $1;
 SELECT * FROM app.users
 ORDER BY email;
 
+-- name: SearchUsers :many
+SELECT u.* FROM app.users u
+LEFT JOIN app.organization_members om
+  ON om.user_id = u.id
+ AND om.organization_id = sqlc.arg('organization_id')
+WHERE u.email ILIKE ('%' || sqlc.arg('query') || '%')
+  AND (sqlc.arg('organization_id') = '' OR om.user_id IS NULL)
+ORDER BY u.email;
+
 -- name: CreateUser :one
 INSERT INTO app.users (
   id, name, email, email_verified, password, image

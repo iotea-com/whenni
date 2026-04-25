@@ -2,8 +2,8 @@ package thingsList
 
 import (
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
-	"github.com/iotea-com/iotea/prisma/db"
 )
 
 type Input struct {
@@ -17,7 +17,7 @@ type Input struct {
 }
 
 type Output struct {
-	Things         []db.ThingModel
+	Things         []sqldb.AppThing
 	Page           int
 	TotalPages     int
 	TotalResults   int

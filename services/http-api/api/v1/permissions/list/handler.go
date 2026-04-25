@@ -2,7 +2,7 @@ package permissionsList
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/prisma/db"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 )
 
 type Input struct {
@@ -14,11 +14,11 @@ type Input struct {
 }
 
 type Output struct {
-	PermissionSets []db.PermissionSetModel `json:"permissionSets"`
-	Page           int
-	TotalPages     int
-	TotalResults   int
-	ResultsPerPage int
+	PermissionSets []sqldb.AppPermission `json:"permissionSets"`
+	Page           int                   `json:"page"`
+	TotalPages     int                   `json:"totalPages"`
+	TotalResults   int                   `json:"totalResults"`
+	ResultsPerPage int                   `json:"resultsPerPage"`
 }
 
 // @Summary List permission sets

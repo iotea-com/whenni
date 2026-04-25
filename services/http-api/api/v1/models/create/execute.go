@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -37,17 +37,15 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, err
 	}
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert model")
-	model, err := prisma.Client.Model.CreateOne(
-		db.Model.ID.Set(*modelId),
-		db.Model.Name.Set(request.Input.Name),
-		db.Model.Attributes.Set(attributesBytes),
-		db.Model.CreatedBy.Set(request.GetActorId()),
-		db.Model.UpdatedBy.Set(request.GetActorId()),
-		db.Model.Space.Link(
-			db.Space.ID.Equals(request.Input.SpaceId),
-		),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert model")
+	model, err := sqlc.Queries.CreateModel(dbCtx, sqldb.CreateModelParams{
+		ID:         *modelId,
+		SpaceID:    request.Input.SpaceId,
+		Name:       request.Input.Name,
+		Attributes: attributesBytes,
+		CreatedBy:  request.GetActorId(),
+		UpdatedBy:  request.GetActorId(),
+	})
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -60,7 +58,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Model: model,
+		Model: &model,
 	}
 
 	return &output, nil

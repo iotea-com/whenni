@@ -14,7 +14,7 @@ import (
 	"github.com/iotea-com/iotea/prisma/db"
 	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
 	mqttAuth "github.com/iotea-com/iotea/services/http-api/api/v1/auth/mqtt"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"github.com/steebchen/prisma-client-go/runtime/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -52,7 +52,7 @@ func TestHandler(t *testing.T) {
 			}
 
 			mocks.DB.Server.Certificate.Expect(
-				prisma.Client.Certificate.FindUnique(
+				sqlc.Client.Certificate.FindUnique(
 					db.Certificate.ID.Equals(*sn),
 				),
 			).Returns(expectedDatabaseOutput)

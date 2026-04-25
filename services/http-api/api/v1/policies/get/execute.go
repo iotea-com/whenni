@@ -3,9 +3,10 @@ package policiesGet
 import (
 	"fmt"
 
+	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -17,23 +18,16 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
 	)
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get policy")
-	certificate, err := prisma.Client.Certificate.FindUnique(
-		db.Certificate.ID.Equals(request.Input.CertificateId),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get policy")
+	certificate, err := sqlc.Queries.GetCertificateInSpace(dbCtx, request.Input.CertificateId, request.Input.SpaceId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
 				attribute.String("error.message", fmt.Sprintf("no certificate found in space with ID %s", request.Input.SpaceId)),
 			)
 			dbSpan.End()
-
-			output := Output{
-				Policy: nil,
-			}
-
-			return &output, nil
+			return nil, fiber.NewError(fiber.StatusBadRequest)
 		}
 
 		dbSpan.SetAttributes(
@@ -46,10 +40,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	dbSpan.End()
 
-	output := Output{
-		Policy: certificate.Policy,
-		Revoke: certificate.Revoke,
-	}
+	output := Output{Certificate: &certificate}
 
 	return &output, nil
 }

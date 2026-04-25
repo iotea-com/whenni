@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -19,15 +19,11 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Set member's role in organization
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Set member's role in organization")
-	_, err := prisma.Client.OrganizationMember.FindUnique(
-		db.OrganizationMember.OrganizationIDUserID(
-			db.OrganizationMember.OrganizationID.Equals(request.Input.OrgId),
-			db.OrganizationMember.UserID.Equals(request.Input.UserId),
-		),
-	).Update(
-		db.OrganizationMember.Role.Set(db.OrganizationRole(request.Input.Role)),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Set member's role in organization")
+	member, err := sqlc.Queries.GetOrganizationMember(dbCtx, request.Input.OrgId, request.Input.UserId)
+	if err == nil {
+		_, err = sqlc.Queries.UpdateOrganizationMemberRole(dbCtx, member.ID, sqldb.AppOrganizationRole(request.Input.Role))
+	}
 
 	if err != nil {
 		dbSpan.SetAttributes(

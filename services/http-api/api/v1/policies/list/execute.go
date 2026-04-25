@@ -2,11 +2,9 @@ package policiesList
 
 import (
 	"fmt"
-	"strconv"
 
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -19,26 +17,12 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.Int("request.Input.ResultsPerPage", request.Input.ResultsPerPage),
 	)
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Count policies")
-	var policiesCountResponse []struct {
-		Count db.RawString `json:"policies_count"`
-	}
-	err := prisma.Client.Prisma.QueryRaw(`SELECT count(*) as policies_count FROM app.certificates WHERE certificates."spaceId" = $1`, request.Input.SpaceId).Exec(dbCtx, &policiesCountResponse)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Count policies")
+	policiesCount, err := sqlc.Queries.CountPolicies(dbCtx, request.Input.SpaceId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error counting policies in space in the database: %s", err)),
-		)
-		dbSpan.End()
-
-		return nil, err
-	}
-
-	policiesCount, err := strconv.ParseInt(string(policiesCountResponse[0].Count), 10, 16)
-	if err != nil {
-		dbSpan.SetAttributes(
-			attribute.String("error.type", "database"),
-			attribute.String("error.message", fmt.Sprintf("could not parse count response to int - %#v: %s", policiesCountResponse, err)),
 		)
 		dbSpan.End()
 
@@ -50,12 +34,13 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 	dbSpan.End()
 
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "List policies in the space")
-	certificates, err := prisma.Client.Certificate.FindMany(
-		db.Certificate.SpaceID.Equals(request.Input.SpaceId),
-	).Take(request.Input.ResultsPerPage).
-		Skip((request.Input.Page - 1) * request.Input.ResultsPerPage).
-		Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "List policies in the space")
+	certificates, err := sqlc.Queries.ListPoliciesPaginated(
+		dbCtx,
+		request.Input.SpaceId,
+		int32(request.Input.ResultsPerPage),
+		int32((request.Input.Page-1)*request.Input.ResultsPerPage),
+	)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),

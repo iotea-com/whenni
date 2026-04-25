@@ -80,3 +80,27 @@ WHERE expires_at < NOW();
 -- name: DeleteAuthTokensByUser :exec
 DELETE FROM app.auth_tokens
 WHERE user_id = $1 AND type = $2;
+
+-- name: GetAuthTokenWithUser :one
+SELECT
+  at.user_id,
+  at.token,
+  at.type,
+  at.expires_at,
+  at.created_at,
+  u.id AS joined_user_id,
+  u.name AS joined_user_name,
+  u.email AS joined_user_email,
+  u.email_verified AS joined_user_email_verified,
+  u.password AS joined_user_password,
+  u.image AS joined_user_image
+FROM app.auth_tokens at
+JOIN app.users u ON at.user_id = u.id
+WHERE at.token = $1
+LIMIT 1;
+
+-- name: UpdateUserPassword :one
+UPDATE app.users
+SET password = $2
+WHERE id = $1
+RETURNING *;

@@ -7,9 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteachannels "github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -24,14 +23,9 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Check if thing is used in any channel
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Check if thing is used in channel")
-	channels, err := prisma.Client.Channel.FindMany(
-		db.Channel.SpaceID.Equals(request.Input.SpaceId),
-	).Select(
-		db.Channel.PublishedAt.Field(),
-		db.Channel.Config.Field(),
-	).Exec(dbCtx)
-	if err != nil && err.Error() != "ErrNotFound" {
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Check if thing is used in channel")
+	channels, err := sqlc.Queries.ListChannels(dbCtx, request.Input.SpaceId)
+	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error checking if thing is used in a channel: %s", err)),
@@ -43,11 +37,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	dbSpan.End()
 
-	channelsWithThing := []db.ChannelModel{}
+	channelsWithThing := []string{}
 	for _, channel := range channels {
 		// Check if channel is published
-		_, isPublished := channel.PublishedAt()
-		if !isPublished {
+		if !channel.PublishedAt.Valid {
 			continue
 		}
 
@@ -72,7 +65,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			for _, thingDependency := range node.Metadata.Dependencies.Things {
 
 				if thingDependency.ThingId == request.Input.ThingId {
-					channelsWithThing = append(channelsWithThing, channel)
+					channelsWithThing = append(channelsWithThing, channel.ID)
 				}
 			}
 		}
@@ -92,13 +85,9 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Check if thing is referenced in any other things
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Check if thing is referenced in another thing")
-	things, err := prisma.Client.Thing.FindMany(
-		db.Thing.SpaceID.Equals(request.Input.SpaceId),
-	).Select(
-		db.Thing.Attributes.Field(),
-	).Exec(dbCtx)
-	if err != nil && err.Error() != "ErrNotFound" {
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Check if thing is referenced in another thing")
+	things, err := sqlc.Queries.ListThings(dbCtx, request.Input.SpaceId)
+	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error checking if thing is used in another thing: %s", err)),
@@ -110,7 +99,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	dbSpan.End()
 
-	thingsWithThing := []db.ThingModel{}
+	thingsWithThing := []string{}
 	for _, thing := range things {
 		var thingAttributes map[string]any
 		err = json.Unmarshal(thing.Attributes, &thingAttributes)
@@ -129,7 +118,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 		for _, value := range thingAttributes {
 			if value == request.Input.ThingId {
-				thingsWithThing = append(thingsWithThing, thing)
+				thingsWithThing = append(thingsWithThing, thing.ID)
 			}
 		}
 	}
@@ -147,8 +136,6 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, fiber.NewError(fiber.StatusConflict, string(errorResponseJson))
 	}
 
-	now := util.GetCurrentTime()
-
 	attributes, err := json.Marshal(request.Input.Attributes)
 	if err != nil {
 		errMessage := fmt.Sprintf("error saving attributes: %s", err)
@@ -162,17 +149,29 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, fiber.NewError(400, string(responseJson))
 	}
 
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Update thing in space")
-	thing, err := prisma.Client.Thing.FindUnique(
-		db.Thing.ID.Equals(request.Input.ThingId),
-	).Update(
-		db.Thing.Name.Set(request.Input.Name),
-		db.Thing.Attributes.Set(attributes),
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Update thing in space")
+	_, err = sqlc.Queries.GetThing(dbCtx, request.Input.ThingId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			dbSpan.SetAttributes(
+				attribute.String("error.type", "database"),
+				attribute.String("error.message", fmt.Sprintf("no thing found with ID %s", request.Input.ThingId)),
+			)
+			dbSpan.End()
 
-		// TODO: add user ID to input and set updatedBy
-		db.Thing.UpdatedBy.Set(request.GetActorId()),
-		db.Thing.UpdatedAt.Set(now),
-	).Exec(dbCtx)
+			return nil, fiber.NewError(fiber.StatusBadRequest)
+		}
+
+		dbSpan.SetAttributes(
+			attribute.String("error.type", "database"),
+			attribute.String("error.message", fmt.Sprintf("error loading thing from the database: %s", err)),
+		)
+		dbSpan.End()
+
+		return nil, err
+	}
+
+	thing, err := sqlc.Queries.UpdateThing(dbCtx, request.Input.ThingId, request.Input.Name, attributes, request.GetActorId())
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -185,7 +184,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Thing: thing,
+		Thing: &thing,
 	}
 
 	return &output, nil

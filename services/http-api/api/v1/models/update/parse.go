@@ -7,7 +7,6 @@ import (
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
-	"github.com/iotea-com/iotea/prisma/db"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -15,8 +14,8 @@ import (
 func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 	type RequestBody struct {
 		Model struct {
-			db.ModelModel
 			Attributes map[string]models.Attribute `json:"attributes"`
+			Name       string                      `json:"name"`
 		} `json:"model"`
 	}
 
@@ -59,8 +58,6 @@ func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 		return nil, fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	requestBody.Model.ModelModel.Attributes = attributesJson
-
 	request := &ioteahttp.Request[Input]{
 		Span:         requestSpan,
 		FiberContext: ctx,
@@ -69,7 +66,10 @@ func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 			BearerToken: *bearerToken,
 			SpaceId:     spaceId,
 			ModelId:     modelId,
-			Model:       requestBody.Model.ModelModel,
+			Model: ModelPayload{
+				Name:       requestBody.Model.Name,
+				Attributes: attributesJson,
+			},
 			attributes:  requestBody.Model.Attributes,
 		},
 	}

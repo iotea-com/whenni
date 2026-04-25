@@ -15,7 +15,7 @@ import (
 	v1 "github.com/iotea-com/iotea/services/http-api/api/v1"
 	"github.com/iotea-com/iotea/services/http-api/config"
 	clickhouseService "github.com/iotea-com/iotea/services/http-api/services/clickhouse"
-	postgresService "github.com/iotea-com/iotea/services/http-api/services/prisma"
+	sqlcService "github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel/metric/noop"
 
 	otelfiber "github.com/gofiber/contrib/otelfiber/v2"
@@ -95,8 +95,9 @@ func (a *Api) Shutdown() (errors []error) {
 	}
 
 	// Cleanup all the objects initialized in config.go
-	if err := postgresService.Client.Disconnect(); err != nil {
-		errors = append(errors, fmt.Errorf("could not disconnect from the database: %v", err))
+
+	if sqlcService.Pool != nil {
+		sqlcService.Pool.Close()
 	}
 
 	if err := clickhouseService.Conn.Close(); err != nil {

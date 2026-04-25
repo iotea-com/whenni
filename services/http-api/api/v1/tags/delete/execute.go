@@ -5,8 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -19,14 +18,12 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Check if there are any applied tags
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Check if there are any applied tags")
-	appliedTags, err := prisma.Client.AppliedTag.FindMany(
-		db.AppliedTag.TagID.Equals(request.Input.TagId),
-	).Exec(dbCtx)
-	if err != nil && err.Error() != "ErrNotFound" {
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Check if there are any applied tags")
+	appliedTagCount, err := sqlc.Queries.CountAppliedTagsByTag(dbCtx, request.Input.TagId)
+	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
-			attribute.String("error.message", fmt.Sprintf("error checking if secret is used in a thing: %s", err)),
+			attribute.String("error.message", fmt.Sprintf("error checking if tag is applied: %s", err)),
 		)
 		dbSpan.End()
 
@@ -35,8 +32,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	dbSpan.End()
 
-	if len(appliedTags) > 0 {
-		errMessage := fmt.Sprintf("tag is used in %d thing(s), model(s), or channel(s)", len(appliedTags))
+	if appliedTagCount > 0 {
+		errMessage := fmt.Sprintf("tag is used in %d thing(s), model(s), or channel(s)", appliedTagCount)
 		request.Span.SetAttributes(
 			attribute.String("error.type", "context_validation"),
 			attribute.String("error.message", errMessage),

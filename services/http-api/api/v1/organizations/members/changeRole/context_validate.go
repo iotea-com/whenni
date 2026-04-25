@@ -2,14 +2,12 @@ package organizationsMembersChangeRole
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -19,7 +17,6 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 
 	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
 		BearerToken:  request.Input.BearerToken,
-		PrismaClient: prisma.Client,
 		JwtSecret:    config.VaultConf.JwtSecret,
 		ScopeId:      request.Input.OrgId,
 		Namespace:    ioteapermissions.NamespaceMembers,
@@ -27,41 +24,34 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 		EnforceAdmin: true, // Actor must be a user and an admin to change a member's role
 	}
 
-	err := request.Authorize(authorizeRequestParams)
-	if err != nil {
+	authErr := request.Authorize(authorizeRequestParams)
+	if authErr != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "authorize"),
-			attribute.String("error.message", err.Error()),
+			attribute.String("error.message", authErr.Error()),
 			attribute.String("context_validation.status", "fail"),
 		)
-		return err
+		return authErr
 	}
 
 	// Get admins count from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Count admins")
-	var adminsCountResponse []struct {
-		Count db.RawString `json:"admins_count"`
-	}
-	dbErr := prisma.Client.Prisma.QueryRaw(`SELECT count(*) as admins_count FROM app.organization_members WHERE organization_members."organizationId" = $1 AND organization_members."role" = 'ADMIN'`, request.Input.OrgId).Exec(dbCtx, &adminsCountResponse)
-	if err != nil {
-		request.Span.SetAttributes(
-			attribute.String("error.type", "database"),
-			attribute.String("error.message", fmt.Sprintf("error counting admins in the database: %s", err)),
-		)
-		dbSpan.End()
-
-		return dbErr
-	}
-
-	adminsCount, dbErr := strconv.ParseInt(string(adminsCountResponse[0].Count), 10, 16)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Count admins")
+	members, dbErr := sqlc.Queries.ListOrganizationMembers(dbCtx, request.Input.OrgId)
 	if dbErr != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "database"),
-			attribute.String("error.message", fmt.Sprintf("could not parse count response to int - %#v: %s", adminsCountResponse, err)),
+			attribute.String("error.message", fmt.Sprintf("error counting admins in the database: %s", dbErr)),
 		)
 		dbSpan.End()
 
 		return dbErr
+	}
+
+	adminsCount := 0
+	for _, member := range members {
+		if member.Role == "ADMIN" {
+			adminsCount++
+		}
 	}
 
 	// Check that there is at least one admin in the organization

@@ -11,9 +11,8 @@ import (
 	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	channelService "github.com/iotea-com/iotea/libs/protocols/channels"
 	pbChannel "github.com/iotea-com/iotea/libs/protocols/channels"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc"
@@ -89,13 +88,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 func isSmallRuntime(channelId string) (bool, error) {
 	// Fetch channel from database
-	channelJson, err := prisma.Client.Channel.FindUnique(
-		db.Channel.ID.Equals(channelId),
-	).Select(
-		db.Channel.ID.Field(),
-		db.Channel.Config.Field(),
-		db.Channel.SpaceID.Field(),
-	).Exec(context.Background())
+	channelJson, err := sqlc.Queries.GetChannel(context.Background(), channelId)
 
 	if err != nil {
 		return false, fmt.Errorf("error fetching channel from database: %s", err)

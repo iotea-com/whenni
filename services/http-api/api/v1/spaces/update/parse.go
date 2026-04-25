@@ -7,14 +7,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/prisma/db"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
 func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 	type RequestBody struct {
-		Space *db.SpaceModel `json:"space"`
+		Space *SpacePayload `json:"space"`
 	}
 
 	requestSpan := trace.SpanFromContext(ctx.UserContext())
@@ -45,6 +44,9 @@ func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 		)
 		return nil, fiber.NewError(http.StatusUnprocessableEntity, err.Error())
 	}
+	if requestBody.Space == nil {
+		return nil, fiber.NewError(http.StatusUnprocessableEntity, "space is required")
+	}
 
 	request := &ioteahttp.Request[Input]{
 		Span:         requestSpan,
@@ -52,8 +54,11 @@ func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 		Context:      ctx.UserContext(),
 		Input: Input{
 			BearerToken: *bearerToken,
-			Space:       *requestBody.Space,
-			OrgId:       orgId,
+			Space: SpacePayload{
+				ID:   spaceId,
+				Name: requestBody.Space.Name,
+			},
+			OrgId: orgId,
 		},
 	}
 

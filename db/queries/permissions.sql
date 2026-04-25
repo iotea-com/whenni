@@ -7,10 +7,32 @@ SELECT * FROM app.permissions
 WHERE organization_id = $1 AND space_id IS NULL
 ORDER BY name;
 
+-- name: CountOrganizationPermissionSets :one
+SELECT COUNT(*) FROM app.permissions
+WHERE organization_id = $1
+  AND space_id IS NULL;
+
+-- name: ListOrganizationPermissionSetsPaginated :many
+SELECT * FROM app.permissions
+WHERE organization_id = $1
+  AND space_id IS NULL
+ORDER BY updated_at DESC
+LIMIT $2 OFFSET $3;
+
 -- name: ListSpacePermissionSets :many
 SELECT * FROM app.permissions
 WHERE space_id = $1
 ORDER BY name;
+
+-- name: CountSpacePermissionSets :one
+SELECT COUNT(*) FROM app.permissions
+WHERE space_id = $1;
+
+-- name: ListSpacePermissionSetsPaginated :many
+SELECT * FROM app.permissions
+WHERE space_id = $1
+ORDER BY updated_at DESC
+LIMIT $2 OFFSET $3;
 
 -- name: CreatePermissionSet :one
 INSERT INTO app.permissions (
@@ -25,6 +47,7 @@ UPDATE app.permissions
 SET name = $2,
     permissions = $3,
     updated_by = $4,
+    space_id = $5,
     updated_at = NOW()
 WHERE id = $1
 RETURNING *;
@@ -42,10 +65,34 @@ SELECT * FROM app."apiKeys"
 WHERE organization_id = $1
 ORDER BY created_at DESC;
 
+-- name: CountOrganizationApiKeys :one
+SELECT COUNT(*) FROM app."apiKeys"
+WHERE organization_id = $1
+  AND space_id IS NULL;
+
+-- name: ListOrganizationApiKeysPaginated :many
+SELECT * FROM app."apiKeys"
+WHERE organization_id = $1
+  AND space_id IS NULL
+ORDER BY created_at DESC
+LIMIT $2 OFFSET $3;
+
 -- name: ListApiKeysBySpace :many
 SELECT * FROM app."apiKeys"
 WHERE space_id = $1
 ORDER BY created_at DESC;
+
+-- name: CountSpaceApiKeys :one
+SELECT COUNT(*) FROM app."apiKeys"
+WHERE organization_id = $1
+  AND space_id = $2;
+
+-- name: ListSpaceApiKeysPaginated :many
+SELECT * FROM app."apiKeys"
+WHERE organization_id = $1
+  AND space_id = $2
+ORDER BY created_at DESC
+LIMIT $3 OFFSET $4;
 
 -- name: CreateApiKey :one
 INSERT INTO app."apiKeys" (
@@ -60,6 +107,14 @@ RETURNING *;
 DELETE FROM app."apiKeys"
 WHERE id = $1;
 
+-- name: DeleteApiKeysBySpace :exec
+DELETE FROM app."apiKeys"
+WHERE space_id = $1;
+
 -- name: DeleteExpiredApiKeys :exec
 DELETE FROM app."apiKeys"
 WHERE expires_at < NOW();
+
+-- name: DeletePermissionSetsBySpace :exec
+DELETE FROM app.permissions
+WHERE space_id = $1;

@@ -2,15 +2,16 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/keyauth"
 	"github.com/golang-jwt/jwt/v5"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -38,12 +39,10 @@ var keyauthConfig = keyauth.Config{
 
 		// Check DB to see if token matches any API keys
 		dbCtx := context.Background()
-		apiKey, err := prisma.Client.APIKey.FindUnique(
-			db.APIKey.ID.Equals(token),
-		).Exec(dbCtx)
+		apiKey, err := sqlc.Queries.GetApiKey(dbCtx, token)
 
 		if err != nil {
-			if err.Error() == "ErrNotFound" {
+			if errors.Is(err, pgx.ErrNoRows) {
 				requestSpan.AddEvent("API key not found in database")
 				return false, keyauth.ErrMissingOrMalformedAPIKey
 			}

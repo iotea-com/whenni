@@ -5,9 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -23,30 +21,20 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Update the permission set
-	var name *string
-	if request.Input.Name != "" {
-		name = &request.Input.Name
-	}
-
 	var spaceId *string
 	if request.Input.SpaceId != "" {
 		spaceId = &request.Input.SpaceId
 	}
 
-	now := util.GetCurrentTime()
-
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Update permission set")
-	permissionSet, err := prisma.Client.PermissionSet.FindUnique(
-		db.PermissionSet.ID.Equals(request.Input.PermissionSetId),
-	).Update(
-		db.PermissionSet.Name.Set(*name),
-		db.PermissionSet.UpdatedBy.Set(request.GetActorId()),
-		db.PermissionSet.UpdatedAt.Set(now),
-		db.PermissionSet.Permissions.Set(request.Input.Permissions),
-		db.PermissionSet.Space.Link(
-			db.Space.ID.EqualsIfPresent(spaceId),
-		),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Update permission set")
+	permissionSet, err := sqlc.Queries.UpdatePermissionSet(
+		dbCtx,
+		request.Input.PermissionSetId,
+		request.Input.Name,
+		request.Input.Permissions,
+		request.GetActorId(),
+		spaceId,
+	)
 
 	if err != nil {
 		dbSpan.SetAttributes(
@@ -60,7 +48,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		PermissionSet: permissionSet,
+		PermissionSet: &permissionSet,
 	}
 
 	return &output, nil

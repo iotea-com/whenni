@@ -26,6 +26,14 @@ RETURNING *;
 DELETE FROM app.organizations
 WHERE id = $1;
 
+-- name: DeleteOrganizationApiKeys :exec
+DELETE FROM app."apiKeys"
+WHERE organization_id = $1;
+
+-- name: DeleteOrganizationPermissionSets :exec
+DELETE FROM app.permissions
+WHERE organization_id = $1;
+
 -- name: ListOrganizationMembers :many
 SELECT 
   om.*,
@@ -55,6 +63,54 @@ SET role = $2,
 WHERE id = $1
 RETURNING *;
 
+-- name: UpdateOrganizationMemberRoleByOrgAndUser :one
+UPDATE app.organization_members
+SET role = $3,
+    updated_at = NOW()
+WHERE organization_id = $1 AND user_id = $2
+RETURNING *;
+
 -- name: DeleteOrganizationMember :exec
 DELETE FROM app.organization_members
 WHERE id = $1;
+
+-- name: DeleteOrganizationMembers :exec
+DELETE FROM app.organization_members
+WHERE organization_id = $1;
+
+-- name: DeleteOrganizationMemberByOrgAndUser :exec
+DELETE FROM app.organization_members
+WHERE organization_id = $1 AND user_id = $2;
+
+-- name: CountOrganizationMembersWithFilter :one
+SELECT COUNT(*)
+FROM app.organization_members om
+JOIN app.users u ON u.id = om.user_id
+WHERE om.organization_id = $1
+  AND ($2 = '' OR LOWER(u.email) LIKE LOWER('%' || $2 || '%'));
+
+-- name: ListOrganizationMembersWithFilter :many
+SELECT
+  om.*,
+  u.id as user_id,
+  u.name as user_name,
+  u.email as user_email
+FROM app.organization_members om
+JOIN app.users u ON u.id = om.user_id
+WHERE om.organization_id = $1
+  AND ($2 = '' OR LOWER(u.email) LIKE LOWER('%' || $2 || '%'))
+ORDER BY om.created_at DESC
+LIMIT $3 OFFSET $4;
+
+-- name: CountOrganizationAdmins :one
+SELECT COUNT(*)
+FROM app.organization_members
+WHERE organization_id = $1 AND role = 'ADMIN';
+
+-- name: GetDefaultOrganizationPermissionSet :one
+SELECT *
+FROM app.permissions
+WHERE organization_id = $1
+  AND space_id IS NULL
+  AND name = 'Default'
+LIMIT 1;

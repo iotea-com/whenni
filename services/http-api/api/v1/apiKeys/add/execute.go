@@ -2,10 +2,11 @@ package apiKeysAdd
 
 import (
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5/pgtype"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -45,22 +46,18 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		ApiKey: nil,
 	}
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert API key")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert API key")
 	if apiKeyType == "space" {
-		apiKey, err := prisma.Client.APIKey.CreateOne(
-			db.APIKey.ID.Set(*apiKeyId),
-			db.APIKey.CreatedBy.Set(request.GetActorId()),
-			db.APIKey.Organization.Link(
-				db.Organization.ID.Equals(request.Input.OrgId),
-			),
-			db.APIKey.Space.Link(
-				db.Space.ID.Equals(request.Input.SpaceId),
-			),
-			db.APIKey.SpacePermissionSet.Link(
-				db.PermissionSet.ID.Equals(request.Input.PermissionSetId),
-			),
-			db.APIKey.Name.SetIfPresent(name),
-		).Exec(dbCtx)
+		apiKey, err := sqlc.Queries.CreateApiKey(dbCtx, sqldb.CreateApiKeyParams{
+			ID:                          *apiKeyId,
+			OrganizationID:              request.Input.OrgId,
+			OrganizationPermissionSetID: nil,
+			SpaceID:                     &request.Input.SpaceId,
+			SpacePermissionSetID:        &request.Input.PermissionSetId,
+			Name:                        name,
+			CreatedBy:                   request.GetActorId(),
+			ExpiresAt:                   pgtype.Timestamptz{},
+		})
 
 		if err != nil {
 			dbSpan.SetAttributes(
@@ -71,19 +68,18 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
 		}
 
-		output.ApiKey = apiKey
+		output.ApiKey = &apiKey
 	} else {
-		apiKey, err := prisma.Client.APIKey.CreateOne(
-			db.APIKey.ID.Set(*apiKeyId),
-			db.APIKey.CreatedBy.Set(request.GetActorId()),
-			db.APIKey.Organization.Link(
-				db.Organization.ID.Equals(request.Input.OrgId),
-			),
-			db.APIKey.OrganizationPermissionSet.Link(
-				db.PermissionSet.ID.Equals(request.Input.PermissionSetId),
-			),
-			db.APIKey.Name.SetIfPresent(name),
-		).Exec(dbCtx)
+		apiKey, err := sqlc.Queries.CreateApiKey(dbCtx, sqldb.CreateApiKeyParams{
+			ID:                          *apiKeyId,
+			OrganizationID:              request.Input.OrgId,
+			OrganizationPermissionSetID: &request.Input.PermissionSetId,
+			SpaceID:                     nil,
+			SpacePermissionSetID:        nil,
+			Name:                        name,
+			CreatedBy:                   request.GetActorId(),
+			ExpiresAt:                   pgtype.Timestamptz{},
+		})
 
 		if err != nil {
 			dbSpan.SetAttributes(
@@ -94,7 +90,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
 		}
 
-		output.ApiKey = apiKey
+		output.ApiKey = &apiKey
 	}
 
 	dbSpan.SetAttributes(

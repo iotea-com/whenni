@@ -9,7 +9,7 @@ import (
 	"github.com/iotea-com/iotea/libs/secrets"
 	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 )
 
 type handlerDbMocks struct {
@@ -42,7 +42,7 @@ func HandlerUnitTestWithSetup(t *testing.T, route string, handlerFunc func(*fibe
 
 		// create mock prisma client
 		dbClient, dbServer, ensure := db.NewMock()
-		prisma.Client = dbClient
+		sqlc.Client = dbClient
 
 		// ensure the mock database server received requests from the handler
 		defer func() {

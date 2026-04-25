@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -14,10 +14,9 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
 	// Ensure the email is not already in use
-	user, err := prisma.Client.User.FindUnique(
-		db.User.Email.Equals(request.Input.Email),
-	).Exec(request.Context)
-	if err != nil && err.Error() != "ErrNotFound" {
+	userEmail := request.Input.Email
+	_, err := sqlc.Queries.GetUserByEmail(request.Context, &userEmail)
+	if err != nil && err != pgx.ErrNoRows {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("could not validate email: %s", err)),
@@ -27,7 +26,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 		return fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}
 
-	if user != nil {
+	if err == nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "email_already_in_use"),
 			attribute.String("error.message", fmt.Sprintf("email '%s' already in use", request.Input.Email)),

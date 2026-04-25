@@ -11,8 +11,8 @@ import (
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	mqttPolicies "github.com/iotea-com/iotea/libs/http/policies"
 	"github.com/iotea-com/iotea/libs/val"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -45,10 +45,12 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	// Get certificate from the database
 	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get certificate")
-	certificate, err := prisma.Client.Certificate.FindUnique(
-		db.Certificate.ID.Equals(*sn),
-	).Exec(dbCtx)
+	certificate, err := sqlc.Queries.GetCertificate(dbCtx, *sn)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			dbSpan.End()
+			return &Output{Result: "deny"}, nil
+		}
 		request.Span.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error getting certificate from the database: %s", err)),

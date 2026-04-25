@@ -6,7 +6,6 @@ import (
 	"github.com/iotea-com/iotea/services/http-api/api/v1/auth"
 	"github.com/iotea-com/iotea/services/http-api/api/v1/certificates"
 	"github.com/iotea-com/iotea/services/http-api/api/v1/channels"
-	"github.com/iotea-com/iotea/services/http-api/api/v1/environments"
 	"github.com/iotea-com/iotea/services/http-api/api/v1/models"
 	"github.com/iotea-com/iotea/services/http-api/api/v1/organizations"
 	"github.com/iotea-com/iotea/services/http-api/api/v1/permissions"
@@ -33,9 +32,6 @@ func Register(app *fiber.App) {
 
 	// channels
 	channels.Register(v1)
-
-	// environments
-	environments.Register(v1)
 
 	// organizations
 	organizations.Register(v1)

@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"golang.org/x/crypto/bcrypt"
@@ -34,11 +34,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	// Update the user's password
 	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Update user password")
-	_, err = prisma.Client.User.FindUnique(
-		db.User.ID.Equals(request.Actor.Id),
-	).Update(db.User.Password.Set(string(hashedPassword))).Exec(dbCtx)
+	updatedPassword := string(hashedPassword)
+	_, err = sqlc.Queries.UpdateUserPassword(dbCtx, request.Actor.Id, &updatedPassword)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
 				attribute.String("error.message", fmt.Sprintf("error updating user password: %s", err)),

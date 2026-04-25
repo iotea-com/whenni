@@ -7,8 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteachannels "github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -21,13 +21,9 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Check if thing is used in any channel
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Check if thing is used in channel")
-	channels, err := prisma.Client.Channel.FindMany(
-		db.Channel.SpaceID.Equals(request.Input.SpaceId),
-	).Select(
-		db.Channel.Config.Field(),
-	).Exec(dbCtx)
-	if err != nil && err.Error() != "ErrNotFound" {
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Check if thing is used in channel")
+	channels, err := sqlc.Queries.ListChannels(dbCtx, request.Input.SpaceId)
+	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error checking if thing is used in a channel: %s", err)),
@@ -39,7 +35,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	dbSpan.End()
 
-	channelsWithThing := []db.ChannelModel{}
+	channelsWithThing := []string{}
 	for _, channel := range channels {
 		var channelConfig ioteachannels.Channel
 		err = json.Unmarshal(channel.Config, &channelConfig)
@@ -60,7 +56,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			for _, thingDependency := range node.Metadata.Dependencies.Things {
 
 				if thingDependency.ThingId == request.Input.ThingId {
-					channelsWithThing = append(channelsWithThing, channel)
+					channelsWithThing = append(channelsWithThing, channel.ID)
 				}
 			}
 		}
@@ -81,13 +77,9 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Check if thing is referenced in any other things
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Check if thing is referenced in another thing")
-	things, err := prisma.Client.Thing.FindMany(
-		db.Thing.SpaceID.Equals(request.Input.SpaceId),
-	).Select(
-		db.Thing.Attributes.Field(),
-	).Exec(dbCtx)
-	if err != nil && err.Error() != "ErrNotFound" {
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Check if thing is referenced in another thing")
+	things, err := sqlc.Queries.ListThings(dbCtx, request.Input.SpaceId)
+	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error checking if thing is used in another thing: %s", err)),
@@ -99,7 +91,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	dbSpan.End()
 
-	thingsWithThing := []db.ThingModel{}
+	thingsWithThing := []string{}
 	for _, thing := range things {
 		var thingAttributes map[string]any
 		err = json.Unmarshal(thing.Attributes, &thingAttributes)
@@ -118,7 +110,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 		for _, value := range thingAttributes {
 			if value == request.Input.ThingId {
-				thingsWithThing = append(thingsWithThing, thing)
+				thingsWithThing = append(thingsWithThing, thing.ID)
 			}
 		}
 	}
@@ -138,12 +130,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Delete thing
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete thing")
-	_, err = prisma.Client.Thing.FindUnique(
-		db.Thing.ID.Equals(request.Input.ThingId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete thing")
+	_, err = sqlc.Queries.GetThing(dbCtx, request.Input.ThingId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
 				attribute.String("error.message", fmt.Sprintf("no thing found with ID %s", request.Input.ThingId)),
@@ -153,6 +143,17 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			return nil, fiber.NewError(fiber.StatusBadRequest)
 		}
 
+		dbSpan.SetAttributes(
+			attribute.String("error.type", "database"),
+			attribute.String("error.message", fmt.Sprintf("error deleting thing from the database: %s", err)),
+		)
+		dbSpan.End()
+
+		return nil, err
+	}
+
+	err = sqlc.Queries.DeleteThing(dbCtx, request.Input.ThingId)
+	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error deleting thing from the database: %s", err)),
