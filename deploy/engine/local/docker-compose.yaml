@@ -10,17 +10,20 @@ networks:
 volumes:
   iotea_node_modules_volume:
   iotea_go_modules_volume:
-  grafana_plugins_volume:
   clickhouse_data_volume:
   postgres_data_volume:
   redis_data_volume:
   minio_data_volume:
-  nats-data:
+  nats_data_volume:
 
 services:
   http-api:
+    container_name: http-api
     profiles:
       - run
+    build:
+      context: ../../..
+      dockerfile: services/http-api/deploy/development/Dockerfile
     image: iotea-http-api:local
     ports:
       - "9001:9001"
@@ -37,24 +40,25 @@ services:
     user: root
     depends_on:
       - vault
-      - platform-otel-collector
-      - db
+      - otel-collector
+      - postgres
       - redis
     restart: "no"
 
   nats:
+    container_name: nats
     profiles:
       - dev
       - run
     image: nats:latest
-    command: ["--js", "--http_port=8222"] # Enable JetStream and monitoring
+    command: [ "--js", "--http_port=8222" ] # Enable JetStream and monitoring
     ports:
       - "4222:4222" # Client port
       - "8222:8222" # HTTP monitoring
     networks:
       - iotea_network
     volumes:
-      - nats-data:/data # Persist JetStream data
+      - nats_data_volume:/data # Persist JetStream data
     environment:
       - JS_MAX_MEMORY=-1 # Unlimited memory
       - JS_MAX_STORE=-1 # Unlimited storage
@@ -62,6 +66,7 @@ services:
       - JS_MAX_CONSUMERS=-1 # Unlimited consumers
 
   vault:
+    container_name: vault
     profiles:
       - dev
       - run
@@ -79,16 +84,17 @@ services:
       - iotea_network
       - services_network
 
-  platform-otel-collector:
+  otel-collector:
+    container_name: otel-collector
     profiles:
       - dev
       - run
     image: otel/opentelemetry-collector-contrib:latest
-    command: ["--config", "/etc/platform-otel-collector-config.yaml"]
+    command: [ "--config", "/otel-collector-config.yaml" ]
     # ports: # enable if you want to connect to this collector from localhost
     #   - 4317:4317 # OTLP gRPC - change this to another port if you want to enable both collectors locally
     volumes:
-      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/otel/platform-otel-collector-config.yaml:/etc/platform-otel-collector-config.yaml
+      - ./config/otel/otel-collector-config.yaml:/otel-collector-config.yaml:ro
     networks:
       - iotea_network
     depends_on:
@@ -96,6 +102,7 @@ services:
         condition: service_healthy
 
   clickhouse:
+    container_name: clickhouse
     profiles:
       - dev
       - run
@@ -109,7 +116,7 @@ services:
     networks:
       - iotea_network
     environment:
-      - CLICKHOUSE_DB=platform
+      - CLICKHOUSE_DB=default
       - CLICKHOUSE_USER=iotea
       - CLICKHOUSE_PASSWORD=iotea
     healthcheck:
@@ -118,33 +125,8 @@ services:
       timeout: 5s
       retries: 3
 
-  grafana:
-    profiles:
-      - dev
-      - run
-    image: grafana/grafana:latest
-    volumes:
-      - grafana_plugins_volume:/var/lib/grafana/plugins
-      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-      - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/grafana/dashboards:/etc/grafana/provisioning/dashboards
-    environment:
-      - GF_PLUGINS_DIR=/var/lib/grafana/plugins
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
-      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
-      - GF_DASHBOARDS_MIN_REFRESH_INTERVAL=500ms
-    entrypoint: /bin/sh
-    command: -c " grafana cli plugins install grafana-clickhouse-datasource || true && sleep 5 && grafana-server --homepath=/usr/share/grafana"
-    ports:
-      - "3000:3000"
-    networks:
-      - iotea_network
-      - services_network
-    depends_on:
-      - platform-otel-collector
-
-  storage:
+  minio:
+    container_name: minio
     profiles:
       - dev
       - run
@@ -161,7 +143,8 @@ services:
     networks:
       - iotea_network
 
-  db:
+  postgres:
+    container_name: postgres
     profiles:
       - dev
       - run
@@ -170,7 +153,6 @@ services:
       POSTGRES_USER: iotea
       POSTGRES_PASSWORD: iotea
       POSTGRES_DB: iotea
-      POSTGRES_MAX_CONNECTIONS: 200 # Default is usually 100
     command:
       - "postgres"
       - "-c"
@@ -183,6 +165,7 @@ services:
       - iotea_network
 
   redis:
+    container_name: redis
     profiles:
       - dev
       - run
@@ -192,11 +175,12 @@ services:
     volumes:
       - redis_data_volume:/data
       - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/redis/redis.conf:/usr/local/etc/redis/redis.conf
-    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
     networks:
       - iotea_network
 
   inbucket:
+    container_name: inbucket
     profiles:
       - dev
       - run

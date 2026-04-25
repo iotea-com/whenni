@@ -40,7 +40,7 @@
 							"command": "nx run engine:build-local"
 						},
 						{
-							"command": "bash -c 'cd deploy/engine && docker compose -f local/docker-compose.yaml --profile dev up --build -d'"
+							"command": "bash -c 'USR_MONOREPO_ROOT=\"$(pwd)\"; cd deploy/engine && USR_MONOREPO_ROOT=\"$USR_MONOREPO_ROOT\" docker compose -f local/docker-compose.yaml --profile dev up --build -d'"
 						},
 						{
 							"command": "bash -c 'cd deploy/engine/local && chmod +x ctl.sh && ./ctl.sh'"
@@ -52,7 +52,7 @@
 				"stop": {
 					"commands": [
 						{
-							"command": "docker compose -f local/docker-compose.yaml --profile dev stop"
+							"command": "bash -c 'USR_MONOREPO_ROOT=\"$(cd ../.. && pwd)\"; USR_MONOREPO_ROOT=\"$USR_MONOREPO_ROOT\" docker compose -f local/docker-compose.yaml --profile dev stop'"
 						}
 					],
 					"cwd": "{projectRoot}"
@@ -60,7 +60,7 @@
 				"down": {
 					"commands": [
 						{
-							"command": "docker compose -f local/docker-compose.yaml --profile dev down"
+							"command": "bash -c 'USR_MONOREPO_ROOT=\"$(cd ../.. && pwd)\"; USR_MONOREPO_ROOT=\"$USR_MONOREPO_ROOT\" docker compose -f local/docker-compose.yaml --profile dev down'"
 						}
 					],
 					"cwd": "{projectRoot}"
@@ -93,7 +93,7 @@
 							"command": "nx run engine:build-local"
 						},
 						{
-							"command": "bash -c 'cd deploy/engine && docker compose -f local/docker-compose.yaml --profile run up --build -d'"
+							"command": "bash -c 'USR_MONOREPO_ROOT=\"$(pwd)\"; cd deploy/engine && USR_MONOREPO_ROOT=\"$USR_MONOREPO_ROOT\" docker compose -f local/docker-compose.yaml --profile run up --build -d'"
 						}
 					]
 				}
@@ -115,7 +115,7 @@
 							"command": "nx run-many --target=build --projects=http-api -c local --skip-nx-cache"
 						},
 						{
-							"command": "bash -c 'cd deploy/engine && docker compose -f local/docker-compose.yaml --profile run up --build -d'"
+							"command": "bash -c 'USR_MONOREPO_ROOT=\"$(pwd)\"; cd deploy/engine && USR_MONOREPO_ROOT=\"$USR_MONOREPO_ROOT\" docker compose -f local/docker-compose.yaml --profile run up --build -d'"
 						}
 					]
 				}
@@ -133,7 +133,7 @@
 					"cwd": "{workspaceRoot}",
 					"commands": [
 						{
-							"command": "bash -c 'cd deploy/engine && docker compose -f local/docker-compose.yaml --profile run down'"
+							"command": "bash -c 'USR_MONOREPO_ROOT=\"$(pwd)\"; cd deploy/engine && USR_MONOREPO_ROOT=\"$USR_MONOREPO_ROOT\" docker compose -f local/docker-compose.yaml --profile run down'"
 						}
 					]
 				}

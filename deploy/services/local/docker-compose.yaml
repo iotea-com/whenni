@@ -7,9 +7,9 @@ volumes:
   influxdb_data:
   kafka_data:
 
-
 services:
   emqx:
+    container_name: emqx-service
     profiles: [ "source", "action" ]
     image: iotea-emqx:latest
     ports:
@@ -24,6 +24,7 @@ services:
 
   # TODO: deprecate use of 1883 in tests when certificates are more streamlined
   mosquitto:
+    container_name: mosquitto-service
     profiles: [ "source", "action" ]
     image: eclipse-mosquitto:latest
     ports:
@@ -36,6 +37,7 @@ services:
       - services_network
 
   influxdb:
+    container_name: influxdb-service
     profiles: [ "action" ]
     image: influxdb:latest
     ports:
@@ -53,6 +55,7 @@ services:
       - services_network
 
   minio:
+    container_name: minio-service
     image: minio/minio
     environment:
       MINIO_ROOT_USER: minioadmin
@@ -65,6 +68,7 @@ services:
       - services_network
 
   kafka:
+    container_name: kafka-service
     profiles: [ "source", "action" ]
     image: docker.io/bitnami/kafka:latest
     ports:
@@ -83,6 +87,7 @@ services:
       - services_network
 
   kafka-ui:
+    container_name: kafka-ui-service
     profiles: [ "source", "action" ]
     image: provectuslabs/kafka-ui
     ports:
@@ -97,6 +102,7 @@ services:
       - kafka
 
   nats-service:
+    container_name: nats-service
     profiles: [ "source", "action" ]
     image: nats:latest
     ports:
@@ -105,6 +111,7 @@ services:
       - services_network
 
   mongo:
+    container_name: mongo-service
     image: mongo
     restart: always
     ports:
@@ -116,6 +123,7 @@ services:
       - services_network
 
   mongo-ui:
+    container_name: mongo-ui-service
     image: mongo-express
     restart: always
     ports:

@@ -67,25 +67,24 @@ RUN touch ~/.zshrc && \
 # -----------------------------------------------------------------------------------------------------
 #                                                                                                 Build
 # ---------------------------------------------------------------------------------------------------*/
-WORKDIR /iotea
+WORKDIR /whenni
 
 RUN source ~/.zshrc && \
-    yarn add prisma
+    go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
-# First we only copy and generate the Go prisma client once, 
+# First we only copy and generate the Go sqlc client once, 
 # so we can use docker caching and speed up development builds
-COPY ./prisma/schema.prisma ./prisma/schema.prisma
-COPY ./prisma/gen-client.sh ./prisma/gen-client.sh
+COPY ./db/queries ./db/queries
 COPY ./go.mod ./go.mod
 COPY ./go.sum ./go.sum
 
-# Create prisma client
-WORKDIR /iotea/prisma
+# Create sqlc client
+WORKDIR /whenni/db
 RUN source ~/.zshrc && \
-    ./gen-client.sh
+    sqlc generate
 
 # Download dependencies first (this layer will be cached)
-WORKDIR /iotea
+WORKDIR /whenni
 RUN go mod download
 
 # Copy the rest of the project
@@ -99,7 +98,7 @@ COPY ./libs/secrets ./libs/secrets
 COPY ./services/http-api ./services/http-api
 
 # Go to the http-api service directory
-WORKDIR /iotea/services/http-api
+WORKDIR /whenni/services/http-api
 
 # Build-time variables
 ARG GIT_BRANCH
@@ -145,11 +144,11 @@ LABEL branch=${GIT_BRANCH} \
     go-version=${GO_VERSION}
 
 # Create a non-root user with a specific UID/GID
-RUN groupadd -r iotea --gid=1000 && \
-    useradd -r -g iotea --uid=1000 --create-home --shell=/sbin/nologin iotea && \
+RUN groupadd -r whenni --gid=1000 && \
+    useradd -r -g whenni --uid=1000 --create-home --shell=/sbin/nologin whenni && \
     # Add docker group with GID 999 (common docker group GID)
     groupadd -r docker --gid=999 && \
-    usermod -aG docker iotea
+    usermod -aG docker whenni
 
 # Setup system and clean up in the same layer to keep image size small
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -170,15 +169,15 @@ RUN echo '#!/bin/sh\n\
     chmod +x /start.sh
 
 # Copy binary
-COPY --from=builder /iotea/services/http-api/http-api /http-api
+COPY --from=builder /whenni/services/http-api/http-api /http-api
 
 # Set proper permissions
-RUN chown iotea:iotea /http-api /start.sh && \
+RUN chown whenni:whenni /http-api /start.sh && \
     chmod 755 /http-api
 
 # Switch to non-root user
-USER iotea
+USER whenni
 
 # Start
-WORKDIR /home/iotea
+WORKDIR /home/whenni
 ENTRYPOINT ["/start.sh"]

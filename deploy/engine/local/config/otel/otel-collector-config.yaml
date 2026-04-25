@@ -11,7 +11,7 @@ exporters:
     endpoint: "clickhouse://clickhouse:9000"
     username: "iotea"
     password: "iotea"
-    database: "platform"
+    database: "default"
     ttl: 8h
     create_schema: false
 
@@ -22,14 +22,14 @@ processors:
 service:
   pipelines:
     traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [clickhouse]
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [ clickhouse ]
     metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [clickhouse]
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [ clickhouse ]
     logs:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [clickhouse]
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [ clickhouse ]

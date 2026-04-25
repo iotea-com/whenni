@@ -60,8 +60,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
     npm install -g nx && \
     corepack enable
 
-# set the working directory in the container
-WORKDIR /iotea
+# Repo is bind-mounted at /whenni (see deploy/engine/local/docker-compose.yaml)
+WORKDIR /whenni
 
 # Command to run the executable
 CMD chmod +x ./deploy/engine/local/config/start.sh && ./deploy/engine/local/config/start.sh
