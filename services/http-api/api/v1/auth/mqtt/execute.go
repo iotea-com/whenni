@@ -44,7 +44,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Get certificate from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get certificate")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get certificate")
 	certificate, err := sqlc.Queries.GetCertificate(dbCtx, *sn)
 	if err != nil {
 		if err == pgx.ErrNoRows {

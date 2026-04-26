@@ -56,7 +56,7 @@ type VaultConfig struct {
 	JwtSecret   string `mapstructure:"JWT_SECRET"`
 
 	// Observability
-	PlatformOtelCollectorEndpoint string `mapstructure:"PLATFORM_OTEL_COLLECTOR_ENDPOINT"`
+	OtelCollectorEndpoint string `mapstructure:"OTEL_COLLECTOR_ENDPOINT"`
 
 	// Dev Environments
 	DevenvGrpcServerUrl string `mapstructure:"DEVENV_GRPC_SERVER_URL"`
@@ -205,27 +205,27 @@ func loadVaultSecrets() (*VaultConfig, error) {
 
 	// Safely assign each value, with a fallback to empty string or handle nil cases
 	vaultConfig := &VaultConfig{
-		LogLevel:                      SecretsClient.GetStringFromMap(secrets, "LOG_LEVEL"),
-		ApiPort:                       SecretsClient.GetIntFromMap(secrets, "API_SERVER_PORT"),
-		EngineGrpcServiceUrl:          SecretsClient.GetStringFromMap(secrets, "ENGINE_GRPC_SERVER_URL"),
-		DatabaseUrl:                   SecretsClient.GetStringFromMap(secrets, "DATABASE_URL"),
-		JwtSecret:                     SecretsClient.GetStringFromMap(secrets, "JWT_SECRET"),
-		PlatformOtelCollectorEndpoint: SecretsClient.GetStringFromMap(secrets, "PLATFORM_OTEL_COLLECTOR_ENDPOINT"),
-		CollectorGrpcRuntimeUrl:       SecretsClient.GetStringFromMap(secrets, "COLLECTOR_GRPC_RUNTIME_URL"),
-		DevenvGrpcServerUrl:           SecretsClient.GetStringFromMap(secrets, "DEVENV_GRPC_SERVER_URL"),
-		ClickhouseHost:                SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_HOST"),
-		ClickhousePort:                SecretsClient.GetIntFromMap(secrets, "CLICKHOUSE_PORT"),
-		ClickhouseUsername:            SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_USERNAME"),
-		ClickhousePassword:            SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_PASSWORD"),
-		ClickhouseDatabase:            SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_DATABASE"),
-		RedisHost:                     SecretsClient.GetStringFromMap(secrets, "REDIS_HOST"),
-		RedisPort:                     SecretsClient.GetIntFromMap(secrets, "REDIS_PORT"),
-		RedisUsername:                 SecretsClient.GetStringFromMap(secrets, "REDIS_USERNAME"),
-		RedisPassword:                 SecretsClient.GetStringFromMap(secrets, "REDIS_PASSWORD"),
-		SmtpHost:                      SecretsClient.GetStringFromMap(secrets, "SMTP_HOST"),
-		SmtpPort:                      SecretsClient.GetIntFromMap(secrets, "SMTP_PORT"),
-		SmtpUser:                      SecretsClient.GetStringFromMap(secrets, "SMTP_USER"),
-		SmtpPassword:                  SecretsClient.GetStringFromMap(secrets, "SMTP_PASSWORD"),
+		LogLevel:                SecretsClient.GetStringFromMap(secrets, "LOG_LEVEL"),
+		ApiPort:                 SecretsClient.GetIntFromMap(secrets, "API_SERVER_PORT"),
+		EngineGrpcServiceUrl:    SecretsClient.GetStringFromMap(secrets, "ENGINE_GRPC_SERVER_URL"),
+		DatabaseUrl:             SecretsClient.GetStringFromMap(secrets, "DATABASE_URL"),
+		JwtSecret:               SecretsClient.GetStringFromMap(secrets, "JWT_SECRET"),
+		OtelCollectorEndpoint:   SecretsClient.GetStringFromMap(secrets, "OTEL_COLLECTOR_ENDPOINT"),
+		CollectorGrpcRuntimeUrl: SecretsClient.GetStringFromMap(secrets, "COLLECTOR_GRPC_RUNTIME_URL"),
+		DevenvGrpcServerUrl:     SecretsClient.GetStringFromMap(secrets, "DEVENV_GRPC_SERVER_URL"),
+		ClickhouseHost:          SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_HOST"),
+		ClickhousePort:          SecretsClient.GetIntFromMap(secrets, "CLICKHOUSE_PORT"),
+		ClickhouseUsername:      SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_USERNAME"),
+		ClickhousePassword:      SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_PASSWORD"),
+		ClickhouseDatabase:      SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_DATABASE"),
+		RedisHost:               SecretsClient.GetStringFromMap(secrets, "REDIS_HOST"),
+		RedisPort:               SecretsClient.GetIntFromMap(secrets, "REDIS_PORT"),
+		RedisUsername:           SecretsClient.GetStringFromMap(secrets, "REDIS_USERNAME"),
+		RedisPassword:           SecretsClient.GetStringFromMap(secrets, "REDIS_PASSWORD"),
+		SmtpHost:                SecretsClient.GetStringFromMap(secrets, "SMTP_HOST"),
+		SmtpPort:                SecretsClient.GetIntFromMap(secrets, "SMTP_PORT"),
+		SmtpUser:                SecretsClient.GetStringFromMap(secrets, "SMTP_USER"),
+		SmtpPassword:            SecretsClient.GetStringFromMap(secrets, "SMTP_PASSWORD"),
 	}
 
 	return vaultConfig, nil

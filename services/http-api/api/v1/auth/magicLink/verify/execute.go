@@ -22,7 +22,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Retrieve the verification token from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Retrieve verification token")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Retrieve verification token")
 	verificationToken, err := sqlc.Queries.GetAuthTokenWithUser(dbCtx, request.Input.VerificationToken)
 	if err != nil {
 		if err == pgx.ErrNoRows {
@@ -61,7 +61,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	// Verify user email if not verified
 	if !verificationToken.JoinedUserEmailVerified.Valid {
-		dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Set user email as verified")
+		dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Set user email as verified")
 		_, err := sqlc.Queries.VerifyUserEmail(dbCtx, verificationToken.JoinedUserID)
 		if err != nil {
 			dbSpan.SetAttributes(
@@ -107,7 +107,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Clear old refresh tokens from the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Clear old refresh tokens")
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Clear old refresh tokens")
 	err = sqlc.Queries.DeleteAuthTokensByUser(dbCtx, verificationToken.UserID, sqldb.AppAuthTokenTypeREFRESH)
 
 	if err != nil {
@@ -124,7 +124,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Store the refresh token in the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Store refresh token")
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Store refresh token")
 	_, err = sqlc.Queries.CreateAuthToken(
 		dbCtx,
 		verificationToken.UserID,
@@ -147,7 +147,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Remove all verification tokens for the user from the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Remove verification token")
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Remove verification token")
 	err = sqlc.Queries.DeleteAuthTokensByUser(dbCtx, verificationToken.UserID, sqldb.AppAuthTokenTypeMAGICLINK)
 	if err != nil {
 		dbSpan.SetAttributes(

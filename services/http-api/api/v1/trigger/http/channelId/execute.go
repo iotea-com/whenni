@@ -26,7 +26,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// get channel configuration
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get channel")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get channel")
 	c, err := sqlc.Queries.GetChannel(dbCtx, request.Input.ChannelId)
 	if err != nil {
 		if err == pgx.ErrNoRows {

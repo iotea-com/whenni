@@ -1,3 +1,5 @@
+name: whenni
+
 networks:
   services_network:
     name: services_network

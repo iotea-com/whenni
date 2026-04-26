@@ -33,7 +33,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Get the user from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get user")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get user")
 	userEmail := request.Input.Email
 	user, err := sqlc.Queries.GetUserByEmail(dbCtx, &userEmail)
 
@@ -101,7 +101,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 func handleMagicLinkLogin(user sqldb.AppUser, appUrl string, ctx context.Context) error {
 	// Create a new magic link token
-	_, tokenSpan := otel.Tracer("prisma").Start(ctx, "Generate magic link token")
+	_, tokenSpan := otel.Tracer("sqlc").Start(ctx, "Generate magic link token")
 	if user.Email == nil || *user.Email == "" {
 		tokenSpan.SetAttributes(
 			attribute.String("error.type", "user_no_email"),
@@ -125,7 +125,7 @@ func handleMagicLinkLogin(user sqldb.AppUser, appUrl string, ctx context.Context
 	tokenSpan.End()
 
 	// Store the token in the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(ctx, "Store magic link token")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(ctx, "Store magic link token")
 	_, err = sqlc.Queries.CreateAuthToken(dbCtx, user.ID, token, sqldb.AppAuthTokenTypeMAGICLINK, expiresAt.UTC())
 
 	if err != nil {
@@ -216,7 +216,7 @@ func handleCredentialsLogin(user sqldb.AppUser, providedPassword string, ctx con
 	}
 
 	// Generate an access token
-	_, tokenSpan := otel.Tracer("prisma").Start(ctx, "Generate tokens")
+	_, tokenSpan := otel.Tracer("sqlc").Start(ctx, "Generate tokens")
 	accessToken, err := ioteahttputil.GenerateAccessToken(user.ID, config.VaultConf.JwtSecret)
 	if err != nil {
 		tokenSpan.SetAttributes(
@@ -241,7 +241,7 @@ func handleCredentialsLogin(user sqldb.AppUser, providedPassword string, ctx con
 	tokenSpan.End()
 
 	// Clear old refresh tokens from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(ctx, "Clear old refresh tokens")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(ctx, "Clear old refresh tokens")
 	err = sqlc.Queries.DeleteAuthTokensByUser(dbCtx, user.ID, sqldb.AppAuthTokenTypeREFRESH)
 
 	if err != nil {
@@ -256,7 +256,7 @@ func handleCredentialsLogin(user sqldb.AppUser, providedPassword string, ctx con
 	dbSpan.End()
 
 	// Store the refresh token in the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(ctx, "Store refresh token")
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(ctx, "Store refresh token")
 	_, err = sqlc.Queries.CreateAuthToken(
 		dbCtx,
 		user.ID,

@@ -33,7 +33,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Update the user's password
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Update user password")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Update user password")
 	updatedPassword := string(hashedPassword)
 	_, err = sqlc.Queries.UpdateUserPassword(dbCtx, request.Actor.Id, &updatedPassword)
 	if err != nil {

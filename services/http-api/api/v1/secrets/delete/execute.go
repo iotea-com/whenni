@@ -21,7 +21,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Check if secret is used in any things
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Check if secret is used in things")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Check if secret is used in things")
 	things, err := sqlc.Queries.ListThings(dbCtx, request.Input.SpaceId)
 	if err != nil {
 		dbSpan.SetAttributes(

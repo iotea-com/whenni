@@ -46,7 +46,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Create a new user
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Create user")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Create user")
 	userEmail := request.Input.Email
 	userPassword := string(hashedPassword)
 	_, err = sqlc.Queries.CreateUser(dbCtx, sqldb.CreateUserParams{
@@ -108,7 +108,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		}
 
 		// Create a new organization member with the default org permission set
-		dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Create organization member")
+		dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Create organization member")
 		_, err = sqlc.Queries.CreateOrganizationMember(dbCtx, parsedClaims.OrgId, *userId, sqldb.AppOrganizationRoleMEMBER, orgPermissionSet.ID)
 
 		if err != nil {

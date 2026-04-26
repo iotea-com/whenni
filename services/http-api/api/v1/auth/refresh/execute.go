@@ -22,7 +22,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Get the refresh token and user from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get refresh token with user")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get refresh token with user")
 	refreshToken, err := sqlc.Queries.GetAuthTokenWithUser(dbCtx, request.Input.RefreshToken)
 
 	if err != nil {
@@ -85,7 +85,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Clear old refresh tokens from the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Clear old refresh tokens")
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Clear old refresh tokens")
 	err = sqlc.Queries.DeleteAuthTokensByUser(dbCtx, refreshToken.UserID, sqldb.AppAuthTokenTypeREFRESH)
 
 	if err != nil {
@@ -100,7 +100,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Store the new refresh token in the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Store new refresh token")
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Store new refresh token")
 	_, err = sqlc.Queries.CreateAuthToken(
 		dbCtx,
 		refreshToken.UserID,
