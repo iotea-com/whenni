@@ -43,8 +43,33 @@ services:
     depends_on:
       - vault
       - otel-collector
+      - controller
       - postgres
       - redis
+    restart: "no"
+
+  controller:
+    container_name: controller
+    profiles:
+      - run
+    build:
+      context: ../../..
+      dockerfile: services/controller/deploy/development/Dockerfile
+    image: iotea-controller:local
+    ports:
+      - "9002:9002"
+    volumes:
+      - ${USR_MONOREPO_ROOT}:/whenni
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - iotea_network
+    env_file:
+      - .env
+    environment:
+      - ENVIRONMENT=local # Override the .env environment variable
+    user: root
+    depends_on:
+      - otel-collector
     restart: "no"
 
   nats:

@@ -8,6 +8,6 @@ import (
 
 func main() {
 	server := api.New()
-	fmt.Println("Starting controller server on port 8080...")
-	server.Listen(8080)
+	fmt.Println("Starting controller server on port 9002...")
+	server.Listen(9002)
 }
