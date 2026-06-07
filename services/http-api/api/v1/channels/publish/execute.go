@@ -2,17 +2,13 @@ package channelsPublish
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	channelService "github.com/iotea-com/iotea/libs/protocols/channels"
-	pbChannel "github.com/iotea-com/iotea/libs/protocols/channels"
+	pbController "github.com/iotea-com/iotea/libs/protocols/controller"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc"
@@ -26,18 +22,18 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
 	)
 
-	// Set up rules engine client
+	// Set up controller client
 	// TODO: Add TLS to this connection for production
-	engineConn, err := grpc.NewClient(config.VaultConf.EngineGrpcServiceUrl,
+	controllerConn, err := grpc.NewClient(config.VaultConf.ControllerGrpcServiceUrl,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
 
 	defer func() {
-		if err := engineConn.Close(); err != nil {
+		if err := controllerConn.Close(); err != nil {
 			request.Span.SetAttributes(
 				attribute.String("error.type", "grpc_request"),
-				attribute.String("error.message", fmt.Sprintf("failed to close rules engine grpc client: %v", err)),
+				attribute.String("error.message", fmt.Sprintf("failed to close controller grpc client: %v", err)),
 			)
 		}
 	}()
@@ -45,7 +41,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "grpc_request"),
-			attribute.String("error.message", fmt.Sprintf("failed to setup rules engine grpc client: endpoint is %v and error is %v", config.VaultConf.EngineGrpcServiceUrl, err)),
+			attribute.String("error.message", fmt.Sprintf("failed to setup controller grpc client: endpoint is %v and error is %v", config.VaultConf.ControllerGrpcServiceUrl, err)),
 		)
 		response := ioteahttp.NewErrorResponse([]any{
 			"Could not get the status of the channel at this time. Please try again.",
@@ -54,56 +50,25 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, fiber.NewError(fiber.StatusServiceUnavailable, string(responseJson))
 	}
 
-	client := pbChannel.NewChannelServiceClient(engineConn)
+	client := pbController.NewControllerServiceClient(controllerConn)
 
-	// Send Publish message to the orchestrator
+	// Send Publish message to the controller
 	ctx, cancel := context.WithTimeout(request.Context, time.Second*5)
 	defer cancel()
-	message := &channelService.ExecuteRequest{ChannelId: request.Input.ChannelId}
-	executeResponse, err := client.Execute(ctx, message)
+	_, err = client.Publish(ctx, &pbController.PublishRequest{
+		ChannelId: request.Input.ChannelId,
+	})
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "grpc_request"),
-			attribute.String("error.message", fmt.Sprintf("could not send execute response to the orchestrator: %s", err)),
+			attribute.String("error.message", fmt.Sprintf("could not send publish message to the controller: %s", err)),
 		)
 		response := ioteahttp.NewErrorResponse([]any{
 			"Could not publish the channel at this time. Please try again.",
 		})
 		responseJson, _ := response.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusServiceUnavailable, string(responseJson))
-	} else if executeResponse.Error != "" {
-		request.Span.SetAttributes(
-			attribute.String("error.type", "grpc_request"),
-			attribute.String("error.message", fmt.Sprintf("a publish error ocurred: %s", executeResponse.Error)),
-		)
-		response := ioteahttp.NewErrorResponse([]any{
-			fmt.Sprintf("Could not publish the channel at this time: %s, Please try again.", executeResponse.Error),
-		})
-		responseJson, _ := response.MarshalJson()
-		return nil, fiber.NewError(fiber.StatusBadRequest, string(responseJson))
 	}
 
 	return nil, nil
-}
-
-func isSmallRuntime(channelId string) (bool, error) {
-	// Fetch channel from database
-	channelJson, err := sqlc.Queries.GetChannel(context.Background(), channelId)
-
-	if err != nil {
-		return false, fmt.Errorf("error fetching channel from database: %s", err)
-	}
-
-	// Unmarshal channel config
-	var c channels.Channel
-	if err := json.Unmarshal(channelJson.Config, &c); err != nil {
-		return false, fmt.Errorf("error unmarshalling channel: %s", err)
-	}
-
-	// Check if the channel is a small runtime
-	if c.Runtime.Size != "small" {
-		return false, nil
-	}
-
-	return true, nil
 }

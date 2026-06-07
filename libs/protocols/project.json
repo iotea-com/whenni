@@ -4,7 +4,7 @@
   "sourceRoot": "libs/protocols",
   "projectType": "application",
   "targets": {
-    "create": {
+    "compile": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",

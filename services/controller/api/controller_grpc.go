@@ -15,13 +15,13 @@ func newControllerGRPC() *controllerGRPC {
 }
 
 func (*controllerGRPC) Publish(context.Context, *pb.PublishRequest) (*pb.PublishResponse, error) {
-	return &pb.PublishResponse{Message: "hello world"}, nil
+	return &pb.PublishResponse{}, nil
 }
 
 func (*controllerGRPC) Unpublish(context.Context, *pb.UnpublishRequest) (*pb.UnpublishResponse, error) {
-	return &pb.UnpublishResponse{Message: "hello world"}, nil
+	return &pb.UnpublishResponse{}, nil
 }
 
 func (*controllerGRPC) Status(context.Context, *pb.StatusRequest) (*pb.StatusResponse, error) {
-	return &pb.StatusResponse{Message: "hello world"}, nil
+	return &pb.StatusResponse{}, nil
 }
