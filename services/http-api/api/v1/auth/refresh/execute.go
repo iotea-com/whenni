@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -21,13 +22,11 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Get the refresh token and user from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get refresh token with user")
-	refreshToken, err := prisma.Client.AuthToken.FindUnique(
-		db.AuthToken.Token.Equals(request.Input.RefreshToken),
-	).With(db.AuthToken.User.Fetch()).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get refresh token with user")
+	refreshToken, err := sqlc.Queries.GetAuthTokenWithUser(dbCtx, request.Input.RefreshToken)
 
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "refresh_token_not_found"),
 				attribute.String("error.message", fmt.Sprintf("refresh token not found: %s", request.Input.RefreshToken)),
@@ -62,8 +61,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Generate a new access token
-	user := refreshToken.User()
-	accessToken, err := ioteahttputil.GenerateAccessToken(user.ID, config.VaultConf.JwtSecret)
+	accessToken, err := ioteahttputil.GenerateAccessToken(refreshToken.JoinedUserID, config.VaultConf.JwtSecret)
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "jwt_generation"),
@@ -87,11 +85,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Clear old refresh tokens from the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Clear old refresh tokens")
-	_, err = prisma.Client.AuthToken.FindMany(
-		db.AuthToken.UserID.Equals(refreshToken.User().ID),
-		db.AuthToken.Type.Equals(db.AuthTokenTypeRefresh),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Clear old refresh tokens")
+	err = sqlc.Queries.DeleteAuthTokensByUser(dbCtx, refreshToken.UserID, sqldb.AppAuthTokenTypeREFRESH)
 
 	if err != nil {
 		dbSpan.SetAttributes(
@@ -105,13 +100,14 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Store the new refresh token in the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Store new refresh token")
-	_, err = prisma.Client.AuthToken.CreateOne(
-		db.AuthToken.Token.Set(*newRefreshToken),
-		db.AuthToken.Type.Set(db.AuthTokenTypeRefresh),
-		db.AuthToken.ExpiresAt.Set(time.Now().Add(ioteahttputil.RefreshTokenExpiry).UTC()),
-		db.AuthToken.User.Link(db.User.ID.Equals(refreshToken.User().ID)),
-	).Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Store new refresh token")
+	_, err = sqlc.Queries.CreateAuthToken(
+		dbCtx,
+		refreshToken.UserID,
+		*newRefreshToken,
+		sqldb.AppAuthTokenTypeREFRESH,
+		time.Now().Add(ioteahttputil.RefreshTokenExpiry).UTC(),
+	)
 
 	if err != nil {
 		dbSpan.SetAttributes(

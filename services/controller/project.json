@@ -1,0 +1,119 @@
+{
+  "name": "controller",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "services/controller",
+  "projectType": "application",
+  "targets": {
+    "get-build-info": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "parallel": false,
+        "commands": [
+          "echo \"# Build environment variables\" > .env.build",
+          "echo \"INPUT_BUILD_ARGS=\\\"GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)\" >> .env.build",
+          "echo \"GIT_COMMIT=$(git rev-parse --short=7 HEAD)\" >> .env.build",
+          "if [ \"$(git status --porcelain | wc -l | xargs)\" -gt \"0\" ]; then echo \"GIT_DIRTY=yes\" >> .env.build; else echo \"GIT_DIRTY=no\" >> .env.build; fi",
+          "echo \"BUILD_CREATOR=$(git config user.name || echo \"unknown\")\\\"\" >> .env.build"
+        ]
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "local",
+      "dependsOn": [
+        "get-build-info"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}"
+      },
+      "configurations": {
+        "local": {
+          "command": "nx run controller:containerize -c local"
+        },
+        "staging": {
+          "command": "nx run controller:containerize -c staging"
+        },
+        "production": {
+          "command": "nx run controller:containerize -c production"
+        }
+      }
+    },
+    "push": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}"
+      },
+      "defaultConfiguration": "staging",
+      "configurations": {
+        "staging": {
+          "command": "docker push 378120902656.dkr.ecr.us-west-2.amazonaws.com/controller:staging"
+        },
+        "production": {
+          "command": "docker push 378120902656.dkr.ecr.us-west-2.amazonaws.com/controller:latest"
+        }
+      }
+    },
+    "containerize": {
+      "executor": "@nx-tools/nx-container:build",
+      "defaultConfiguration": "local",
+      "options": {
+        "context": "{workspaceRoot}",
+        "cwd": "{workspaceRoot}",
+        "file": "services/controller/deploy/development/Dockerfile",
+        "push": false,
+        "load": true
+      },
+      "configurations": {
+        "local": {
+          "tags": [
+            "iotea-controller:local"
+          ],
+          "platforms": [],
+          "file": "services/controller/deploy/development/Dockerfile"
+        },
+        "staging": {
+          "tags": [
+            "378120902656.dkr.ecr.us-west-2.amazonaws.com/controller:staging"
+          ],
+          "file": "services/controller/deploy/production/Dockerfile"
+        },
+        "production": {
+          "tags": [
+            "378120902656.dkr.ecr.us-west-2.amazonaws.com/controller:latest"
+          ],
+          "platforms": [
+            "linux/arm64"
+          ],
+          "file": "services/controller/deploy/production/Dockerfile"
+        }
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "development",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "air"
+      },
+      "configurations": {
+        "development": {
+          "command": "air"
+        }
+      }
+    },
+    "test": {
+      "outputs": [
+        "{projectRoot}/services/controller/coverage.out"
+      ],
+      "command": "ENVIRONMENT=test go test -v ./services/controller/... -cover -race -coverprofile=./services/controller/coverage.out"
+    },
+    "compile-openapi": {
+      "command": "swag init -g ./services/controller/main.go -ot yaml -o services/controller/api/static/docs"
+    }
+  },
+  "tags": []
+}

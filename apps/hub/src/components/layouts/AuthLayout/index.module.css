@@ -1,4 +1,0 @@
-.authFormWrapper {
-  @apply flex items-center justify-center h-full;
-  background: linear-gradient(-15deg, #063712, #34dd4c);
-}

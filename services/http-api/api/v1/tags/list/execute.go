@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -18,35 +17,11 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// List tags in space (based on the filter)
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "List tags in space")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "List tags in space")
 
-	tags, err := prisma.Client.Tag.FindMany(
-		db.Tag.SpaceID.Equals(request.Input.SpaceId),
-	).With(
-		db.Tag.Applications.Fetch().With(
-			db.AppliedTag.Thing.Fetch(),
-			db.AppliedTag.Channel.Fetch(),
-			db.AppliedTag.Model.Fetch(),
-		),
-	).OrderBy(db.Tag.UpdatedAt.Order(db.DESC)).
-		Exec(dbCtx)
+	tags, err := sqlc.Queries.ListTags(dbCtx, request.Input.SpaceId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
-			request.Span.SetAttributes(
-				attribute.String("error.type", "http_request"),
-				attribute.String("error.message", fmt.Sprintf("no tags found in space with ID %s", request.Input.SpaceId)),
-			)
-			dbSpan.End()
-
-			output := Output{
-				Tags: nil,
-			}
-
-			return &output, nil
-		}
-
 		dbSpan.End()
-
 		return nil, err
 	}
 
@@ -57,50 +32,31 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Group applied tags by tag
-	tagMap := make(map[string]ExpandedTag)
+	tagMap := make(map[string]ExpandedTag, len(tags))
 	for _, tag := range tags {
-		// Create new tag in map if necessary
-		_, tagExists := tagMap[tag.ID]
-		if !tagExists {
-			tagMap[tag.ID] = ExpandedTag{
-				Tag:      &tag,
-				Things:   []string{},
-				Channels: []string{},
-				Models:   []string{},
-			}
+		expandedTag := ExpandedTag{
+			Tag:      tag,
+			Things:   []string{},
+			Channels: []string{},
+			Models:   []string{},
 		}
 
-		for _, appliedTag := range tag.Applications() {
-			// Add the thing ID, channel ID, or model ID to the response
-			if thing, ok := appliedTag.Thing(); ok {
-				t := tagMap[tag.ID]
-				t.Things = append(t.Things, thing.ID)
-				tagMap[tag.ID] = t
+		appliedTags, listAppliedTagsErr := sqlc.Queries.ListAppliedTagsByTag(dbCtx, tag.ID)
+		if listAppliedTagsErr != nil {
+			return nil, listAppliedTagsErr
+		}
+		for _, appliedTag := range appliedTags {
+			if appliedTag.ThingID != nil {
+				expandedTag.Things = append(expandedTag.Things, *appliedTag.ThingID)
 			}
-			if channel, ok := appliedTag.Channel(); ok {
-				t := tagMap[tag.ID]
-				t.Channels = append(t.Channels, channel.ID)
-				tagMap[tag.ID] = t
+			if appliedTag.ChannelID != nil {
+				expandedTag.Channels = append(expandedTag.Channels, *appliedTag.ChannelID)
 			}
-			if model, ok := appliedTag.Model(); ok {
-				t := tagMap[tag.ID]
-				t.Models = append(t.Models, model.ID)
-				tagMap[tag.ID] = t
+			if appliedTag.ModelID != nil {
+				expandedTag.Models = append(expandedTag.Models, *appliedTag.ModelID)
 			}
 		}
-
-		// // Remove tags that do not apply to the current category
-		// for tagID, tag := range tagMap {
-		// 	if request.Input.Category == "things" && len(tag.Things) <= 0 {
-		// 		delete(tagMap, tagID)
-		// 	}
-		// 	if request.Input.Category == "channels" && len(tag.Channels) <= 0 {
-		// 		delete(tagMap, tagID)
-		// 	}
-		// 	if request.Input.Category == "models" && len(tag.Models) <= 0 {
-		// 		delete(tagMap, tagID)
-		// 	}
-		// }
+		tagMap[tag.ID] = expandedTag
 	}
 
 	output := &Output{

@@ -5,19 +5,17 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 )
 
 func ValidateSpaceById(ctx *fiber.Ctx) error {
 	spaceId := ctx.Params("spaceId")
 
 	dbCtx := context.Background()
-	_, err := prisma.Client.Space.FindUnique(
-		db.Space.ID.Equals(spaceId),
-	).Exec(dbCtx)
+	_, err := sqlc.Queries.GetSpace(dbCtx, spaceId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			errorResponse := ioteahttp.NewErrorResponse([]any{
 				"space not found",
 			})

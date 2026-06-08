@@ -16,7 +16,6 @@ import {
   riShareCircleLine,
 } from '@mwarnerdotme/react-remixicon'
 import { FC, useEffect, useMemo, useState } from 'react'
-import styles from './index.module.scss'
 
 type icon =
   | 'input'
@@ -90,16 +89,22 @@ const NodeCard: FC<Props> = ({
 
   if (!muted) {
     return (
-      <div style={{ height: 75, width: 75 }} className={styles.nodeCard}>
-        <RemixIcon icon={icon} size="2x" className={styles.icon} />
+      <div
+        style={{ height: 75, width: 75 }}
+        className="flex flex-col items-center justify-center bg-gray-100 border border-green-500 rounded-lg transition select-none shadow cursor-pointer"
+      >
+        <RemixIcon icon={icon} size="2x" className="text-gray-800" />
         <p className="text-gray-400 text-xs">{caption}</p>
       </div>
     )
   }
 
   return (
-    <div style={{ height: 75, width: 75 }} className={`${styles.nodeCard} ${styles.muted}`}>
-      <RemixIcon icon={icon} size="2x" className={styles.icon} />
+    <div
+      style={{ height: 75, width: 75 }}
+      className="flex flex-col items-center justify-center bg-gray-100 border border-gray-200 shadow-none transition select-none shadow cursor-pointer"
+    >
+      <RemixIcon icon={icon} size="2x" className="text-gray-500" />
       <p className="text-gray-500 text-xs">{caption}</p>
     </div>
   )

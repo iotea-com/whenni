@@ -5,23 +5,21 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/libs/secrets"
-	"github.com/iotea-com/iotea/prisma/db"
 )
 
 func resolveAwsSNSDependency(
 	env environment.Env,
-	snsThing *db.ThingModel,
+	snsThing sqldb.AppThing,
 	nodeConfig map[string]any,
 	key string,
-	prismaClient *db.PrismaClient,
 	secretsClient secrets.SecretsClient,
 	spaceId string,
 ) error {
 	_ = env
-	_ = prismaClient
 
 	// Unmarshal the thing so that we can process it
 	var awsSNS things.AwsSNS
@@ -47,15 +45,13 @@ func resolveAwsSNSDependency(
 
 func resolveAwsSESDependency(
 	env environment.Env,
-	sesThing *db.ThingModel,
+	sesThing sqldb.AppThing,
 	nodeConfig map[string]any,
 	key string,
-	prismaClient *db.PrismaClient,
 	secretsClient secrets.SecretsClient,
 	spaceId string,
 ) error {
 	_ = env
-	_ = prismaClient
 
 	// Unmarshal the thing so that we can process it
 	var awsSES things.AwsSES
@@ -81,15 +77,13 @@ func resolveAwsSESDependency(
 
 func resolveSendgridClientDependency(
 	env environment.Env,
-	sendgridClientThing *db.ThingModel,
+	sendgridClientThing sqldb.AppThing,
 	nodeConfig map[string]any,
 	key string,
-	prismaClient *db.PrismaClient,
 	secretsClient secrets.SecretsClient,
 	spaceId string,
 ) error {
 	_ = env
-	_ = prismaClient
 
 	// Unmarshal the thing so that we can process it
 	var sendgridClient things.SendgridClient

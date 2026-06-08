@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -21,12 +22,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Retrieve the verification token from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Retrieve verification token")
-	verificationToken, err := prisma.Client.AuthToken.FindUnique(
-		db.AuthToken.Token.Equals(request.Input.VerificationToken),
-	).With(db.AuthToken.User.Fetch()).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Retrieve verification token")
+	verificationToken, err := sqlc.Queries.GetAuthTokenWithUser(dbCtx, request.Input.VerificationToken)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "verification_token_not_found"),
 				attribute.String("error.message", fmt.Sprintf("verification token not found: %s", request.Input.VerificationToken)),
@@ -61,12 +60,9 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Verify user email if not verified
-	_, isEmailVerified := verificationToken.User().EmailVerified()
-	if !isEmailVerified {
-		dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Set user email as verified")
-		_, err := prisma.Client.User.FindUnique(
-			db.User.ID.Equals(verificationToken.User().ID),
-		).Update(db.User.EmailVerified.Set(time.Now().UTC())).Exec(dbCtx)
+	if !verificationToken.JoinedUserEmailVerified.Valid {
+		dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Set user email as verified")
+		_, err := sqlc.Queries.VerifyUserEmail(dbCtx, verificationToken.JoinedUserID)
 		if err != nil {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
@@ -82,7 +78,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Create a new access token
-	accessToken, err := ioteahttputil.GenerateAccessToken(verificationToken.User().ID, config.VaultConf.JwtSecret)
+	accessToken, err := ioteahttputil.GenerateAccessToken(verificationToken.JoinedUserID, config.VaultConf.JwtSecret)
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "jwt_token_generation"),
@@ -111,11 +107,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Clear old refresh tokens from the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Clear old refresh tokens")
-	_, err = prisma.Client.AuthToken.FindMany(
-		db.AuthToken.UserID.Equals(verificationToken.User().ID),
-		db.AuthToken.Type.Equals(db.AuthTokenTypeRefresh),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Clear old refresh tokens")
+	err = sqlc.Queries.DeleteAuthTokensByUser(dbCtx, verificationToken.UserID, sqldb.AppAuthTokenTypeREFRESH)
 
 	if err != nil {
 		dbSpan.SetAttributes(
@@ -131,13 +124,14 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Store the refresh token in the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Store refresh token")
-	_, err = prisma.Client.AuthToken.CreateOne(
-		db.AuthToken.Token.Set(*refreshToken),
-		db.AuthToken.Type.Set(db.AuthTokenTypeRefresh),
-		db.AuthToken.ExpiresAt.Set(time.Now().Add(ioteahttputil.RefreshTokenExpiry).UTC()),
-		db.AuthToken.User.Link(db.User.ID.Equals(verificationToken.User().ID)),
-	).Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Store refresh token")
+	_, err = sqlc.Queries.CreateAuthToken(
+		dbCtx,
+		verificationToken.UserID,
+		*refreshToken,
+		sqldb.AppAuthTokenTypeREFRESH,
+		time.Now().Add(ioteahttputil.RefreshTokenExpiry).UTC(),
+	)
 
 	if err != nil {
 		dbSpan.SetAttributes(
@@ -153,11 +147,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Remove all verification tokens for the user from the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Remove verification token")
-	_, err = prisma.Client.AuthToken.FindMany(
-		db.AuthToken.User.Where(db.User.ID.Equals(verificationToken.User().ID)),
-		db.AuthToken.Type.Equals(db.AuthTokenTypeMagicLink),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Remove verification token")
+	err = sqlc.Queries.DeleteAuthTokensByUser(dbCtx, verificationToken.UserID, sqldb.AppAuthTokenTypeMAGICLINK)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),

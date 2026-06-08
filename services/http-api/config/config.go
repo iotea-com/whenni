@@ -7,13 +7,14 @@ import (
 	"strings"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
+	sqlcdb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/libs/legacy/engine/observability"
 	"github.com/iotea-com/iotea/libs/secrets"
-	"github.com/iotea-com/iotea/prisma/db"
 	clickhouseService "github.com/iotea-com/iotea/services/http-api/services/clickhouse"
-	postgresService "github.com/iotea-com/iotea/services/http-api/services/prisma"
 	ioteaSmtp "github.com/iotea-com/iotea/services/http-api/services/smtp"
+	sqlcService "github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
 )
@@ -47,21 +48,15 @@ type VaultConfig struct {
 	// API server port
 	ApiPort int `mapstructure:"API_SERVER_PORT"`
 
-	// Orchestrator gRPC end point
-	EngineGrpcServiceUrl string `mapstructure:"ENGINE_GRPC_SERVER_URL"`
+	// Controller gRPC end point
+	ControllerGrpcServiceUrl string `mapstructure:"CONTROLLER_GRPC_SERVER_URL"`
 
 	// Database
 	DatabaseUrl string `mapstructure:"DATABASE_URL"`
 	JwtSecret   string `mapstructure:"JWT_SECRET"`
 
 	// Observability
-	PlatformOtelCollectorEndpoint string `mapstructure:"PLATFORM_OTEL_COLLECTOR_ENDPOINT"`
-
-	// Dev Environments
-	DevenvGrpcServerUrl string `mapstructure:"DEVENV_GRPC_SERVER_URL"`
-
-	// Runtime Metrics Collector
-	CollectorGrpcRuntimeUrl string `mapstructure:"COLLECTOR_GRPC_RUNTIME_URL"`
+	OtelCollectorEndpoint string `mapstructure:"OTEL_COLLECTOR_ENDPOINT"`
 
 	// Clickhouse
 	ClickhouseHost     string `mapstructure:"CLICKHOUSE_HOST"`
@@ -102,7 +97,7 @@ func load(env environment.Env) (envConfig *EnvConfig, vaultConfig *VaultConfig) 
 			JwtSecret: "super-secret-jwt-token-with-at-least-32-characters-long",
 		}
 		return
-	} else if env == environment.Development || env == environment.Local {
+	} else if env == environment.Development {
 		viper.BindEnv("API_VAULT_USERNAME")
 		viper.BindEnv("API_VAULT_PASSWORD")
 
@@ -118,7 +113,7 @@ func load(env environment.Env) (envConfig *EnvConfig, vaultConfig *VaultConfig) 
 		if err != nil {
 			panic(fmt.Sprintf("Could not connect to Vault, %v", err))
 		}
-	} else if env == environment.Staging || env == environment.Production {
+	} else if env == environment.Production {
 		// In a production setup, Vault is setup to "inject" a token into
 		// the container this application is running on, so we don't need
 		// to authenticate
@@ -162,16 +157,12 @@ func load(env environment.Env) (envConfig *EnvConfig, vaultConfig *VaultConfig) 
 	// so we don't need to do this.
 	if env == environment.Development {
 		// Strip the port from the engine grpc server url
-		engineGrpcServerUrl := strings.Split(vaultConfig.EngineGrpcServiceUrl, ":")
-		vaultConfig.EngineGrpcServiceUrl = fmt.Sprintf("127.0.0.1:%s", engineGrpcServerUrl[1])
+		controllerGrpcServerUrl := strings.Split(vaultConfig.ControllerGrpcServiceUrl, ":")
+		vaultConfig.ControllerGrpcServiceUrl = fmt.Sprintf("127.0.0.1:%s", controllerGrpcServerUrl[1])
 	}
 
-	// There's a bug where the prisma client only picks up the DATABASE_URL
-	// environment variable if it's set before the prisma client is instantiated.
-	// So we set it here.
-	os.Setenv("DATABASE_URL", vaultConfig.DatabaseUrl)
-
 	// Initialize the DB client
+	fmt.Printf("Initializing database client with URL: %s\n", vaultConfig.DatabaseUrl)
 	err = initDbClient(vaultConfig.DatabaseUrl)
 	if err != nil {
 		panic(fmt.Sprintf("Error initializing database client: %v", err))
@@ -204,54 +195,53 @@ func loadVaultSecrets() (*VaultConfig, error) {
 
 	// Safely assign each value, with a fallback to empty string or handle nil cases
 	vaultConfig := &VaultConfig{
-		LogLevel:                      SecretsClient.GetStringFromMap(secrets, "LOG_LEVEL"),
-		ApiPort:                       SecretsClient.GetIntFromMap(secrets, "API_SERVER_PORT"),
-		EngineGrpcServiceUrl:          SecretsClient.GetStringFromMap(secrets, "ENGINE_GRPC_SERVER_URL"),
-		DatabaseUrl:                   SecretsClient.GetStringFromMap(secrets, "DATABASE_URL"),
-		JwtSecret:                     SecretsClient.GetStringFromMap(secrets, "JWT_SECRET"),
-		PlatformOtelCollectorEndpoint: SecretsClient.GetStringFromMap(secrets, "PLATFORM_OTEL_COLLECTOR_ENDPOINT"),
-		CollectorGrpcRuntimeUrl:       SecretsClient.GetStringFromMap(secrets, "COLLECTOR_GRPC_RUNTIME_URL"),
-		DevenvGrpcServerUrl:           SecretsClient.GetStringFromMap(secrets, "DEVENV_GRPC_SERVER_URL"),
-		ClickhouseHost:                SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_HOST"),
-		ClickhousePort:                SecretsClient.GetIntFromMap(secrets, "CLICKHOUSE_PORT"),
-		ClickhouseUsername:            SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_USERNAME"),
-		ClickhousePassword:            SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_PASSWORD"),
-		ClickhouseDatabase:            SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_DATABASE"),
-		RedisHost:                     SecretsClient.GetStringFromMap(secrets, "REDIS_HOST"),
-		RedisPort:                     SecretsClient.GetIntFromMap(secrets, "REDIS_PORT"),
-		RedisUsername:                 SecretsClient.GetStringFromMap(secrets, "REDIS_USERNAME"),
-		RedisPassword:                 SecretsClient.GetStringFromMap(secrets, "REDIS_PASSWORD"),
-		SmtpHost:                      SecretsClient.GetStringFromMap(secrets, "SMTP_HOST"),
-		SmtpPort:                      SecretsClient.GetIntFromMap(secrets, "SMTP_PORT"),
-		SmtpUser:                      SecretsClient.GetStringFromMap(secrets, "SMTP_USER"),
-		SmtpPassword:                  SecretsClient.GetStringFromMap(secrets, "SMTP_PASSWORD"),
+		LogLevel:                 SecretsClient.GetStringFromMap(secrets, "LOG_LEVEL"),
+		ApiPort:                  SecretsClient.GetIntFromMap(secrets, "API_SERVER_PORT"),
+		ControllerGrpcServiceUrl: SecretsClient.GetStringFromMap(secrets, "CONTROLLER_GRPC_SERVER_URL"),
+		DatabaseUrl:              SecretsClient.GetStringFromMap(secrets, "DATABASE_URL"),
+		JwtSecret:                SecretsClient.GetStringFromMap(secrets, "JWT_SECRET"),
+		OtelCollectorEndpoint:    SecretsClient.GetStringFromMap(secrets, "OTEL_COLLECTOR_ENDPOINT"),
+		ClickhouseHost:           SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_HOST"),
+		ClickhousePort:           SecretsClient.GetIntFromMap(secrets, "CLICKHOUSE_PORT"),
+		ClickhouseUsername:       SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_USERNAME"),
+		ClickhousePassword:       SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_PASSWORD"),
+		ClickhouseDatabase:       SecretsClient.GetStringFromMap(secrets, "CLICKHOUSE_DATABASE"),
+		RedisHost:                SecretsClient.GetStringFromMap(secrets, "REDIS_HOST"),
+		RedisPort:                SecretsClient.GetIntFromMap(secrets, "REDIS_PORT"),
+		RedisUsername:            SecretsClient.GetStringFromMap(secrets, "REDIS_USERNAME"),
+		RedisPassword:            SecretsClient.GetStringFromMap(secrets, "REDIS_PASSWORD"),
+		SmtpHost:                 SecretsClient.GetStringFromMap(secrets, "SMTP_HOST"),
+		SmtpPort:                 SecretsClient.GetIntFromMap(secrets, "SMTP_PORT"),
+		SmtpUser:                 SecretsClient.GetStringFromMap(secrets, "SMTP_USER"),
+		SmtpPassword:             SecretsClient.GetStringFromMap(secrets, "SMTP_PASSWORD"),
 	}
 
 	return vaultConfig, nil
 }
 
 func initDbClient(databaseUrl string) error {
-	// If running 'nx test', use a default mock client
-	environment := os.Getenv("ENVIRONMENT")
-	if environment == "test" {
-		client, _, _ := db.NewMock()
-		postgresService.Client = client
-		return nil
-	}
-
-	// Init prisma client
-	client := db.NewClient()
+	// TODO: replace deprecated prisma mock with sqlc mock
+	// // If running 'nx test', use a default mock client
+	// environment := os.Getenv("ENVIRONMENT")
+	// if environment == "test" {
+	// 	client, _, _ := db.NewMock()
+	// 	sqlcService.Client = client
+	// 	return nil
+	// }
 
 	// Connect
-	if err := client.Prisma.Connect(); err != nil {
-		return fmt.Errorf("could not connect to the database: %s", err)
+	pool, err := pgxpool.New(context.Background(), databaseUrl)
+	if err != nil {
+		return fmt.Errorf("could not create pgx pool: %s", err)
 	}
 
-	postgresService.Client = client
+	sqlcService.Pool = pool
+	sqlcService.Queries = sqlcdb.New(pool)
 	return nil
 }
 
 func initClickhouseClient(databaseHost string, databasePort int, databaseUsername string, databasePassword string, databaseName string) error {
+	// TODO: mock clickhouse connection
 	// If running 'nx test', use a default mock client
 	// environment := os.Getenv("ENVIRONMENT")
 	// if environment == "test" {

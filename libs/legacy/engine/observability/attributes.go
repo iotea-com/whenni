@@ -9,7 +9,7 @@ import (
 
 	"runtime"
 
-	"github.com/iotea-com/iotea/libs/engine/environment"
+	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/rs/zerolog/log"
 
 	"github.com/docker/docker/client"
@@ -52,11 +52,7 @@ func setAttributes(env environment.Env, resourceAttr ResourceAttributes) []attri
 		if err := setContainerAttributes(&attrs); err != nil {
 			log.Warn().Msgf("Failed to set container attributes: %v", err)
 		}
-	case environment.Local:
-		if err := setContainerAttributes(&attrs); err != nil {
-			log.Warn().Msgf("Failed to set container attributes: %v", err)
-		}
-	case environment.Staging, environment.Production:
+	case environment.Production:
 		// Try Kubernetes first
 		if err := setK8sAttributes(&attrs); err != nil {
 			log.Warn().Msgf("Failed to set Kubernetes attributes: %v", err)

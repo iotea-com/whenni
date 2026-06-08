@@ -1,26 +1,26 @@
 package resolve
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/libs/secrets"
-	"github.com/iotea-com/iotea/prisma/db"
 )
 
 func resolveKafkaProducerDependency(
 	env environment.Env,
-	producerThing *db.ThingModel,
+	producerThing sqldb.AppThing,
 	nodeConfig map[string]any,
 	key string,
-	prismaClient *db.PrismaClient,
 	secretsClient secrets.SecretsClient,
 	spaceId string,
 ) error {
 	_ = env
+	_ = nodeConfig
+	_ = key
 	_ = secretsClient
 	_ = spaceId
 
@@ -37,38 +37,20 @@ func resolveKafkaProducerDependency(
 		return fmt.Errorf("invalid cluster configuration in database: expected a string but got %T", producer.Cluster)
 	}
 
-	// Fetch the cluster thing from the database
-	clusterThing, err := prismaClient.Thing.FindUnique(db.Thing.ID.Equals(clusterId)).Exec(context.Background())
-	if err != nil {
-		return fmt.Errorf("an error ocurred whilst fetching Kafka cluster thing \"%v\" from database: %v", clusterId, err)
-	}
-
-	// Now we have to resolve the cluster
-	var cluster things.KafkaCluster
-	err = json.Unmarshal(clusterThing.Attributes, &cluster)
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal config: %v", err)
-	}
-
-	// Set the client's cluster to the fetched cluster attributes
-	producer.Cluster = cluster
-
-	// Set the unpacked client attributes to the right field in the node configuration
-	nodeConfig[key] = producer
-
-	return nil
+	return fmt.Errorf("resolving Kafka cluster thing %q requires database access: pending sqlc migration", clusterId)
 }
 
 func resolveKafkaConsumerDependency(
 	env environment.Env,
-	producerThing *db.ThingModel,
+	producerThing sqldb.AppThing,
 	nodeConfig map[string]any,
 	key string,
-	prismaClient *db.PrismaClient,
 	secretsClient secrets.SecretsClient,
 	spaceId string,
 ) error {
 	_ = env
+	_ = nodeConfig
+	_ = key
 	_ = secretsClient
 	_ = spaceId
 
@@ -85,38 +67,20 @@ func resolveKafkaConsumerDependency(
 		return fmt.Errorf("invalid cluster configuration in database: expected a string but got %T", consumer.Cluster)
 	}
 
-	// Fetch the cluster thing from the database
-	clusterThing, err := prismaClient.Thing.FindUnique(db.Thing.ID.Equals(clusterId)).Exec(context.Background())
-	if err != nil {
-		return fmt.Errorf("an error ocurred whilst fetching Kafka cluster thing \"%v\" from database: %v", clusterId, err)
-	}
-
-	// Now we have to resolve the cluster
-	var cluster things.KafkaCluster
-	err = json.Unmarshal(clusterThing.Attributes, &cluster)
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal config: %v", err)
-	}
-
-	// Set the client's cluster to the fetched cluster attributes
-	consumer.Cluster = cluster
-
-	// Set the unpacked client attributes to the right field in the node configuration
-	nodeConfig[key] = consumer
-
-	return nil
+	return fmt.Errorf("resolving Kafka cluster thing %q requires database access: pending sqlc migration", clusterId)
 }
 
 func resolveNatsClientDependency(
 	env environment.Env,
-	clientThing *db.ThingModel,
+	clientThing sqldb.AppThing,
 	nodeConfig map[string]any,
 	key string,
-	prismaClient *db.PrismaClient,
 	secretsClient secrets.SecretsClient,
 	spaceId string,
 ) error {
 	_ = env
+	_ = nodeConfig
+	_ = key
 	_ = secretsClient
 	_ = spaceId
 
@@ -133,24 +97,5 @@ func resolveNatsClientDependency(
 		return fmt.Errorf("invalid cluster configuration in database: expected a string but got %T", client.Server)
 	}
 
-	// Fetch the cluster thing from the database
-	serverThing, err := prismaClient.Thing.FindUnique(db.Thing.ID.Equals(serverId)).Exec(context.Background())
-	if err != nil {
-		return fmt.Errorf("an error ocurred whilst fetching NATS server thing \"%v\" from database: %v", serverId, err)
-	}
-
-	// Now we have to resolve the cluster
-	var server things.NatsServer
-	err = json.Unmarshal(serverThing.Attributes, &server)
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal config: %v", err)
-	}
-
-	// Set the client's server to the fetched broker attributes
-	client.Server = server
-
-	// Set the unpacked client attributes to the right field in the node configuration
-	nodeConfig[key] = client
-
-	return nil
+	return fmt.Errorf("resolving NATS server thing %q requires database access: pending sqlc migration", serverId)
 }

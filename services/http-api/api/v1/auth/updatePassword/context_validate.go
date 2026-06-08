@@ -3,7 +3,6 @@ package updatePassword
 import (
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -13,11 +12,10 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 	userId := request.FiberContext.Locals("user_id").(string)
 
 	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
-		BearerToken:  request.Input.BearerToken,
-		PrismaClient: prisma.Client,
-		JwtSecret:    config.VaultConf.JwtSecret,
-		ScopeId:      userId,
-		Unprotected:  true,
+		BearerToken: request.Input.BearerToken,
+		JwtSecret:   config.VaultConf.JwtSecret,
+		ScopeId:     userId,
+		Unprotected: true,
 	}
 
 	err := request.Authorize(authorizeRequestParams)

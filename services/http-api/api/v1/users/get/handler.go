@@ -2,7 +2,6 @@ package get
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/prisma/db"
 )
 
 type Input struct {
@@ -10,7 +9,7 @@ type Input struct {
 }
 
 type Output struct {
-	User *db.UserModel
+	User *User
 }
 
 // @Summary Get a user

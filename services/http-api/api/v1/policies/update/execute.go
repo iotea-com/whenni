@@ -6,8 +6,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -18,15 +18,24 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	// Store in the database
 	policyJson, _ := json.Marshal(request.Input.Policy)
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Update permission set")
-	certificate, err := prisma.Client.Certificate.FindUnique(
-		db.Certificate.ID.Equals(request.Input.CertificateId),
-	).Update(
-		db.Certificate.Policy.Set(policyJson),
-		db.Certificate.Revoke.Set(request.Input.Revoke),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Update permission set")
+	certificate, err := sqlc.Queries.UpdatePolicy(
+		dbCtx,
+		request.Input.CertificateId,
+		request.Input.SpaceId,
+		policyJson,
+		request.Input.Revoke,
+	)
 
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			dbSpan.SetAttributes(
+				attribute.String("error.type", "database"),
+				attribute.String("error.message", fmt.Sprintf("no certificate found in space with ID %s", request.Input.SpaceId)),
+			)
+			dbSpan.End()
+			return nil, fiber.NewError(fiber.StatusBadRequest)
+		}
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error updating permission set in the database: %s", err)),
@@ -38,7 +47,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Certificate: certificate,
+		Certificate: &certificate,
 	}
 
 	return &output, nil

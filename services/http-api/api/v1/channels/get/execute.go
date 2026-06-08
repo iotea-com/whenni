@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -18,12 +18,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
 	)
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get channel")
-	channel, err := prisma.Client.Channel.FindUnique(
-		db.Channel.ID.Equals(request.Input.ChannelId),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get channel")
+	channel, err := sqlc.Queries.GetChannel(dbCtx, request.Input.ChannelId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			request.Span.SetAttributes(
 				attribute.String("error.type", "http_request"),
 				attribute.String("error.message", fmt.Sprintf("no channel found with ID %s", request.Input.ChannelId)),
@@ -45,7 +43,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Channel: channel,
+		Channel: &channel,
 	}
 
 	return &output, nil

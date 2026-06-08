@@ -3,7 +3,6 @@ package organizationsCreate
 import (
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -11,11 +10,10 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
 	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
-		BearerToken:  request.Input.BearerToken,
-		PrismaClient: prisma.Client,
-		JwtSecret:    config.VaultConf.JwtSecret,
-		ScopeId:      "user",
-		Unprotected:  true,
+		BearerToken: request.Input.BearerToken,
+		JwtSecret:   config.VaultConf.JwtSecret,
+		ScopeId:     "user",
+		Unprotected: true,
 	}
 
 	err := request.Authorize(authorizeRequestParams)

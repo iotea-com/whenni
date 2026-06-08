@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/docker/docker/client"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/libs/secrets"
-	"github.com/iotea-com/iotea/prisma/db"
 )
 
 const (
@@ -24,14 +24,12 @@ const (
 
 func resolveHttpServerDependency(
 	env environment.Env,
-	thing *db.ThingModel,
+	thing sqldb.AppThing,
 	nodeConfig map[string]any,
 	key string,
-	prismaClient *db.PrismaClient,
 	secretsClient secrets.SecretsClient,
 	spaceId string,
 ) error {
-	_ = prismaClient
 	_ = secretsClient
 	_ = spaceId
 

@@ -5,8 +5,7 @@ import (
 
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -19,7 +18,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Create tag entry
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert tag")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert tag")
 	tagId, err := id.Generator.NewTagId()
 	if err != nil {
 		request.Span.SetAttributes(
@@ -29,15 +28,14 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, err
 	}
 
-	tag, err := prisma.Client.Tag.CreateOne(
-		db.Tag.Name.Set(request.Input.Name),
-		db.Tag.Space.Link(
-			db.Space.ID.Equals(request.Input.SpaceId),
-		),
-		db.Tag.CreatedBy.Set(request.GetActorId()),
-		db.Tag.UpdatedBy.Set(request.GetActorId()),
-		db.Tag.ID.Set(*tagId),
-	).Exec(dbCtx)
+	tag, err := sqlc.Queries.CreateTag(
+		dbCtx,
+		*tagId,
+		request.Input.Name,
+		request.Input.SpaceId,
+		request.GetActorId(),
+		request.GetActorId(),
+	)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),

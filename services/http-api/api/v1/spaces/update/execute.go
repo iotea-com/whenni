@@ -5,9 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -18,19 +17,15 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.Space.ID", request.Input.Space.ID),
 	)
 
-	now := util.GetCurrentTime()
-
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Update space")
-	space, err := prisma.Client.Space.FindUnique(
-		db.Space.ID.Equals(request.Input.Space.ID),
-	).Update(
-		db.Space.Name.Set(request.Input.Space.Name),
-		// TODO: add user ID to input and set updatedBy
-		// db.Space.UpdatedBy.Set(request.Input.Space.UserId),
-		db.Space.UpdatedAt.Set(now),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Update space")
+	space, err := sqlc.Queries.UpdateSpace(
+		dbCtx,
+		request.Input.Space.ID,
+		request.Input.Space.Name,
+		request.GetActorId(),
+	)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
 				attribute.String("error.message", fmt.Sprintf("no space found with ID %s", request.Input.Space.ID)),
@@ -51,7 +46,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Space: space,
+		Space: &space,
 	}
 
 	return &output, nil

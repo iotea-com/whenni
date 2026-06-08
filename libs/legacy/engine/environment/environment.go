@@ -13,29 +13,13 @@ const (
 type Env string
 
 const (
-	// Test is the environment for testing, where the application is running in a
-	// test environment, mock clients are used, and the application is not actually
-	// running.
+	// Environment for testing with mock services, stubs, and fixtures.
 	Test Env = "test"
 
-	// Development is the environment for development, where all the rules engine
-	// services are running in a single container instance, and leverage the "air"
-	// tool to automatically restart the container when code changes are detected.
+	// Environment for local development.
 	Development Env = "development"
 
-	// Local is the environment for local testing, after code changes are
-	// made. This will spin up individual containers for each service, and a new dedicated
-	// runtime container will be spun up for each channel.
-	Local Env = "local"
-
-	// Staging is the environment for staging, where the rules engine is
-	// deployed to a kubernetes cluster, and each channel is deployed as a separate
-	// pod.
-	Staging Env = "staging"
-
-	// Production is the environment for production, where the rules engine is
-	// deployed to a kubernetes cluster, and each channel is deployed as a separate
-	// pod.
+	// Environment for built container images deployed to a k8s cluster.
 	Production Env = "production"
 )
 

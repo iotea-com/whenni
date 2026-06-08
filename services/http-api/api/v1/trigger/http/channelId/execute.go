@@ -12,8 +12,8 @@ import (
 	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/resolve"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -26,12 +26,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// get channel configuration
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get channel")
-	c, err := prisma.Client.Channel.FindUnique(
-		db.Channel.ID.Equals(request.Input.ChannelId),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get channel")
+	c, err := sqlc.Queries.GetChannel(dbCtx, request.Input.ChannelId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			err := fmt.Sprintf("no channel found with ID %s", request.Input.ChannelId)
 			request.Span.SetAttributes(
 				attribute.String("error.type", "database"),
@@ -83,8 +81,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	// find all dependenices
 	thingsFindConfig := resolve.FindConfig{
-		Metadata:     &sourceNode.Metadata,
-		PrismaClient: prisma.Client,
+		Metadata: &sourceNode.Metadata,
 	}
 
 	dependencies, err := resolve.FindDependenciesInNode(&thingsFindConfig)

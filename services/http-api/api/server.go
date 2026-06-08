@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,14 +10,12 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/swagger"
 	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
+	"github.com/iotea-com/iotea/libs/telemetry"
 	"github.com/iotea-com/iotea/services/http-api/api/healthcheck"
 	v1 "github.com/iotea-com/iotea/services/http-api/api/v1"
 	"github.com/iotea-com/iotea/services/http-api/config"
 	clickhouseService "github.com/iotea-com/iotea/services/http-api/services/clickhouse"
-	postgresService "github.com/iotea-com/iotea/services/http-api/services/prisma"
-	"go.opentelemetry.io/otel/metric/noop"
-
-	otelfiber "github.com/gofiber/contrib/otelfiber/v2"
+	sqlcService "github.com/iotea-com/iotea/services/http-api/services/sqlc"
 )
 
 const (
@@ -36,7 +33,7 @@ func New() *Api {
 		switch config.Env {
 		case environment.Development:
 			return false
-		case environment.Local, environment.Production, environment.Staging:
+		case environment.Production:
 			return true
 		default:
 			return false
@@ -44,7 +41,7 @@ func New() *Api {
 	})()
 
 	httpServer := fiber.New(fiber.Config{
-		AppName:           "iotea-http-api",
+		AppName:           "http-api",
 		Prefork:           prefork,
 		ServerHeader:      "Fiber",
 		EnablePrintRoutes: true,
@@ -53,13 +50,7 @@ func New() *Api {
 	// Add middleware
 	httpServer.Use(recover.New())
 	httpServer.Use(cors.New())
-	httpServer.Use(otelfiber.Middleware(
-		otelfiber.WithNext(func(c *fiber.Ctx) bool {
-			// Skip metrics for health checks and other noisy endpoints
-			return strings.HasPrefix(c.Path(), "/healthcheck")
-		}),
-		otelfiber.WithMeterProvider(noop.NewMeterProvider()), // Disable metrics collection
-	))
+	httpServer.Use(telemetry.TracerMiddleware())
 
 	// Register core API groups
 	healthcheck.Register(httpServer)
@@ -95,8 +86,9 @@ func (a *Api) Shutdown() (errors []error) {
 	}
 
 	// Cleanup all the objects initialized in config.go
-	if err := postgresService.Client.Disconnect(); err != nil {
-		errors = append(errors, fmt.Errorf("could not disconnect from the database: %v", err))
+
+	if sqlcService.Pool != nil {
+		sqlcService.Pool.Close()
 	}
 
 	if err := clickhouseService.Conn.Close(); err != nil {

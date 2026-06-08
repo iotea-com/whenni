@@ -1,4 +1,3 @@
-import styles from './index.module.css'
 import getAccessToken, { getSession } from '@iotea/hub/util/getAccessToken'
 import { redirect } from 'next/navigation'
 // import CallbackUrlRedirect from './CallbackUrlRedirect'
@@ -14,7 +13,12 @@ const AuthLayout = async ({ children }) => {
   return (
     <div className="h-screen w-screen">
       {/* <CallbackUrlRedirect session={session} /> */}
-      <div className={styles.authFormWrapper}>{children}</div>
+      <div
+        className="flex items-center justify-center h-full"
+        style={{ background: 'linear-gradient(-15deg, #063712, #34dd4c)' }}
+      >
+        {children}
+      </div>
     </div>
   )
 }

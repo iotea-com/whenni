@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/jackc/pgx/v5"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteachannels "github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -21,13 +21,9 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Check if model is used in any channel
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Check if model is used in channel")
-	channels, err := prisma.Client.Channel.FindMany(
-		db.Channel.SpaceID.Equals(request.Input.SpaceId),
-	).Select(
-		db.Channel.Config.Field(),
-	).Exec(dbCtx)
-	if err != nil && err.Error() != "ErrNotFound" {
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Check if model is used in channel")
+	channels, err := sqlc.Queries.ListChannels(dbCtx, request.Input.SpaceId)
+	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error checking if model is used in a channel: %s", err)),
@@ -39,7 +35,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	dbSpan.End()
 
-	channelsWithModel := []db.ChannelModel{}
+	channelsWithModel := []string{}
 	for _, channel := range channels {
 		var channelConfig ioteachannels.Channel
 		err = json.Unmarshal(channel.Config, &channelConfig)
@@ -60,7 +56,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			for _, modelDependency := range node.Metadata.Dependencies.Models {
 
 				if modelDependency.ModelId == request.Input.ModelId {
-					channelsWithModel = append(channelsWithModel, channel)
+					channelsWithModel = append(channelsWithModel, channel.ID)
 				}
 			}
 		}
@@ -81,12 +77,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Delete thing
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete model")
-	_, err = prisma.Client.Model.FindUnique(
-		db.Model.ID.Equals(request.Input.ModelId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete model")
+	_, err = sqlc.Queries.GetModel(dbCtx, request.Input.ModelId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
 				attribute.String("error.message", fmt.Sprintf("no model found with ID %s in space with ID %s", request.Input.ModelId, request.Input.SpaceId)),
@@ -94,7 +88,16 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			dbSpan.End()
 			return nil, fiber.NewError(fiber.StatusBadRequest)
 		}
+		dbSpan.SetAttributes(
+			attribute.String("error.type", "database"),
+			attribute.String("error.message", fmt.Sprintf("error checking model in the database: %s", err)),
+		)
+		dbSpan.End()
+		return nil, err
+	}
 
+	err = sqlc.Queries.DeleteModel(dbCtx, request.Input.ModelId)
+	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error deleting model from the database: %s", err)),

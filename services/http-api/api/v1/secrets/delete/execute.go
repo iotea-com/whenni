@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -21,13 +21,9 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Check if secret is used in any things
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Check if secret is used in things")
-	things, err := prisma.Client.Thing.FindMany(
-		db.Thing.SpaceID.Equals(request.Input.SpaceId),
-	).Select(
-		db.Thing.Attributes.Field(),
-	).Exec(dbCtx)
-	if err != nil && err.Error() != "ErrNotFound" {
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Check if secret is used in things")
+	things, err := sqlc.Queries.ListThings(dbCtx, request.Input.SpaceId)
+	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error checking if secret is used in a thing: %s", err)),
@@ -39,7 +35,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	dbSpan.End()
 
-	thingsWithSecret := []db.ThingModel{}
+	thingsWithSecret := []sqldb.AppThing{}
 	for _, thing := range things {
 		var thingAttributes map[string]any
 		err = json.Unmarshal(thing.Attributes, &thingAttributes)

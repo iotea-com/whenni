@@ -5,11 +5,11 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"golang.org/x/crypto/bcrypt"
@@ -46,12 +46,14 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Create a new user
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Create user")
-	_, err = prisma.Client.User.CreateOne(
-		db.User.ID.Set(*userId),
-		db.User.Email.Set(request.Input.Email),
-		db.User.Password.Set(string(hashedPassword)),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Create user")
+	userEmail := request.Input.Email
+	userPassword := string(hashedPassword)
+	_, err = sqlc.Queries.CreateUser(dbCtx, sqldb.CreateUserParams{
+		ID:       *userId,
+		Email:    &userEmail,
+		Password: &userPassword,
+	})
 
 	if err != nil {
 		dbSpan.SetAttributes(
@@ -93,12 +95,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		parsedClaims := inviteToken.Claims.(*claims)
 
 		// Get the default org permission set
-		orgPermissionSet, err := prisma.Client.PermissionSet.FindFirst(
-			db.PermissionSet.OrganizationID.Equals(parsedClaims.OrgId),
-			db.PermissionSet.Name.Equals("Default"),
-		).Exec(request.Context)
-
-		if err != nil || orgPermissionSet == nil {
+		orgPermissionSet, err := sqlc.Queries.GetDefaultOrganizationPermissionSet(request.Context, parsedClaims.OrgId)
+		if err != nil {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
 				attribute.String("error.message", fmt.Sprintf("error getting default org permission set: %s", err)),
@@ -110,19 +108,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		}
 
 		// Create a new organization member with the default org permission set
-		dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Create organization member")
-		_, err = prisma.Client.OrganizationMember.CreateOne(
-			db.OrganizationMember.Organization.Link(
-				db.Organization.ID.Equals(parsedClaims.OrgId),
-			),
-			db.OrganizationMember.User.Link(
-				db.User.ID.Equals(*userId),
-			),
-			db.OrganizationMember.OrganizationPermissionSet.Link(
-				db.PermissionSet.ID.Equals(orgPermissionSet.ID),
-			),
-			db.OrganizationMember.Role.Set("MEMBER"),
-		).Exec(dbCtx)
+		dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Create organization member")
+		_, err = sqlc.Queries.CreateOrganizationMember(dbCtx, parsedClaims.OrgId, *userId, sqldb.AppOrganizationRoleMEMBER, orgPermissionSet.ID)
 
 		if err != nil {
 			dbSpan.SetAttributes(

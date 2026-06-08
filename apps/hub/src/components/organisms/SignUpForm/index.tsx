@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import { FC, FormEventHandler, useEffect, useState } from 'react'
-import styles from './index.module.css'
 import Button from '@iotea/libs/frontend/components/atoms/Button'
 import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
 import Link from 'next/link'
@@ -86,7 +85,7 @@ const SignUpForm: FC<Props> = ({ invitation, inviteToken, inviteTokenError }) =>
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className="flex flex-col max-w-md w-full">
       {invitation && (
         <div className="rounded-lg bg-white px-10 py-8 w-full mb-4">
           <h2 className="text-gray-800 text-2xl">👋 You've been invited!</h2>
@@ -95,7 +94,7 @@ const SignUpForm: FC<Props> = ({ invitation, inviteToken, inviteTokenError }) =>
           </p>
         </div>
       )}
-      <div className={styles.signupForm}>
+      <div className="bg-gray-50 rounded-xl py-8 px-9 shadow-xl">
         <Image
           src={'/img/logos/app-icon-primary.png'}
           height={35}

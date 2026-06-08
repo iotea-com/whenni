@@ -3,7 +3,6 @@
 import useModal, { closeModal } from '@iotea/libs/frontend/hooks/useModal'
 import { CSSProperties, FC, PropsWithChildren, useRef } from 'react'
 
-import styles from './index.module.css'
 import noop from '@iotea/libs/frontend/util/noop'
 import Button from '../../atoms/Button'
 import { RemixIcon, riCloseLine } from '@mwarnerdotme/react-remixicon'
@@ -55,7 +54,7 @@ const Modal: FC<PropsWithChildren<Props>> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={styles.modalWrapper}
+          className="fixed top-0 bottom-0 left-0 right-0 flex items-center justify-end z-40 bg-gradient-to-b from-black/60 to-black/70"
         >
           <motion.div
             transition={{ ease: 'easeIn', duration: 0.05 }}
@@ -64,10 +63,14 @@ const Modal: FC<PropsWithChildren<Props>> = ({
             exit={{ x: 500 }}
             ref={modalRef}
             style={style}
-            className={`${styles.modal} ${className}`}
+            className={`relative flex flex-col border-green-500 bg-gray-50 dark:bg-gray-900 overflow-y-scroll h-full pl-7 pr-4 py-8 min-w-400 ${className}`}
           >
             {!hideForceClose && (
-              <RemixIcon className={styles.closeButton} icon={riCloseLine} onClick={onClose} />
+              <RemixIcon
+                className="absolute -top-4 -left-4 text-gray-500 hover:text-green-300 transition cursor-pointer"
+                icon={riCloseLine}
+                onClick={onClose}
+              />
             )}
             <main>{children}</main>
             <div className="grow"></div>

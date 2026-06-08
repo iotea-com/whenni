@@ -13,7 +13,7 @@ func respond(request *ioteahttp.Request[Input], output *Output) {
 	request.Span.AddEvent("respond")
 
 	responseBody := ResponseBody{
-		Status: output.Status.String(),
+		Status: output.Status,
 	}
 
 	response := ioteahttp.NewGetResponse(responseBody)

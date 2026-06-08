@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -19,12 +19,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// get channel
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get channel")
-	channel, err := prisma.Client.Channel.FindUnique(
-		db.Channel.ID.Equals(request.Input.ChannelId),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get channel")
+	channel, err := sqlc.Queries.GetChannel(dbCtx, request.Input.ChannelId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
 				attribute.String("error.message", fmt.Sprintf("no channel found with ID %s", request.Input.ChannelId)),
@@ -45,9 +43,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// verify channel is not published
-	_, hasPublishedAt := channel.PublishedAt()
-	_, hasPublishedBy := channel.PublishedBy()
-	if hasPublishedAt || hasPublishedBy {
+	if channel.PublishedAt.Valid || channel.PublishedBy != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "context_validation"),
 			attribute.String("error.message", fmt.Sprintf("no channel found with ID %s", request.Input.ChannelId)),
@@ -60,20 +56,9 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// delete channel
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete channel")
-	_, err = prisma.Client.Channel.FindUnique(
-		db.Channel.ID.Equals(request.Input.ChannelId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete channel")
+	err = sqlc.Queries.DeleteChannel(dbCtx, request.Input.ChannelId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
-			dbSpan.SetAttributes(
-				attribute.String("error.type", "database"),
-				attribute.String("error.message", fmt.Sprintf("no channel found with ID %s", request.Input.ChannelId)),
-			)
-
-			return nil, fiber.NewError(fiber.StatusBadRequest)
-		}
-
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("could not delete channel from the database: %s", err)),

@@ -7,7 +7,7 @@ import (
 	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	resolveModels "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models/resolve"
 	resolveThings "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/resolve"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -26,8 +26,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	// Expand the channel config
 	for i, node := range request.Input.Config.Nodes {
 		modelsResolveConfig := resolveModels.ResolveConfig{
-			Metadata:     &node.Metadata,
-			PrismaClient: prisma.Client,
+			Metadata:    &node.Metadata,
+			SqlcQueries: sqlc.Queries,
 		}
 
 		if err := resolveModels.ResolveInNode(&modelsResolveConfig); err != nil {
@@ -35,8 +35,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		}
 
 		thingsExpandConfig := resolveThings.ExpandConfig{
-			Metadata:     &node.Metadata,
-			PrismaClient: prisma.Client,
+			Metadata:    &node.Metadata,
+			SqlcQueries: sqlc.Queries,
 		}
 
 		if err := resolveThings.ExpandInNode(&thingsExpandConfig); err != nil {

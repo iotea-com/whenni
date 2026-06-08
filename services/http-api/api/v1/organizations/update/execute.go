@@ -5,9 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -18,18 +17,10 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.Organization.ID", request.Input.Organization.ID),
 	)
 
-	now := util.GetCurrentTime()
-
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Update organization")
-	organization, err := prisma.Client.Organization.FindUnique(
-		db.Organization.ID.Equals(request.Input.Organization.ID),
-	).Update(
-		db.Organization.Name.Set(request.Input.Organization.Name),
-		db.Organization.UpdatedBy.Set(request.GetActorId()),
-		db.Organization.UpdatedAt.Set(now),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Update organization")
+	organization, err := sqlc.Queries.UpdateOrganization(dbCtx, request.Input.Organization.ID, request.Input.Organization.Name, request.GetActorId())
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
 				attribute.String("error.message", fmt.Sprintf("no organization found with ID %s", request.Input.Organization.ID)),
@@ -50,7 +41,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Organization: organization,
+		Organization: &organization,
 	}
 
 	return &output, nil

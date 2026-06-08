@@ -1,0 +1,37 @@
+syntax = "proto3";
+package controller;
+
+option go_package = "https://github.com/iotea-com/IoTea/libs/protocols/controller";
+
+service ControllerService {
+  rpc Publish (PublishRequest) returns (PublishResponse) {}
+  rpc Unpublish (UnpublishRequest) returns (UnpublishResponse) {}
+  rpc Status (StatusRequest) returns (StatusResponse) {}
+}
+
+message PublishRequest {
+  string channelId = 1;
+}
+
+message PublishResponse {}
+
+message UnpublishRequest {
+  string channelId = 1;
+}
+
+message UnpublishResponse {}
+
+message StatusRequest {
+  string channelId = 1;
+}
+
+message StatusResponse {
+  ChannelStatus status = 1;
+}
+
+enum ChannelStatus {
+  UNKNOWN = 0;
+  PUBLISHED = 1;
+  UNPUBLISHED = 2;
+  ERROR = 3;
+}

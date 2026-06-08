@@ -10,9 +10,9 @@ import (
 	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
 	resolveModels "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models/resolve"
 	resolveThings "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/resolve"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -21,12 +21,11 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
 	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
-		BearerToken:  request.Input.BearerToken,
-		PrismaClient: prisma.Client,
-		JwtSecret:    config.VaultConf.JwtSecret,
-		ScopeId:      request.Input.SpaceId,
-		Namespace:    ioteapermissions.NamespaceChannels,
-		Action:       ioteapermissions.ActionUpdate,
+		BearerToken: request.Input.BearerToken,
+		JwtSecret:   config.VaultConf.JwtSecret,
+		ScopeId:     request.Input.SpaceId,
+		Namespace:   ioteapermissions.NamespaceChannels,
+		Action:      ioteapermissions.ActionUpdate,
 	}
 
 	authorizeErr := request.Authorize(authorizeRequestParams)
@@ -40,12 +39,10 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 	}
 
 	// Get the channel config from the database
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Get channel")
-	channelRecord, err := prisma.Client.Channel.FindUnique(
-		db.Channel.ID.Equals(request.Input.ChannelId),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get channel")
+	channelRecord, err := sqlc.Queries.GetChannel(dbCtx, request.Input.ChannelId)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if err == pgx.ErrNoRows {
 			message := fmt.Sprintf("no channel found with ID %s", request.Input.ChannelId)
 			dbSpan.SetAttributes(
 				attribute.String("error.type", "database"),
@@ -91,8 +88,8 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 	// Expand the channel config
 	for i, node := range c.Nodes {
 		modelsResolveConfig := resolveModels.ResolveConfig{
-			Metadata:     &node.Metadata,
-			PrismaClient: prisma.Client,
+			Metadata:    &node.Metadata,
+			SqlcQueries: sqlc.Queries,
 		}
 
 		if err := resolveModels.ResolveInNode(&modelsResolveConfig); err != nil {
@@ -100,8 +97,8 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 		}
 
 		thingsExpandConfig := resolveThings.ExpandConfig{
-			Metadata:     &node.Metadata,
-			PrismaClient: prisma.Client,
+			Metadata:    &node.Metadata,
+			SqlcQueries: sqlc.Queries,
 		}
 
 		if err := resolveThings.ExpandInNode(&thingsExpandConfig); err != nil {

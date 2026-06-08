@@ -13,7 +13,7 @@ func Register(app fiber.Router) {
 
 	// We do performance testing on local and development environments,
 	// so we want to let as many requests through as possible.
-	if config.Env == environment.Staging || config.Env == environment.Production {
+	if config.Env == environment.Production {
 		trigger.Use(middleware.IpRateLimiter)
 	}
 

@@ -5,8 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -19,10 +18,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Check if permission set is the default permission set
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Check if permission set is the default permission set")
-	permissionSet, err := prisma.Client.PermissionSet.FindUnique(
-		db.PermissionSet.ID.Equals(request.Input.PermissionSetId),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Check if permission set is the default permission set")
+	permissionSet, err := sqlc.Queries.GetPermissionSet(dbCtx, request.Input.PermissionSetId)
 
 	if err != nil {
 		dbSpan.SetAttributes(
@@ -47,10 +44,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Delete permission set from the database
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Delete permission set")
-	_, err = prisma.Client.PermissionSet.FindUnique(
-		db.PermissionSet.ID.Equals(request.Input.PermissionSetId),
-	).Delete().Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Delete permission set")
+	err = sqlc.Queries.DeletePermissionSet(dbCtx, request.Input.PermissionSetId)
 
 	if err != nil {
 		dbSpan.SetAttributes(

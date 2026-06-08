@@ -2,21 +2,26 @@ package modelsUpdate
 
 import (
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
-	"github.com/iotea-com/iotea/prisma/db"
 )
+
+type ModelPayload struct {
+	Name       string `json:"name"`
+	Attributes []byte `json:"attributes"`
+}
 
 type Input struct {
 	SpaceId     string        `validate:"required"`
 	ModelId     string        `validate:"required"`
 	BearerToken string        `validate:"required"`
-	Model       db.ModelModel `validate:"required"`
+	Model       ModelPayload  `validate:"required"`
 
 	attributes map[string]models.Attribute
 }
 
 type Output struct {
-	Model *db.ModelModel `json:"model"`
+	Model *sqldb.AppModel `json:"model"`
 }
 
 // @Summary Update a model

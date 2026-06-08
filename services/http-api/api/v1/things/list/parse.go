@@ -61,7 +61,7 @@ func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 		Input: Input{
 			BearerToken:    *bearerToken,
 			SpaceId:        spaceId,
-			ThingCategory:  thingCategory,w
+			ThingCategory:  thingCategory,
 			Page:           page,
 			ResultsPerPage: resultsPerPage,
 			Filter:         searchFilter,

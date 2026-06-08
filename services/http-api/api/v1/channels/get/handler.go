@@ -2,7 +2,7 @@ package channelsGet
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/prisma/db"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 )
 
 type Input struct {
@@ -12,7 +12,7 @@ type Input struct {
 }
 
 type Output struct {
-	Channel *db.ChannelModel
+	Channel *sqldb.AppChannel
 }
 
 // @Summary Get a channel

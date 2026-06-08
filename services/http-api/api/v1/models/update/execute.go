@@ -1,14 +1,12 @@
 package modelsUpdate
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -20,28 +18,23 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
 	)
 
-	now := util.GetCurrentTime()
-
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Update struct in space")
-
-	attributesBytes, err := json.Marshal(request.Input.attributes)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Update model in space")
+	model, err := sqlc.Queries.UpdateModel(
+		dbCtx,
+		request.Input.ModelId,
+		request.Input.Model.Name,
+		request.Input.Model.Attributes,
+		request.GetActorId(),
+	)
 	if err != nil {
-		request.Span.SetAttributes(
-			attribute.String("error.type", "parse_json"),
-			attribute.String("error.message", fmt.Sprintf("error marshalling attributes: %s", err)),
-		)
-		return nil, fiber.NewError(fiber.StatusUnprocessableEntity, "error marshalling attributes")
-	}
-
-	model, err := prisma.Client.Model.FindUnique(
-		db.Model.ID.Equals(request.Input.ModelId),
-	).Update(
-		db.Model.Name.Set(request.Input.Model.Name),
-		db.Model.Attributes.Set(attributesBytes),
-		db.Model.UpdatedBy.Set(request.GetActorId()),
-		db.Model.UpdatedAt.Set(now),
-	).Exec(dbCtx)
-	if err != nil {
+		if err == pgx.ErrNoRows {
+			dbSpan.SetAttributes(
+				attribute.String("error.type", "database"),
+				attribute.String("error.message", fmt.Sprintf("no model found with ID %s", request.Input.ModelId)),
+			)
+			dbSpan.End()
+			return nil, fiber.NewError(fiber.StatusBadRequest)
+		}
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
 			attribute.String("error.message", fmt.Sprintf("error updating model in the database: %s", err)),
@@ -53,7 +46,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Model: model,
+		Model: &model,
 	}
 
 	return &output, nil

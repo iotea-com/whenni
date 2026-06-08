@@ -3,10 +3,10 @@ package tagsApply
 import (
 	"fmt"
 
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -19,8 +19,13 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
 	)
 
-	// Create initial db arguments
-	var subjectLinkArg db.AppliedTagSetParam = nil
+	// Build the subject-specific link fields for app.applied_tags.
+	params := sqldb.ApplyTagParams{
+		SpaceID:   request.Input.SpaceId,
+		TagID:     request.Input.TagId,
+		CreatedBy: request.GetActorId(),
+		UpdatedBy: request.GetActorId(),
+	}
 
 	// Determine the type of subject
 	idType, err := id.Parse(request.Input.SubjectId)
@@ -34,11 +39,11 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	switch idType {
 	case id.IdTypeThing:
-		subjectLinkArg = db.AppliedTag.Thing.Link(db.Thing.ID.Equals(request.Input.SubjectId))
+		params.ThingID = &request.Input.SubjectId
 	case id.IdTypeChannel:
-		subjectLinkArg = db.AppliedTag.Channel.Link(db.Channel.ID.Equals(request.Input.SubjectId))
+		params.ChannelID = &request.Input.SubjectId
 	case id.IdTypeModel:
-		subjectLinkArg = db.AppliedTag.Model.Link(db.Model.ID.Equals(request.Input.SubjectId))
+		params.ModelID = &request.Input.SubjectId
 	default:
 		request.Span.SetAttributes(
 			attribute.String("error.type", "id_parse"),
@@ -48,18 +53,12 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Apply tag to the subject
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Apply tag")
-	_, err = prisma.Client.AppliedTag.CreateOne(
-		db.AppliedTag.Space.Link(db.Space.ID.Equals(request.Input.SpaceId)),
-		db.AppliedTag.Tag.Link(db.Tag.ID.Equals(request.Input.TagId)),
-		db.AppliedTag.CreatedBy.Set(request.GetActorId()),
-		db.AppliedTag.UpdatedBy.Set(request.GetActorId()),
-		subjectLinkArg,
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Apply tag")
+	_, err = sqlc.Queries.ApplyTag(dbCtx, params)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
-			attribute.String("error.message", fmt.Sprintf("error inserting space into the database: %s", err)),
+			attribute.String("error.message", fmt.Sprintf("error applying tag in the database: %s", err)),
 		)
 		dbSpan.End()
 		return nil, err

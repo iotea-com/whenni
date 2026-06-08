@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
 	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -33,9 +33,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Get actor email
-	user, err := prisma.Client.User.FindUnique(
-		db.User.ID.Equals(request.GetActorId()),
-	).Exec(request.Context)
+	user, err := sqlc.Queries.GetUser(request.Context, request.GetActorId())
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -44,8 +42,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, err
 	}
 
-	email, ok := user.Email()
-	if !ok || email == "" {
+	if user.Email == nil || *user.Email == "" {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "validation"),
 			attribute.String("error.message", "user has no email address"),
@@ -56,13 +53,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Create organization
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert organization")
-	organization, err := prisma.Client.Organization.CreateOne(
-		db.Organization.ID.Set(*orgId),
-		db.Organization.Name.Set(request.Input.Name),
-		db.Organization.CreatedBy.Set(request.GetActorId()),
-		db.Organization.UpdatedBy.Set(request.GetActorId()),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert organization")
+	organization, err := sqlc.Queries.CreateOrganization(dbCtx, *orgId, request.Input.Name, request.GetActorId(), request.GetActorId())
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -84,17 +76,16 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, err
 	}
 
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Insert default permission set")
-	_, err = prisma.Client.PermissionSet.CreateOne(
-		db.PermissionSet.ID.Set(*defaultPermissionSetId),
-		db.PermissionSet.Name.Set("Default"),
-		db.PermissionSet.CreatedBy.Set(request.GetActorId()),
-		db.PermissionSet.UpdatedBy.Set(request.GetActorId()),
-		db.PermissionSet.Organization.Link(
-			db.Organization.ID.Equals(organization.ID),
-		),
-		db.PermissionSet.Permissions.Set(ioteapermissions.DefaultMemberOrganizationPermissions),
-	).Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Insert default permission set")
+	_, err = sqlc.Queries.CreatePermissionSet(dbCtx, sqldb.CreatePermissionSetParams{
+		ID:             *defaultPermissionSetId,
+		OrganizationID: organization.ID,
+		SpaceID:        nil,
+		Name:           "Default",
+		Permissions:    ioteapermissions.DefaultMemberOrganizationPermissions,
+		CreatedBy:      request.GetActorId(),
+		UpdatedBy:      request.GetActorId(),
+	})
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -107,19 +98,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	// Create initial member
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Insert initial organization member")
-	_, err = prisma.Client.OrganizationMember.CreateOne(
-		db.OrganizationMember.Organization.Link(
-			db.Organization.ID.Equals(organization.ID),
-		),
-		db.OrganizationMember.User.Link(
-			db.User.ID.Equals(request.GetActorId()),
-		),
-		db.OrganizationMember.OrganizationPermissionSet.Link(
-			db.PermissionSet.ID.Equals(*defaultPermissionSetId),
-		),
-		db.OrganizationMember.Role.Set(db.OrganizationRoleAdmin),
-	).Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Insert initial organization member")
+	_, err = sqlc.Queries.CreateOrganizationMember(dbCtx, organization.ID, request.GetActorId(), "ADMIN", *defaultPermissionSetId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -132,7 +112,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	dbSpan.End()
 
 	output := Output{
-		Organization: organization,
+		Organization: &organization,
 	}
 
 	return &output, nil

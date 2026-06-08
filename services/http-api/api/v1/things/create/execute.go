@@ -7,17 +7,17 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/certificates"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
+	"github.com/jackc/pgx/v5"
 
 	mqttPolicies "github.com/iotea-com/iotea/libs/http/policies"
 	"github.com/iotea-com/iotea/libs/id"
 	"github.com/iotea-com/iotea/libs/secrets"
-	"github.com/iotea-com/iotea/prisma/db"
 	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/prisma"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -162,7 +162,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	return &output, nil
 }
 
-func handleCreateMqttClient(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateMqttClient(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	mqttClient, err := things.NewMqttClientFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -195,15 +195,8 @@ func handleCreateMqttClient(request *ioteahttp.Request[Input], thingId string) (
 	}
 	defaultPolicyJson, _ := json.Marshal(defaultPolicy)
 
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Create certificate")
-	certificate, err := prisma.Client.Certificate.CreateOne(
-		db.Certificate.ID.Set(serialNumber),
-		db.Certificate.Name.Set(request.Input.Name),
-		db.Certificate.Policy.Set(defaultPolicyJson),
-		db.Certificate.Space.Link(
-			db.Space.ID.Equals(request.Input.SpaceId),
-		),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Create certificate")
+	certificate, err := sqlc.Queries.CreateCertificate(dbCtx, serialNumber, request.Input.Name, defaultPolicyJson, request.Input.SpaceId)
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -217,11 +210,12 @@ func handleCreateMqttClient(request *ioteahttp.Request[Input], thingId string) (
 	dbSpan.End()
 
 	// Check if the MQTT Broker Thing exists
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Check MQTT Broker existence")
-	_, err = prisma.Client.Thing.FindUnique(
-		db.Thing.ID.Equals(mqttClient.Broker.(string)),
-	).Exec(dbCtx)
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Check MQTT Broker existence")
+	_, err = sqlc.Queries.GetThing(dbCtx, mqttClient.Broker.(string))
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			err = fmt.Errorf("no MQTT broker found with ID %s", mqttClient.Broker.(string))
+		}
 		errMessage := fmt.Sprintf("error getting requested MQTT broker: %s", err)
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -237,7 +231,7 @@ func handleCreateMqttClient(request *ioteahttp.Request[Input], thingId string) (
 	mqttClient.CertificateId = certificate.ID
 
 	// Create a new Thing
-	dbCtx, dbSpan = otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan = otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -259,7 +253,7 @@ func handleCreateMqttClient(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateMqttBroker(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateMqttBroker(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	mqttBroker, err := things.NewMqttBrokerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -283,7 +277,7 @@ func handleCreateMqttBroker(request *ioteahttp.Request[Input], thingId string) (
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -305,7 +299,7 @@ func handleCreateMqttBroker(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateHttpServer(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateHttpServer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	httpServer, err := things.NewHttpServerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -314,7 +308,7 @@ func handleCreateHttpServer(request *ioteahttp.Request[Input], thingId string) (
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -336,7 +330,7 @@ func handleCreateHttpServer(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateKafkaCluster(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateKafkaCluster(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	kafkaCluster, err := things.NewKafkaClusterFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -345,7 +339,7 @@ func handleCreateKafkaCluster(request *ioteahttp.Request[Input], thingId string)
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -367,7 +361,7 @@ func handleCreateKafkaCluster(request *ioteahttp.Request[Input], thingId string)
 	return thing, nil
 }
 
-func handleCreateKafkaProducer(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateKafkaProducer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	kafkaProducer, err := things.NewKafkaProducerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -376,7 +370,7 @@ func handleCreateKafkaProducer(request *ioteahttp.Request[Input], thingId string
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -398,7 +392,7 @@ func handleCreateKafkaProducer(request *ioteahttp.Request[Input], thingId string
 	return thing, nil
 }
 
-func handleCreateKafkaConsumer(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateKafkaConsumer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	kafkaConsumer, err := things.NewKafkaConsumerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -407,7 +401,7 @@ func handleCreateKafkaConsumer(request *ioteahttp.Request[Input], thingId string
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -429,7 +423,7 @@ func handleCreateKafkaConsumer(request *ioteahttp.Request[Input], thingId string
 	return thing, nil
 }
 
-func handleCreateNatsServer(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateNatsServer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	natsServer, err := things.NewNatsServerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -438,7 +432,7 @@ func handleCreateNatsServer(request *ioteahttp.Request[Input], thingId string) (
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -460,7 +454,7 @@ func handleCreateNatsServer(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateNatsClient(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateNatsClient(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	natsClient, err := things.NewNatsClientFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -469,7 +463,7 @@ func handleCreateNatsClient(request *ioteahttp.Request[Input], thingId string) (
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -491,7 +485,7 @@ func handleCreateNatsClient(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateS3Bucket(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateS3Bucket(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	s3Bucket, err := things.NewS3BucketFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -500,7 +494,7 @@ func handleCreateS3Bucket(request *ioteahttp.Request[Input], thingId string) (*d
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -522,7 +516,7 @@ func handleCreateS3Bucket(request *ioteahttp.Request[Input], thingId string) (*d
 	return thing, nil
 }
 
-func handleCreateMinioBucket(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateMinioBucket(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	minioBucket, err := things.NewMinioBucketFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -531,7 +525,7 @@ func handleCreateMinioBucket(request *ioteahttp.Request[Input], thingId string) 
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -553,7 +547,7 @@ func handleCreateMinioBucket(request *ioteahttp.Request[Input], thingId string) 
 	return thing, nil
 }
 
-func handleCreateInfluxDbDatabase(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateInfluxDbDatabase(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	influxDbDatabase, err := things.NewInfluxDbDatabaseFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -562,7 +556,7 @@ func handleCreateInfluxDbDatabase(request *ioteahttp.Request[Input], thingId str
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -584,7 +578,7 @@ func handleCreateInfluxDbDatabase(request *ioteahttp.Request[Input], thingId str
 	return thing, nil
 }
 
-func handleCreateClickhouseDatabase(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateClickhouseDatabase(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	clickhouseDatabase, err := things.NewClickhouseDatabaseFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -593,7 +587,7 @@ func handleCreateClickhouseDatabase(request *ioteahttp.Request[Input], thingId s
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -615,7 +609,7 @@ func handleCreateClickhouseDatabase(request *ioteahttp.Request[Input], thingId s
 	return thing, nil
 }
 
-func handleCreateAwsSES(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateAwsSES(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	awsSES, err := things.NewAwsSESFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -624,7 +618,7 @@ func handleCreateAwsSES(request *ioteahttp.Request[Input], thingId string) (*db.
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -646,7 +640,7 @@ func handleCreateAwsSES(request *ioteahttp.Request[Input], thingId string) (*db.
 	return thing, nil
 }
 
-func handleCreateAwsSNS(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateAwsSNS(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	awsSNS, err := things.NewAwsSNSFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -655,7 +649,7 @@ func handleCreateAwsSNS(request *ioteahttp.Request[Input], thingId string) (*db.
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -677,7 +671,7 @@ func handleCreateAwsSNS(request *ioteahttp.Request[Input], thingId string) (*db.
 	return thing, nil
 }
 
-func handleCreateSendgridClient(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateSendgridClient(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	sendgridClient, err := things.NewSendgridClientFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -686,7 +680,7 @@ func handleCreateSendgridClient(request *ioteahttp.Request[Input], thingId strin
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -708,7 +702,7 @@ func handleCreateSendgridClient(request *ioteahttp.Request[Input], thingId strin
 	return thing, nil
 }
 
-func handleCreateMongoDbServer(request *ioteahttp.Request[Input], thingId string) (*db.ThingModel, error) {
+func handleCreateMongoDbServer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	mongoDbServer, err := things.NewMongoDbServerFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -717,7 +711,7 @@ func handleCreateMongoDbServer(request *ioteahttp.Request[Input], thingId string
 	}
 
 	// Create a new Thing
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(request.Context, "Insert thing")
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Insert thing")
 	thing, err := insertThingIntoDatabase(dbCtx, insertThingIntoDatabaseParams{
 		SpaceId:    request.Input.SpaceId,
 		ThingId:    thingId,
@@ -747,28 +741,23 @@ type insertThingIntoDatabaseParams struct {
 	Attributes things.Attributes
 }
 
-func insertThingIntoDatabase(ctx context.Context, params insertThingIntoDatabaseParams) (*db.ThingModel, error) {
+func insertThingIntoDatabase(ctx context.Context, params insertThingIntoDatabaseParams) (*sqldb.AppThing, error) {
 	jsonAttributes, err := params.Attributes.MarshalJson()
 	if err != nil {
 		return nil, err
 	}
 
-	now := util.GetCurrentTime()
-
-	dbCtx, dbSpan := otel.Tracer("prisma").Start(ctx, "Insert thing")
-	thing, err := prisma.Client.Thing.CreateOne(
-		db.Thing.ID.Set(params.ThingId),
-		db.Thing.Name.Set(params.ThingName),
-		db.Thing.Attributes.Set(jsonAttributes),
-		db.Thing.CreatedBy.Set(params.ActorId),
-		db.Thing.UpdatedBy.Set(params.ActorId),
-		db.Thing.ThingCategory.Set(params.Attributes.Category().String()),
-		db.Thing.Space.Link(
-			db.Space.ID.Equals(params.SpaceId),
-		),
-		db.Thing.CreatedAt.Set(now),
-		db.Thing.UpdatedAt.Set(now),
-	).Exec(dbCtx)
+	dbCtx, dbSpan := otel.Tracer("sqlc").Start(ctx, "Insert thing")
+	thing, err := sqlc.Queries.CreateThing(dbCtx, sqldb.CreateThingParams{
+		ID:            params.ThingId,
+		Name:          params.ThingName,
+		SpaceID:       params.SpaceId,
+		Attributes:    jsonAttributes,
+		Internal:      false,
+		ThingCategory: params.Attributes.Category().String(),
+		CreatedBy:     params.ActorId,
+		UpdatedBy:     params.ActorId,
+	})
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
@@ -778,7 +767,7 @@ func insertThingIntoDatabase(ctx context.Context, params insertThingIntoDatabase
 		return nil, err
 	}
 
-	return thing, nil
+	return &thing, nil
 }
 
 func handleCreateAttributesError(request *ioteahttp.Request[Input], err error) error {

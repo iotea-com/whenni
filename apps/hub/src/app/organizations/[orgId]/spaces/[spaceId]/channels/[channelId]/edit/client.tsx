@@ -24,7 +24,6 @@ import {
   riLayout3Line,
   riCloudLine,
 } from '@mwarnerdotme/react-remixicon'
-import style from './index.module.scss'
 import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
 import NodeLibraryPane from '@iotea/hub/components/organisms/ChannelEditor/NodeLibraryPane'
 import NodeOptionsPane from '@iotea/hub/components/organisms/ChannelEditor/NodeOptionsPane'
@@ -707,7 +706,10 @@ const ChannelByIdEditClientPage: FC<Props> = ({
           </div>
         </div>
       </header>
-      <div id={style.channelEditor}>
+      <div
+        id="channelEditor"
+        className="flex overflow-y-hidden bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200 relative w-[calc(100vw-65px)] h-[calc(100vh-57px)]"
+      >
         <Modal id="channelExecutionsTable" showAccept={false}>
           <p>
             <RemixIcon className="mr-1" icon={riCloudLine} />

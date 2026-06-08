@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/iotea-com/iotea/libs/engine/dependencies/models"
+	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
 )
 
 // Template represents a structure used to dynamically replace placeholders

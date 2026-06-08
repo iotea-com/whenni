@@ -1,5 +1,0 @@
-#channelEditor {
-  @apply flex overflow-y-hidden bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200 relative;
-  width: calc(100vw - 65px);
-  height: calc(100vh - 57px);
-}

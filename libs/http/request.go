@@ -3,6 +3,7 @@ package ioteahttp
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -12,15 +13,19 @@ import (
 	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
 	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
 	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	apisqlc "github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
+type PermissionSet struct {
+	Permissions []string
+}
+
 type Actor struct {
 	Id                    string
-	CombinedPermissionSet map[string]*db.PermissionSetModel
+	CombinedPermissionSet map[string]*PermissionSet
 }
 
 type Request[I any] struct {
@@ -37,7 +42,6 @@ var DefaultSpacePermissions = []ioteapermissions.Permission{
 
 type AuthorizeRequestParams struct {
 	BearerToken  string                     `validate:"required"`
-	PrismaClient *db.PrismaClient           `validate:"-"` // skip validation for PrismaClient
 	JwtSecret    string                     `validate:"required"`
 	ScopeId      string                     `validate:"required"` // ID of the user, organization, or space that the request is related to
 	Unprotected  bool                       // If true, the request will not be checked for permissions
@@ -65,7 +69,6 @@ func (r *Request[I]) Authorize(params AuthorizeRequestParams) *fiber.Error {
 	if strings.Contains(params.BearerToken, "tea_") {
 		actorId, combinedPermissionSet, err := handleApiKey(
 			params.BearerToken,
-			params.PrismaClient,
 			r.Span,
 			params.ScopeId,
 			params.Unprotected,
@@ -89,7 +92,6 @@ func (r *Request[I]) Authorize(params AuthorizeRequestParams) *fiber.Error {
 	// Handle JWTs
 	actorId, combinedPermissionSet, err := handleJwt(
 		params.BearerToken,
-		params.PrismaClient,
 		params.JwtSecret,
 		r.Span,
 		params.ScopeId,
@@ -112,8 +114,8 @@ func (r *Request[I]) Authorize(params AuthorizeRequestParams) *fiber.Error {
 	return nil
 }
 
-func (r *Request[I]) setActor(id string, combinedPermissionSet map[string]*db.PermissionSetModel) {
-	cps := make(map[string]*db.PermissionSetModel)
+func (r *Request[I]) setActor(id string, combinedPermissionSet map[string]*PermissionSet) {
+	cps := make(map[string]*PermissionSet)
 	if combinedPermissionSet != nil {
 		cps = combinedPermissionSet
 	}
@@ -134,15 +136,18 @@ func (r *Request[I]) GetActorId() string {
 
 func handleApiKey(
 	token string,
-	p *db.PrismaClient,
 	span trace.Span,
 	scopeId string,
 	unprotected bool,
 	enforceAdmin bool,
 	namespace ioteapermissions.Namespace,
 	action ioteapermissions.Action,
-) (string, map[string]*db.PermissionSetModel, error) {
+) (string, map[string]*PermissionSet, error) {
 	span.AddEvent("recognized API key in Authorization header")
+
+	if apisqlc.Pool == nil {
+		return "", nil, fmt.Errorf("database pool is not initialized")
+	}
 
 	// Check if admin permissions are enforced
 	if enforceAdmin {
@@ -152,17 +157,21 @@ func handleApiKey(
 	// Get API key from the database
 	// TODO: cache the results of this query
 	dbCtx := context.Background()
-	apiKey, err := p.APIKey.FindUnique(
-		db.APIKey.ID.Equals(token),
-	).With(
-		db.APIKey.Organization.Fetch().With(
-			db.Organization.Spaces.Fetch(),
-		),
-		db.APIKey.OrganizationPermissionSet.Fetch(),
-		db.APIKey.SpacePermissionSet.Fetch(),
-	).Exec(dbCtx)
+	var apiKey struct {
+		ID                          string
+		OrganizationID              string
+		OrganizationPermissionSetID *string
+		SpacePermissionSetID        *string
+	}
+	err := apisqlc.Pool.QueryRow(
+		dbCtx,
+		`SELECT id, organization_id, organization_permission_set_id, space_permission_set_id
+		FROM app."apiKeys"
+		WHERE id = $1`,
+		token,
+	).Scan(&apiKey.ID, &apiKey.OrganizationID, &apiKey.OrganizationPermissionSetID, &apiKey.SpacePermissionSetID)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return "", nil, fmt.Errorf("no API key found in the database with ID: %s", token)
 		}
 
@@ -181,25 +190,47 @@ func handleApiKey(
 	}
 
 	// Create combined permission map
-	combinedPermissionSet := make(map[string]*db.PermissionSetModel)
-	organizationPermissionSet, ok := apiKey.OrganizationPermissionSet()
-	if ok {
+	combinedPermissionSet := make(map[string]*PermissionSet)
+	if apiKey.OrganizationPermissionSetID != nil {
+		var organizationPermissions []string
+		err = apisqlc.Pool.QueryRow(
+			dbCtx,
+			`SELECT permissions
+			FROM app.permissions
+			WHERE id = $1`,
+			*apiKey.OrganizationPermissionSetID,
+		).Scan(&organizationPermissions)
+		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+			return "", nil, fmt.Errorf("error getting organization permission set from the database: %s", err)
+		}
+		organizationPermissionSet := &PermissionSet{Permissions: organizationPermissions}
 		span.SetAttributes(attribute.StringSlice("authorize.apiKeyOrganizationPermissionSet", organizationPermissionSet.Permissions))
 		combinedPermissionSet[apiKey.OrganizationID] = organizationPermissionSet
 	}
 
-	spacePermissionSet, ok := apiKey.SpacePermissionSet()
-	if ok {
-		permissionSetSpaceId, ok := spacePermissionSet.SpaceID()
-		if ok {
+	if apiKey.SpacePermissionSetID != nil {
+		var permissionSetSpaceID *string
+		var spacePermissions []string
+		err = apisqlc.Pool.QueryRow(
+			dbCtx,
+			`SELECT space_id, permissions
+			FROM app.permissions
+			WHERE id = $1`,
+			*apiKey.SpacePermissionSetID,
+		).Scan(&permissionSetSpaceID, &spacePermissions)
+		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+			return "", nil, fmt.Errorf("error getting space permission set from the database: %s", err)
+		}
+		if permissionSetSpaceID != nil {
+			spacePermissionSet := &PermissionSet{Permissions: spacePermissions}
 			span.SetAttributes(attribute.StringSlice("authorize.apiKeySpacePermissionSet", spacePermissionSet.Permissions))
-			combinedPermissionSet[permissionSetSpaceId] = spacePermissionSet
+			combinedPermissionSet[*permissionSetSpaceID] = spacePermissionSet
 		}
 	}
 
 	// Check permissions in the organization or space
 	allow := checkPermissions(
-		db.OrganizationRoleMember,
+		"MEMBER",
 		combinedPermissionSet,
 		scopeId,
 		namespace,
@@ -218,7 +249,6 @@ func handleApiKey(
 
 func handleJwt(
 	token string,
-	p *db.PrismaClient,
 	jwtSecret string,
 	span trace.Span,
 	scopeId string,
@@ -226,7 +256,11 @@ func handleJwt(
 	enforceAdmin bool,
 	namespace ioteapermissions.Namespace,
 	action ioteapermissions.Action,
-) (string, map[string]*db.PermissionSetModel, error) {
+) (string, map[string]*PermissionSet, error) {
+	if apisqlc.Pool == nil {
+		return "", nil, fmt.Errorf("database pool is not initialized")
+	}
+
 	// Get subject from JWT as user ID
 	jwtToken, err := jwt.Parse(token, ioteahttputil.ParseJwt(jwtSecret))
 	if err != nil {
@@ -267,137 +301,53 @@ func handleJwt(
 			})
 			responseJson, _ := response.MarshalJson()
 			return "", nil, fiber.NewError(fiber.StatusForbidden, string(responseJson))
-		} else {
-			return userId, nil, nil
 		}
+
+		return userId, nil, nil
+	}
+
+	dbCtx := context.Background()
+	organizationID := scopeId
+	if scopeIdType == id.IdTypeSpace {
+		err = apisqlc.Pool.QueryRow(
+			dbCtx,
+			`SELECT organization_id
+			FROM app.spaces
+			WHERE id = $1`,
+			scopeId,
+		).Scan(&organizationID)
+		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return "", nil, fmt.Errorf("space not found")
+			}
+			return "", nil, err
+		}
+	} else if scopeIdType != id.IdTypeOrganization {
+		return "", nil, fmt.Errorf("invalid scope ID type: %s", scopeIdType)
 	}
 
 	// Get user permissions from the database
-	organizationMember, err := func() (*db.OrganizationMemberModel, error) {
-		switch scopeIdType {
-		case id.IdTypeOrganization:
-			// TODO: cache the results of this query
-			dbCtx := context.Background()
-			organizationMember, err := p.OrganizationMember.FindFirst(
-				db.OrganizationMember.UserID.Equals(userId),
-				db.OrganizationMember.OrganizationID.Equals(scopeId),
-			).With(
-				db.OrganizationMember.Organization.Fetch().With(
-					db.Organization.Spaces.Fetch(),
-				),
-				db.OrganizationMember.User.Fetch(),
-				db.OrganizationMember.OrganizationPermissionSet.Fetch(),
-				db.OrganizationMember.SpacePermissions.Fetch(),
-			).Exec(dbCtx)
-
-			if err != nil {
-				return nil, err
-			}
-
-			// If the OrganizationPermissionSet is nil, get the default organization permission set
-			// TODO: cache the results of this query
-			if organizationMember.OrganizationPermissionSet() == nil {
-				dbCtx := context.Background()
-				defaultOrganizationPermissionSet, err := p.PermissionSet.FindFirst(
-					db.PermissionSet.Name.Equals("Default"),
-					db.PermissionSet.OrganizationID.Equals(organizationMember.OrganizationID),
-				).Exec(dbCtx)
-				if err != nil {
-					return nil, err
-				}
-
-				organizationMember = &db.OrganizationMemberModel{
-					InnerOrganizationMember: organizationMember.InnerOrganizationMember,
-					RelationsOrganizationMember: db.RelationsOrganizationMember{
-						OrganizationPermissionSet: defaultOrganizationPermissionSet,
-						User:                      organizationMember.User(),
-						SpacePermissions:          organizationMember.SpacePermissions(),
-						Organization:              organizationMember.Organization(),
-					},
-				}
-			}
-
-			return organizationMember, nil
-		case id.IdTypeSpace:
-			// Get the space from the database
-			// TODO: cache the results of this query
-			dbCtx := context.Background()
-			space, err := p.Space.FindUnique(
-				db.Space.ID.Equals(scopeId),
-			).With(
-				db.Space.Organization.Fetch(),
-			).Exec(dbCtx)
-			if err != nil {
-				return nil, err
-			}
-
-			if space == nil {
-				return nil, fmt.Errorf("space %s not found", scopeId)
-			}
-
-			// Get the organization member from the database using the space's organization ID
-			// TODO: cache the results of this query
-			dbCtx = context.Background()
-			organizationMember, err := p.OrganizationMember.FindFirst(
-				db.OrganizationMember.UserID.Equals(userId),
-				db.OrganizationMember.OrganizationID.Equals(space.OrganizationID),
-			).With(
-				db.OrganizationMember.Organization.Fetch().With(
-					db.Organization.Spaces.Fetch(),
-				),
-				db.OrganizationMember.User.Fetch(),
-				db.OrganizationMember.OrganizationPermissionSet.Fetch(),
-				db.OrganizationMember.SpacePermissions.Fetch().With(
-					db.MemberSpacePermission.PermissionSet.Fetch(),
-				),
-			).Exec(dbCtx)
-			if err != nil {
-				return nil, err
-			}
-
-			// If the SpacePermissions is nil, get the default space permission set
-			// TODO: cache the results of this query
-			if len(organizationMember.SpacePermissions()) <= 0 {
-				dbCtx := context.Background()
-				defaultSpacePermissionSet, err := p.PermissionSet.FindFirst(
-					db.PermissionSet.Name.Equals("Default"),
-					db.PermissionSet.SpaceID.Equals(space.ID),
-				).Exec(dbCtx)
-				if err != nil {
-					return nil, err
-				}
-
-				organizationMember = &db.OrganizationMemberModel{
-					InnerOrganizationMember: organizationMember.InnerOrganizationMember,
-					RelationsOrganizationMember: db.RelationsOrganizationMember{
-						User: organizationMember.User(),
-						SpacePermissions: []db.MemberSpacePermissionModel{
-							{
-								InnerMemberSpacePermission: db.InnerMemberSpacePermission{
-									ID:                   "Default",
-									OrganizationMemberID: organizationMember.ID,
-									PermissionSetID:      defaultSpacePermissionSet.ID,
-									CreatedAt:            util.GetCurrentTime(),
-								},
-								RelationsMemberSpacePermission: db.RelationsMemberSpacePermission{
-									PermissionSet: defaultSpacePermissionSet,
-								},
-							},
-						},
-						OrganizationPermissionSet: organizationMember.OrganizationPermissionSet(),
-						Organization:              organizationMember.Organization(),
-					},
-				}
-			}
-
-			return organizationMember, nil
-		}
-
-		return nil, fmt.Errorf("invalid scope ID type: %s", scopeIdType)
-	}()
-
+	var organizationMember struct {
+		ID                          string
+		OrganizationID              string
+		Role                        string
+		OrganizationPermissionSetID string
+	}
+	err = apisqlc.Pool.QueryRow(
+		dbCtx,
+		`SELECT id, organization_id, role, organization_permission_set_id
+		FROM app.organization_members
+		WHERE user_id = $1 AND organization_id = $2`,
+		userId,
+		organizationID,
+	).Scan(
+		&organizationMember.ID,
+		&organizationMember.OrganizationID,
+		&organizationMember.Role,
+		&organizationMember.OrganizationPermissionSetID,
+	)
 	if err != nil {
-		if err.Error() == "ErrNotFound" {
+		if errors.Is(err, pgx.ErrNoRows) {
 			errMessage := "You are not a member of this organization or this space does not belong to the organization"
 			span.AddEvent(errMessage)
 			response := NewErrorResponse([]any{
@@ -421,22 +371,78 @@ func handleJwt(
 	}
 
 	// Create combined permission map
-	combinedPermissionSet := make(map[string]*db.PermissionSetModel)
-	organizationPermissionSet := organizationMember.OrganizationPermissionSet()
-	if organizationPermissionSet != nil {
-		combinedPermissionSet[organizationMember.OrganizationID] = organizationPermissionSet
+	combinedPermissionSet := make(map[string]*PermissionSet)
+
+	var organizationPermissions []string
+	err = apisqlc.Pool.QueryRow(
+		dbCtx,
+		`SELECT permissions
+		FROM app.permissions
+		WHERE id = $1`,
+		organizationMember.OrganizationPermissionSetID,
+	).Scan(&organizationPermissions)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = apisqlc.Pool.QueryRow(
+				dbCtx,
+				`SELECT permissions
+				FROM app.permissions
+				WHERE organization_id = $1
+				  AND space_id IS NULL
+				  AND name = 'Default'
+				LIMIT 1`,
+				organizationMember.OrganizationID,
+			).Scan(&organizationPermissions)
+		}
+		if err != nil {
+			return "", nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		}
+	}
+	combinedPermissionSet[organizationMember.OrganizationID] = &PermissionSet{Permissions: organizationPermissions}
+
+	spacePermissionRows, rowErr := apisqlc.Pool.Query(
+		dbCtx,
+		`SELECT p.space_id, p.permissions
+		FROM app.member_space_permissions msp
+		JOIN app.permissions p ON p.id = msp.permission_set_id
+		WHERE msp.organization_member_id = $1`,
+		organizationMember.ID,
+	)
+	if rowErr != nil {
+		return "", nil, fiber.NewError(fiber.StatusInternalServerError, rowErr.Error())
+	}
+	for spacePermissionRows.Next() {
+		var permissionSetSpaceID *string
+		var permissions []string
+		if scanErr := spacePermissionRows.Scan(&permissionSetSpaceID, &permissions); scanErr != nil {
+			spacePermissionRows.Close()
+			return "", nil, fiber.NewError(fiber.StatusInternalServerError, scanErr.Error())
+		}
+		if permissionSetSpaceID != nil {
+			combinedPermissionSet[*permissionSetSpaceID] = &PermissionSet{Permissions: permissions}
+		}
+	}
+	spacePermissionRows.Close()
+	if spacePermissionRows.Err() != nil {
+		return "", nil, fiber.NewError(fiber.StatusInternalServerError, spacePermissionRows.Err().Error())
 	}
 
-	spacePermissionSets := organizationMember.SpacePermissions()
-	if len(spacePermissionSets) > 0 {
-		for _, spacePermissionSet := range spacePermissionSets {
-			permissionSet := spacePermissionSet.PermissionSet()
-			spaceId, ok := permissionSet.SpaceID()
-			if !ok {
-				continue
-			}
-
-			combinedPermissionSet[spaceId] = permissionSet
+	if scopeIdType == id.IdTypeSpace && combinedPermissionSet[scopeId] == nil {
+		var defaultSpacePermissions []string
+		err = apisqlc.Pool.QueryRow(
+			dbCtx,
+			`SELECT permissions
+			FROM app.permissions
+			WHERE space_id = $1
+			  AND name = 'Default'
+			LIMIT 1`,
+			scopeId,
+		).Scan(&defaultSpacePermissions)
+		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+			return "", nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		}
+		if err == nil {
+			combinedPermissionSet[scopeId] = &PermissionSet{Permissions: defaultSpacePermissions}
 		}
 	}
 
@@ -445,7 +451,7 @@ func handleJwt(
 
 	// Check if admin permissions are enforced
 	if enforceAdmin {
-		if organizationMember.Role != db.OrganizationRoleAdmin {
+		if organizationMember.Role != "ADMIN" {
 			errMessage := "admin permissions are enforced, and the user is not an admin"
 			span.AddEvent(errMessage)
 			response := NewErrorResponse([]any{
@@ -478,14 +484,14 @@ func handleJwt(
 }
 
 func checkPermissions(
-	role db.OrganizationRole,
-	combinedPermissionSet map[string]*db.PermissionSetModel,
+	role string,
+	combinedPermissionSet map[string]*PermissionSet,
 	scopeId string,
 	namespace ioteapermissions.Namespace,
 	action ioteapermissions.Action,
 ) bool {
 	allow := false
-	if role == db.OrganizationRoleAdmin {
+	if role == "ADMIN" {
 		// bypass permissions check if role is admin
 		allow = true
 	} else {
