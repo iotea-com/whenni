@@ -94,6 +94,9 @@
 						},
 						{
 							"command": "bash -c 'USR_MONOREPO_ROOT=\"$(pwd)\"; cd deploy/engine && USR_MONOREPO_ROOT=\"$USR_MONOREPO_ROOT\" docker compose -f local/docker-compose.yaml --profile run up --build -d'"
+						},
+						{
+							"command": "bash -c 'cd deploy/engine/local && chmod +x ctl.sh && ./ctl.sh'"
 						}
 					]
 				}
@@ -116,6 +119,9 @@
 						},
 						{
 							"command": "bash -c 'USR_MONOREPO_ROOT=\"$(pwd)\"; cd deploy/engine && USR_MONOREPO_ROOT=\"$USR_MONOREPO_ROOT\" docker compose -f local/docker-compose.yaml --profile run up --build -d'"
+						},
+						{
+							"command": "bash -c 'cd deploy/engine/local && chmod +x ctl.sh && ./ctl.sh'"
 						}
 					]
 				}

@@ -33,7 +33,7 @@ func New() *Api {
 		switch config.Env {
 		case environment.Development:
 			return false
-		case environment.Local, environment.Production, environment.Staging:
+		case environment.Production:
 			return true
 		default:
 			return false

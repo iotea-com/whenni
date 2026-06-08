@@ -17,6 +17,7 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,11 +27,10 @@ const (
 )
 
 func execute(request *ioteahttp.Request[Input]) (*Output, error) {
-	request.Span.AddEvent("execute")
-	request.Span.SetAttributes(
+	request.Span.AddEvent("execute", trace.WithAttributes(
 		attribute.String("request.Input.Email", request.Input.Email),
 		attribute.String("request.Input.Method", request.Input.Method),
-	)
+	))
 
 	// Get the user from the database
 	dbCtx, dbSpan := otel.Tracer("sqlc").Start(request.Context, "Get user")
@@ -131,7 +131,7 @@ func handleMagicLinkLogin(user sqldb.AppUser, appUrl string, ctx context.Context
 	if err != nil {
 		dbSpan.SetAttributes(
 			attribute.String("error.type", "database"),
-			attribute.String("error.message", fmt.Sprintf("error getting user from the database: %s", err)),
+			attribute.String("error.message", fmt.Sprintf("error storing magic link token in the database: %s", err)),
 		)
 		dbSpan.End()
 		return errors.New("error storing magic link token")

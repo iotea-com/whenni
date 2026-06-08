@@ -97,7 +97,7 @@ func load(env environment.Env) (envConfig *EnvConfig, vaultConfig *VaultConfig) 
 			JwtSecret: "super-secret-jwt-token-with-at-least-32-characters-long",
 		}
 		return
-	} else if env == environment.Development || env == environment.Local {
+	} else if env == environment.Development {
 		viper.BindEnv("API_VAULT_USERNAME")
 		viper.BindEnv("API_VAULT_PASSWORD")
 
@@ -113,7 +113,7 @@ func load(env environment.Env) (envConfig *EnvConfig, vaultConfig *VaultConfig) 
 		if err != nil {
 			panic(fmt.Sprintf("Could not connect to Vault, %v", err))
 		}
-	} else if env == environment.Staging || env == environment.Production {
+	} else if env == environment.Production {
 		// In a production setup, Vault is setup to "inject" a token into
 		// the container this application is running on, so we don't need
 		// to authenticate
@@ -161,12 +161,8 @@ func load(env environment.Env) (envConfig *EnvConfig, vaultConfig *VaultConfig) 
 		vaultConfig.ControllerGrpcServiceUrl = fmt.Sprintf("127.0.0.1:%s", controllerGrpcServerUrl[1])
 	}
 
-	// There's a bug where the prisma client only picks up the DATABASE_URL
-	// environment variable if it's set before the prisma client is instantiated.
-	// So we set it here.
-	os.Setenv("DATABASE_URL", vaultConfig.DatabaseUrl)
-
 	// Initialize the DB client
+	fmt.Printf("Initializing database client with URL: %s\n", vaultConfig.DatabaseUrl)
 	err = initDbClient(vaultConfig.DatabaseUrl)
 	if err != nil {
 		panic(fmt.Sprintf("Error initializing database client: %v", err))

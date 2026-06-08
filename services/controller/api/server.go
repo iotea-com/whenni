@@ -6,6 +6,7 @@ import (
 	"net"
 
 	pb "github.com/iotea-com/iotea/libs/protocols/controller"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 )
 
@@ -16,7 +17,9 @@ type Server struct {
 
 // New constructs a basic gRPC server with default options.
 func New() *Server {
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	)
 	pb.RegisterControllerServiceServer(s, newControllerGRPC())
 	return &Server{grpc: s}
 }
