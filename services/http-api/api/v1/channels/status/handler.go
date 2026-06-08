@@ -2,7 +2,6 @@ package channelsStatus
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/protocols/channels"
 )
 
 type Input struct {
@@ -12,7 +11,7 @@ type Input struct {
 }
 
 type Output struct {
-	Status channels.Status
+	Status string
 }
 
 // @Summary Check channel status

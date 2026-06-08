@@ -5,7 +5,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
-	"github.com/iotea-com/iotea/services/http-api/config"
 	"go.opentelemetry.io/contrib/bridges/otelzap"
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
@@ -43,9 +42,9 @@ func setupLoggerProvider(ctx context.Context, conn *grpc.ClientConn, res *resour
 
 // Creates a new zap logger. If an otel logger provider is provided, it will be used to create the
 // logger.
-func NewLogger(loggerProvider *sdklog.LoggerProvider) (*zap.Logger, error) {
+func NewLogger(loggerProvider *sdklog.LoggerProvider, env environment.Env) (*zap.Logger, error) {
 	logger, err := (func() (*zap.Logger, error) {
-		if config.Env == environment.Production {
+		if env == environment.Production {
 			return zap.NewProduction()
 		}
 

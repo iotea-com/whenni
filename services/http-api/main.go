@@ -24,7 +24,11 @@ import (
 
 func main() {
 	// Setup observability
-	observability, err := telemetry.InitObservability("http-api")
+	observability, err := telemetry.InitObservability(telemetry.InitConfig{
+		ServiceName:           "http-api",
+		OtelCollectorEndpoint: config.VaultConf.OtelCollectorEndpoint,
+		Environment:           config.Env,
+	})
 	if err != nil {
 		panic(fmt.Errorf("failed to setup observability: %v", err))
 	}

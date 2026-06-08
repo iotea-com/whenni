@@ -6,29 +6,34 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
-	"github.com/iotea-com/iotea/services/http-api/config"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 )
 
+type InitConfig struct {
+	ServiceName           string
+	OtelCollectorEndpoint string
+	Environment           environment.Env
+}
+
 // Initializes all otel providers and returns a struct with references to the providers and a
 // shutdown function to properly flush and close resources.
-func InitObservability(serviceName string) (*Observability, error) {
+func InitObservability(cfg InitConfig) (*Observability, error) {
 	serviceInstance := (func() string {
-		if config.Env == environment.Development {
-			return "docker-compose"
+		if cfg.Environment == environment.Development {
+			return "local"
 		}
 
 		return uuid.NewString()
 	})()
 	obsvConfig := Config{
-		OtelCollectorEndpoint: config.VaultConf.OtelCollectorEndpoint,
+		OtelCollectorEndpoint: cfg.OtelCollectorEndpoint,
 		ResourceAttr: ResourceAttributes{
-			Environment:     config.Env.String(),
-			ServiceName:     serviceName,
+			Environment:     cfg.Environment.String(),
+			ServiceName:     cfg.ServiceName,
 			ServiceInstance: serviceInstance,
 		},
-		UseTLS: config.Env != environment.Development,
+		UseTLS: cfg.Environment != environment.Development,
 	}
 
 	setupCtx, cancelFunc := context.WithTimeout(context.Background(), time.Second)

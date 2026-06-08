@@ -7,8 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	channelService "github.com/iotea-com/iotea/libs/protocols/channels"
-	pbChannel "github.com/iotea-com/iotea/libs/protocols/channels"
+	pbController "github.com/iotea-com/iotea/libs/protocols/controller"
 	"github.com/iotea-com/iotea/services/http-api/config"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel/attribute"
@@ -23,18 +22,18 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
 	)
 
-	// Set up rules engine client
+	// Set up controller client
 	// TODO: Add TLS to this connection for production
-	engineConn, err := grpc.NewClient(config.VaultConf.EngineGrpcServiceUrl,
+	controllerConn, err := grpc.NewClient(config.VaultConf.ControllerGrpcServiceUrl,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
 
 	defer func() {
-		if err := engineConn.Close(); err != nil {
+		if err := controllerConn.Close(); err != nil {
 			request.Span.SetAttributes(
 				attribute.String("error.type", "grpc_request"),
-				attribute.String("error.message", fmt.Sprintf("failed to close rules engine grpc client: %v", err)),
+				attribute.String("error.message", fmt.Sprintf("failed to close controller grpc client: %v", err)),
 			)
 		}
 	}()
@@ -42,7 +41,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "grpc_request"),
-			attribute.String("error.message", fmt.Sprintf("failed to setup rules engine grpc client: endpoint is %v and error is %v", config.VaultConf.EngineGrpcServiceUrl, err)),
+			attribute.String("error.message", fmt.Sprintf("failed to setup controller grpc client: endpoint is %v and error is %v", config.VaultConf.ControllerGrpcServiceUrl, err)),
 		)
 		response := ioteahttp.NewErrorResponse([]any{
 			"Could not get the status of the channel at this time. Please try again.",
@@ -51,17 +50,18 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		return nil, fiber.NewError(fiber.StatusServiceUnavailable, string(responseJson))
 	}
 
-	client := pbChannel.NewChannelServiceClient(engineConn)
+	client := pbController.NewControllerServiceClient(controllerConn)
 
-	// Send message to channel service
+	// Send message to controller
 	ctx, cancel := context.WithTimeout(request.Context, time.Second)
 	defer cancel()
-	message := &channelService.StatusRequest{ChannelId: request.Input.ChannelId}
-	response, err := client.Status(ctx, message)
+	statusResponse, err := client.Status(ctx, &pbController.StatusRequest{
+		ChannelId: request.Input.ChannelId,
+	})
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "grpc_request"),
-			attribute.String("error.message", fmt.Sprintf("could not connect to the orchestrator: %s", err)),
+			attribute.String("error.message", fmt.Sprintf("could not get the status of the channel from the controller: %s", err)),
 		)
 		response := ioteahttp.NewErrorResponse([]any{
 			"Could not get the status of the channel at this time. Please try again.",
@@ -71,7 +71,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	output := &Output{
-		Status: response.Status,
+		Status: statusResponse.GetStatus().String(),
 	}
 
 	return output, nil
