@@ -1,4 +1,5 @@
 import {
+  IconDefinition,
   RemixIcon,
   riHome4Line,
   riSettings3Line,
@@ -8,11 +9,11 @@ import {
 } from '@mwarnerdotme/react-remixicon'
 import Image from 'next/image'
 import Link from 'next/link'
-import styles from './layout.module.scss'
 import getAccessToken, { getSession } from '@iotea/hub/util/getAccessToken'
 import FeedbackButton from '@iotea/hub/components/molecules/FeedbackButton'
 import ioteaClient from '@iotea/hub/lib/iotea'
 import OrgSelectDropdown from '@iotea/hub/components/organisms/OrgSelectDropdown'
+import { FC } from 'react'
 
 export const metadata = {
   title: 'Organization dashboard | IOTEA',
@@ -30,6 +31,18 @@ const Layout = async ({ children, params }) => {
   const organizations = user?.organizations.map((orgMembership) => orgMembership.organization)
   const organization = organizations?.find((org) => org.id === orgId)
 
+  const SidebarLink: FC<{ href: string; icon: IconDefinition }> = ({ href, icon }) => {
+    return (
+      <Link href={href}>
+        <RemixIcon
+          icon={icon}
+          size={'xl'}
+          className="text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-gray-100 transition"
+        />
+      </Link>
+    )
+  }
+
   return (
     <>
       <div className="flex grow">
@@ -46,19 +59,13 @@ const Layout = async ({ children, params }) => {
             </Link>
             <ul className="flex flex-col gap-4 mt-4">
               <li>
-                <Link href={`/organizations/${orgId}`}>
-                  <RemixIcon icon={riHome4Line} size={'xl'} className={styles.sidebarLink} />
-                </Link>
+                <SidebarLink href={`/organizations/${orgId}`} icon={riHome4Line} />
               </li>
               <li>
-                <Link href={`/organizations/${orgId}/team`}>
-                  <RemixIcon icon={riShieldUserLine} size={'xl'} className={styles.sidebarLink} />
-                </Link>
+                <SidebarLink href={`/organizations/${orgId}/team`} icon={riShieldUserLine} />
               </li>
               <li>
-                <Link href={`/organizations/${orgId}/settings`}>
-                  <RemixIcon icon={riSettings3Line} size={'xl'} className={styles.sidebarLink} />
-                </Link>
+                <SidebarLink href={`/organizations/${orgId}/settings`} icon={riSettings3Line} />
               </li>
             </ul>
           </nav>
@@ -72,9 +79,7 @@ const Layout = async ({ children, params }) => {
               <OrgSelectDropdown organizations={organizations ?? []} currentOrg={organization} />
               <div className="grow" />
               <div className="flex gap-4">
-                <Link href={`/profiles/${userId}`}>
-                  <RemixIcon icon={riUser3Line} className={styles.sidebarLink} size="lg" />
-                </Link>
+                <SidebarLink href={`/profiles/${userId}`} icon={riUser3Line} />
               </div>
             </div>
           </header>

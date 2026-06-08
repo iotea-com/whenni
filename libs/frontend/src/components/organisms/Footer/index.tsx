@@ -2,7 +2,6 @@ import Container from '../../templates/Container'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import styles from './index.module.scss'
 import {
   RemixIcon,
   riBlueskyFill,
@@ -18,7 +17,7 @@ import MailchimpNewsletterForm from './MailchimpNewsletterForm'
 
 const Footer = async () => {
   return (
-    <footer id={styles['footer']} className="pt-24 pb-32 bg-gray-100 z-10">
+    <footer className="pt-24 pb-32 bg-gray-100 z-10">
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0">
           <section className="flex flex-col">
@@ -68,7 +67,7 @@ const Footer = async () => {
             </p>
           </section>
           <section>
-            <h3>Resources</h3>
+            <h3 className="mt-4 mb-1">Resources</h3>
             <ul>
               <li>
                 <Link href="/blog">Blog</Link>
@@ -90,7 +89,7 @@ const Footer = async () => {
             </ul>
           </section>
           <section>
-            <h3>Newsletter</h3>
+            <h3 className="mt-4 mb-1">Newsletter</h3>
             <MailchimpNewsletterForm />
           </section>
           {/* <section>

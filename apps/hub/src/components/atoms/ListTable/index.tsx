@@ -2,7 +2,6 @@
 
 import { FC, PropsWithChildren, useMemo } from 'react'
 import { Table, flexRender } from '@tanstack/react-table'
-import styles from './index.module.scss'
 import Button from '@iotea/libs/frontend/components/atoms/Button'
 import {
   RemixIcon,
@@ -80,7 +79,7 @@ const ListTable: FC<PropsWithChildren<Props>> = ({
       </div>
       {headerContent && <div className="mb-2">{headerContent}</div>}
       <div className="bg-gray-100 dark:bg-gray-800 p-[2px] rounded-md">
-        <table className={styles.table}>
+        <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -90,11 +89,11 @@ const ListTable: FC<PropsWithChildren<Props>> = ({
                   const alignClass = (() => {
                     switch (meta?.align) {
                       case 'center':
-                        return 'cellAlignCenter'
+                        return 'text-center'
                       case 'right':
-                        return 'cellAlignRight'
+                        return 'text-right'
                       default:
-                        return 'cellAlignLeft'
+                        return 'text-left'
                     }
                   })()
 
@@ -102,7 +101,7 @@ const ListTable: FC<PropsWithChildren<Props>> = ({
                     <th
                       key={header.id}
                       colSpan={header.colSpan}
-                      className={alignClass}
+                      className={`py-2 px-6 font-normal text-sm text-gray-500 bg-white dark:bg-gray-900 first:rounded-tl last:rounded-tr ${alignClass}`}
                       style={{
                         width: header.column.getIndex() === 0 ? 'auto' : header.column.getSize(),
                       }}
@@ -116,31 +115,31 @@ const ListTable: FC<PropsWithChildren<Props>> = ({
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
+            {table.getRowModel().rows.map((row, rowIndex) => (
+              <tr key={row.id} className="group">
                 {row.getVisibleCells().map((cell) => {
                   const meta = cell.column.columnDef.meta as TableColumnMeta | undefined
 
                   const alignClass = (() => {
                     switch (meta?.align) {
                       case 'center':
-                        return 'cellAlignCenter'
+                        return 'text-center'
                       case 'right':
-                        return 'cellAlignRight'
+                        return 'text-right'
                       default:
-                        return 'cellAlignLeft'
+                        return 'text-left'
                     }
                   })()
 
                   return (
                     <td
                       key={cell.id}
-                      className={`${styles.cell} ${styles.solidRow} ${alignClass}`}
+                      className={`h-12 px-0 first:pl-0 last:pr-0 ${rowIndex === 0 ? 'pt-[2px]' : ''} ${alignClass}`}
                       style={{
                         width: cell.column.getIndex() === 0 ? 'auto' : cell.column.getSize(),
                       }}
                     >
-                      <div className={styles.cellContent}>
+                      <div className="h-full w-full flex items-center transition py-1 px-6 bg-white dark:bg-gray-900 text-gray-700 hover:text-gray-800 dark:text-gray-200 dark:hover:text-gray-100 group-hover:bg-gray-50 dark:group-hover:bg-gray-800">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </div>
                     </td>
@@ -155,23 +154,27 @@ const ListTable: FC<PropsWithChildren<Props>> = ({
               Array(10 - table.getRowModel().rows.length)
                 .fill(0)
                 .map((_, index) => (
-                  <tr key={`empty-${index}`} className={styles.emptyRow}>
+                  <tr key={`empty-${index}`} className="group">
                     {table.getHeaderGroups()[0].headers.map((header) => (
                       <td
                         key={`empty-${index}-${header.id}`}
-                        className={`${styles.cell} ${styles.solidRow}`}
+                        className="h-12 px-0 first:pl-0 last:pr-0"
                         style={{
                           width: header.column.getIndex() === 0 ? 'auto' : header.column.getSize(),
                         }}
                       >
-                        <div className={styles.cellContent}>&nbsp;</div>
+                        <div className="h-full w-full flex items-center transition py-1 px-6 bg-gray-100 group-hover:bg-gray-100">
+                          &nbsp;
+                        </div>
                       </td>
                     ))}
                   </tr>
                 ))}
           </tbody>
         </table>
-        <div className={styles.stats}>{children}</div>
+        <div className="mt-px bg-white dark:bg-gray-900 rounded-b px-6 py-2 [&_small]:text-gray-500">
+          {children}
+        </div>
       </div>
       {page && handlePageChange && (
         <div className="flex gap-2 mt-2">

@@ -9,7 +9,6 @@ import {
 import { Organization, Space } from '@prisma/client'
 import { useClickOutside } from '@react-hooks-library/core'
 import { FC, useMemo, useRef, useState } from 'react'
-import styles from './index.module.scss'
 import CreateSpaceModal from '@iotea/hub/components/modals/CreateSpaceModal'
 import Button from '@iotea/libs/frontend/components/atoms/Button'
 import Link from 'next/link'
@@ -52,17 +51,24 @@ const SpaceSelectDropDown: FC<Props> = ({ organization, currentSpaceId }) => {
   return (
     <>
       <CreateSpaceModal orgId={organization.id} />
-      <div className={styles.dropdown} ref={dropdownRef}>
-        <div className={styles.currentSpace} onClick={handleToggleDropDown}>
+      <div className="relative select-none w-fit min-w-[15rem]" ref={dropdownRef}>
+        <div
+          className="group pr-8 cursor-pointer flex items-center"
+          onClick={handleToggleDropDown}
+        >
           <p className="text-gray-700 dark:text-gray-300 font-semibold">{currentSpace.name}</p>
           {isDropDownOpen ? (
             <RemixIcon
-              className={`${styles.dropdownToggleIcon} ${styles.open}`}
+              className="transition opacity-100"
               icon={riArrowDropUpLine}
               size="xl"
             />
           ) : (
-            <RemixIcon className={styles.dropdownToggleIcon} icon={riArrowDropDownLine} size="xl" />
+            <RemixIcon
+              className="transition opacity-0 group-hover:opacity-100"
+              icon={riArrowDropDownLine}
+              size="xl"
+            />
           )}
         </div>
         {isDropDownOpen && (

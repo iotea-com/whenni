@@ -3,7 +3,6 @@
 import { FC, useMemo, useRef, useState } from 'react'
 import { RemixIcon, IconDefinition, riMore2Fill } from '@mwarnerdotme/react-remixicon'
 import { useClickOutside } from '@react-hooks-library/core'
-import styles from './index.module.scss'
 import { IconSize } from '@mwarnerdotme/react-remixicon/dist/components/RemixIcon'
 
 type ModifierKey = 'ctrl' | 'shift' | 'alt' | 'meta' | 'ctrlOrMeta'
@@ -86,31 +85,34 @@ const ContextMenu: FC<Props> = ({ contextMenuButtons, iconSize }) => {
         onClick={toggleOpen}
       />
       {open && (
-        <div ref={dropdownRef} className={styles.contextMenu}>
+        <div
+          ref={dropdownRef}
+          className="absolute flex flex-col gap-1 p-2 cursor-pointer bg-white dark:bg-gray-800 top-6 right-0 select-none border border-gray-300 dark:border-gray-700 rounded z-30 w-fit max-w-56 shadow-[3px_3px_6px_0_rgba(0,0,0,0.03)]"
+        >
           {processedButtons.map((contextMenuButton) => (
             <div
               key={contextMenuButton.title}
-              className={styles.contextMenuButton}
+              className="group/button relative w-full min-w-[175px] px-2 py-1 text-left transition border border-transparent rounded text-sm hover:bg-green-50 hover:border-green-300 dark:hover:bg-gray-700 dark:hover:border-gray-600"
               onClick={() => {
                 contextMenuButton.onClick()
                 setOpen(false)
               }}
             >
               {contextMenuButton.hotkey && (
-                <div className={styles.hotkey}>
+                <div className="absolute top-1 pt-0.5 right-2 text-gray-500 text-xs group-hover/button:text-green-800 dark:group-hover/button:text-green-300">
                   <p>
                     {contextMenuButton.hotkey.modifiers.join('') + contextMenuButton.hotkey.key}
                   </p>
                 </div>
               )}
-              <p className={styles.title}>
+              <p className="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-200 group-hover/button:text-green-800 dark:group-hover/button:text-green-300">
                 {contextMenuButton.icon && (
                   <RemixIcon className="mr-1" icon={contextMenuButton.icon} />
                 )}
                 {contextMenuButton.title}
               </p>
               {contextMenuButton.description && (
-                <p className={styles.description}>
+                <p className="text-gray-500 leading-3 group-hover/button:text-green-800 dark:group-hover/button:text-green-300">
                   <small>{contextMenuButton.description}</small>
                 </p>
               )}

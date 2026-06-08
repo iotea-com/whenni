@@ -1,9 +1,0 @@
-@reference "../../../app/styles.css";
-
-.wrapper {
-  @apply flex flex-col max-w-md w-full;
-}
-
-.signupForm {
-  @apply bg-gray-50 rounded-xl py-8 px-9 shadow-xl;
-}

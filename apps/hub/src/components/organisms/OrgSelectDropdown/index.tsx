@@ -10,7 +10,6 @@ import { Organization } from '@prisma/client'
 import { useClickOutside } from '@react-hooks-library/core'
 import { useRouter } from 'next/navigation'
 import { FC, useRef, useState } from 'react'
-import styles from './index.module.scss'
 import CreateOrganizationModal from '../../modals/CreateOrganizationModal'
 import Button from '@iotea/libs/frontend/components/atoms/Button'
 
@@ -41,19 +40,26 @@ const OrgSelectDropdown: FC<Props> = ({ organizations, currentOrg }) => {
   return (
     <>
       <CreateOrganizationModal />
-      <div className={styles.dropdown} ref={dropdownRef}>
-        <div className={styles.currentSpace} onClick={handleToggleDropDown}>
+      <div className="relative select-none w-fit min-w-[15rem]" ref={dropdownRef}>
+        <div
+          className="group pr-8 cursor-pointer flex items-center"
+          onClick={handleToggleDropDown}
+        >
           <p className="text-gray-700 dark:text-gray-300 font-semibold">
             {currentOrg?.name ?? 'No organizations found!'}
           </p>
           {isDropDownOpen ? (
             <RemixIcon
-              className={`${styles.dropdownToggleIcon} ${styles.open}`}
+              className="transition opacity-100"
               icon={riArrowDropUpFill}
               size="xl"
             />
           ) : (
-            <RemixIcon className={styles.dropdownToggleIcon} icon={riArrowDropDownFill} size="xl" />
+            <RemixIcon
+              className="transition opacity-0 group-hover:opacity-100"
+              icon={riArrowDropDownFill}
+              size="xl"
+            />
           )}
         </div>
         {isDropDownOpen && (

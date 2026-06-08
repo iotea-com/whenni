@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import { FormEventHandler, useState } from 'react'
-import styles from './index.module.css'
 import Button from '@iotea/libs/frontend/components/atoms/Button'
 import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
 import Link from 'next/link'
@@ -99,8 +98,8 @@ const SignInForm = ({ allowPassword = true, initialEmail }: Props) => {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.signinForm}>
+    <div className="flex flex-col w-full">
+      <div className="min-w-[400px] bg-gray-50 rounded-xl py-8 px-9 shadow-xl">
         <Modal id="forgot-password" showAccept={false}>
           <h2>Forgot password</h2>
           <p className="w-96">
