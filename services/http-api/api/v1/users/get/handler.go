@@ -2,7 +2,6 @@ package get
 
 import (
 	"github.com/gofiber/fiber/v2"
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
 )
 
 type Input struct {
@@ -10,7 +9,7 @@ type Input struct {
 }
 
 type Output struct {
-	User *sqldb.AppUser
+	User *User
 }
 
 // @Summary Get a user

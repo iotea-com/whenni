@@ -44,6 +44,25 @@ JOIN app.users u ON om.user_id = u.id
 WHERE om.organization_id = $1
 ORDER BY om.created_at DESC;
 
+-- name: ListUserOrganizationMembers :many
+SELECT
+  om.id,
+  om.organization_id,
+  om.user_id,
+  om.role,
+  om.organization_permission_set_id,
+  om.created_at,
+  om.updated_at,
+  o.name as organization_name,
+  o.created_at as organization_created_at,
+  o.created_by as organization_created_by,
+  o.updated_at as organization_updated_at,
+  o.updated_by as organization_updated_by
+FROM app.organization_members om
+JOIN app.organizations o ON om.organization_id = o.id
+WHERE om.user_id = $1
+ORDER BY o.name;
+
 -- name: GetOrganizationMember :one
 SELECT * FROM app.organization_members
 WHERE organization_id = $1 AND user_id = $2;
