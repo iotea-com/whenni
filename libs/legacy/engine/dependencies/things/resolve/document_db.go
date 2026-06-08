@@ -5,23 +5,21 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sqldb "github.com/iotea-com/iotea/db/sqlc"
 	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
 	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
 	"github.com/iotea-com/iotea/libs/secrets"
-	"github.com/iotea-com/iotea/prisma/db"
 )
 
 func resolveMongoDbDependency(
 	env environment.Env,
-	databaseThing *db.ThingModel,
+	databaseThing sqldb.AppThing,
 	nodeConfig map[string]any,
 	key string,
-	prismaClient *db.PrismaClient,
 	secretsClient secrets.SecretsClient,
 	spaceId string,
 ) error {
 	_ = env
-	_ = prismaClient
 
 	// Unmarshal the thing so that we can process it
 	var database things.MongoDbServer
