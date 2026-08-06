@@ -1,11 +1,11 @@
 'use client'
 
 import { FC } from 'react'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import ContextMenu from '@iotea/hub/components/atoms/ContextMenu'
-import { handleDeleteApiKey } from '@iotea/hub/actions/apiKeys'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import ContextMenu from '@gruent/hub/components/atoms/ContextMenu'
+import { handleDeleteApiKey } from '@gruent/hub/actions/apiKeys'
 import { riClipboardLine, riDeleteBin7Line } from '@mwarnerdotme/react-remixicon'
-import copyToClipboard from '@iotea/libs/frontend/util/copyToClipboard'
+import copyToClipboard from '@gruent/libs/frontend/util/copyToClipboard'
 
 type Props = {
   apiKeyId: string

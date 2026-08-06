@@ -9,14 +9,14 @@ import {
 } from '@mwarnerdotme/react-remixicon'
 import Image from 'next/image'
 import Link from 'next/link'
-import getAccessToken, { getSession } from '@iotea/hub/util/getAccessToken'
-import FeedbackButton from '@iotea/hub/components/molecules/FeedbackButton'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import OrgSelectDropdown from '@iotea/hub/components/organisms/OrgSelectDropdown'
+import getAccessToken, { getSession } from '@gruent/hub/util/getAccessToken'
+import FeedbackButton from '@gruent/hub/components/molecules/FeedbackButton'
+import gruentClient from '@gruent/hub/lib/gruent'
+import OrgSelectDropdown from '@gruent/hub/components/organisms/OrgSelectDropdown'
 import { FC } from 'react'
 
 export const metadata = {
-  title: 'Organization dashboard | IOTEA',
+  title: 'Organization dashboard | GRUENT',
 }
 
 const Layout = async ({ children, params }) => {
@@ -26,7 +26,7 @@ const Layout = async ({ children, params }) => {
 
   const { orgId } = await params
 
-  const { data: user, errors: _getUserErrors } = await ioteaClient(accessToken).users.get(userId)
+  const { data: user, errors: _getUserErrors } = await gruentClient(accessToken).users.get(userId)
 
   const organizations = user?.organizations.map((orgMembership) => orgMembership.organization)
   const organization = organizations?.find((org) => org.id === orgId)
@@ -52,7 +52,7 @@ const Layout = async ({ children, params }) => {
             <Link href={`/dashboard`}>
               <Image
                 src="/img/logos/app-icon-primary.png"
-                alt="IOTEA logo"
+                alt="GRUENT logo"
                 width={25}
                 height={25}
               />

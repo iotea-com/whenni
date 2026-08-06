@@ -5,15 +5,15 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteachannels "github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruentchannels "github.com/ongruent/gruent/libs/legacy/engine/channels"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.Name", request.Input.Name),
@@ -45,7 +45,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		}
 
 		// Unmarshal channel config
-		var channelConfig ioteachannels.Channel
+		var channelConfig gruentchannels.Channel
 		err = json.Unmarshal(channel.Config, &channelConfig)
 		if err != nil {
 			request.Span.SetAttributes(
@@ -53,7 +53,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 				attribute.String("error.message", fmt.Sprintf("could not read channel config: %s", err.Error())),
 			)
 
-			errorResponse := ioteahttp.NewErrorResponse([]any{
+			errorResponse := gruenthttp.NewErrorResponse([]any{
 				fmt.Sprintf("could not read channel config: %s", err.Error()),
 			})
 			errorResponseJson, _ := errorResponse.MarshalJson()
@@ -77,7 +77,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.message", fmt.Sprintf("thing is used in %d channel(s)", len(channelsWithThing))),
 		)
 
-		errorResponse := ioteahttp.NewErrorResponse([]any{
+		errorResponse := gruenthttp.NewErrorResponse([]any{
 			fmt.Sprintf("thing is used in %d channel(s)", len(channelsWithThing)),
 		})
 		errorResponseJson, _ := errorResponse.MarshalJson()
@@ -109,7 +109,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 				attribute.String("error.message", fmt.Sprintf("could not read thing attributes: %s", err.Error())),
 			)
 
-			errorResponse := ioteahttp.NewErrorResponse([]any{
+			errorResponse := gruenthttp.NewErrorResponse([]any{
 				fmt.Sprintf("could not read thing attributes: %s", err.Error()),
 			})
 			errorResponseJson, _ := errorResponse.MarshalJson()
@@ -129,7 +129,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.message", fmt.Sprintf("thing is referenced in %d other thing(s)", len(thingsWithThing))),
 		)
 
-		errorResponse := ioteahttp.NewErrorResponse([]any{
+		errorResponse := gruenthttp.NewErrorResponse([]any{
 			fmt.Sprintf("thing is referenced in %d other thing(s)", len(thingsWithThing)),
 		})
 		errorResponseJson, _ := errorResponse.MarshalJson()
@@ -144,7 +144,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.message", errMessage),
 		)
 
-		response := ioteahttp.NewErrorResponse([]any{errMessage})
+		response := gruenthttp.NewErrorResponse([]any{errMessage})
 		responseJson, _ := response.MarshalJson()
 		return nil, fiber.NewError(400, string(responseJson))
 	}

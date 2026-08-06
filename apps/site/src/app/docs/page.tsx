@@ -1,24 +1,24 @@
-import Container from '@iotea/libs/frontend/components/templates/Container'
+import Container from '@gruent/libs/frontend/components/templates/Container'
 
 import { Metadata } from 'next'
 
 import styles from './page.module.scss'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 
 // // do not cache this page
 // export const revalidate = 1 * 60 // seconds
 
 export const metadata: Metadata = {
-  title: 'Documentation, tutorials, and API reference | IOTEA',
+  title: 'Documentation, tutorials, and API reference | GRUENT',
   description:
-    'Learn how to use IOTEA to seamlessly integrate devices and services. Get tutorials, API reference, and more.',
+    'Learn how to use GRUENT to seamlessly integrate devices and services. Get tutorials, API reference, and more.',
   openGraph: {
     type: 'website',
-    url: `https://iotea.com/docs`,
-    title: 'Documentation, tutorials, and API reference | IOTEA',
+    url: `https://gruent.com/docs`,
+    title: 'Documentation, tutorials, and API reference | GRUENT',
     description:
-      'Learn how to use IOTEA to seamlessly integrate devices and services. Get tutorials, API reference, and more.',
-    images: ['https://iotea.com/img/logos/app-icon-primary.png'],
+      'Learn how to use GRUENT to seamlessly integrate devices and services. Get tutorials, API reference, and more.',
+    images: ['https://gruent.com/img/logos/app-icon-primary.png'],
   },
 }
 

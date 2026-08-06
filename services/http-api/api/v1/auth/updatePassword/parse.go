@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruenthttputil "github.com/ongruent/gruent/libs/http/util"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
-func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
+func parse(ctx *fiber.Ctx) (*gruenthttp.Request[Input], error) {
 	type RequestBody struct {
 		NewPassword string `json:"password"`
 	}
@@ -28,7 +28,7 @@ func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 		return nil, fiber.NewError(fiber.StatusUnprocessableEntity)
 	}
 
-	bearerToken, err := ioteahttputil.ParseBearerToken(ctx.Get("Authorization"))
+	bearerToken, err := gruenthttputil.ParseBearerToken(ctx.Get("Authorization"))
 	if err != nil {
 		requestSpan.SetAttributes(
 			attribute.String("error.type", "parse_bearer_token"),
@@ -37,7 +37,7 @@ func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 		return nil, err
 	}
 
-	request := &ioteahttp.Request[Input]{
+	request := &gruenthttp.Request[Input]{
 		Span:         requestSpan,
 		FiberContext: ctx,
 		Context:      ctx.UserContext(),

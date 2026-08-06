@@ -2,14 +2,14 @@
 
 import Image from 'next/image'
 import { FC, FormEventHandler, useEffect, useState } from 'react'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
 import Link from 'next/link'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { useRouter } from 'next/navigation'
 import { RemixIcon, riEyeLine } from '@mwarnerdotme/react-remixicon'
 // import { signIn } from 'next-auth/react'
-import { signup } from '@iotea/hub/actions/auth'
+import { signup } from '@gruent/hub/actions/auth'
 
 type Props = {
   invitation?: {
@@ -99,11 +99,11 @@ const SignUpForm: FC<Props> = ({ invitation, inviteToken, inviteTokenError }) =>
           src={'/img/logos/app-icon-primary.png'}
           height={35}
           width={35}
-          alt="IOTEA logo"
+          alt="GRUENT logo"
           className="mb-5"
         />
         <h2 className="text-gray-800 text-2xl">Sign Up</h2>
-        <h3 className="text-gray-500 text-lg font-normal">to start using IOTEA</h3>
+        <h3 className="text-gray-500 text-lg font-normal">to start using GRUENT</h3>
         {/* {process.env.NEXT_PUBLIC_GITHUB_ENABLED === 'true' && (
           <>
             <div className="my-6">

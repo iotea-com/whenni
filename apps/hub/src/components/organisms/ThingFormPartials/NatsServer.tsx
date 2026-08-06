@@ -1,8 +1,8 @@
 'use client'
 
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
 import { Dispatch, FC, useEffect, useMemo, useState } from 'react'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import { RemixIcon, riCloseLine } from '@mwarnerdotme/react-remixicon'
 import { Thing } from '@prisma/client'
 

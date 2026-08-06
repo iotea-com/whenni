@@ -1,5 +1,5 @@
-import { ChannelEdge, ChannelNote, ChannelRuntime } from '@iotea/libs/engine/channels/channels'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
+import { ChannelEdge, ChannelNote, ChannelRuntime } from '@gruent/libs/engine/channels/channels'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
 import { create } from 'zustand'
 import { IoPoint } from '../components/organisms/ChannelEditor/types/IoPoint'
 import { Model, Thing } from '@prisma/client'

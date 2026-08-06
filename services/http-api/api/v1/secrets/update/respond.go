@@ -2,12 +2,12 @@ package secretsUpdate
 
 import (
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 )
 
-func respond(request *ioteahttp.Request[Input], _ *Output) {
+func respond(request *gruenthttp.Request[Input], _ *Output) {
 	request.Span.AddEvent("respond")
 
-	response := ioteahttp.NewCreateResponse(nil)
+	response := gruenthttp.NewCreateResponse(nil)
 	request.FiberContext.Status(fiber.StatusCreated).JSON(response)
 }

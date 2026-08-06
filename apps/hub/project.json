@@ -84,7 +84,7 @@
       "configurations": {
         "local": {
           "tags": [
-            "iotea-hub:local"
+            "gruent-hub:local"
           ],
           "platforms": [],
           "no-cache": true

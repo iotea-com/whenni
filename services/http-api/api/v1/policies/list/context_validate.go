@@ -1,21 +1,21 @@
 package policiesList
 
 import (
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruentpermissions "github.com/ongruent/gruent/libs/http/permissions"
+	"github.com/ongruent/gruent/services/http-api/config"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func contextValidate(request *ioteahttp.Request[Input]) error {
+func contextValidate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
-	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
+	authorizeRequestParams := gruenthttp.AuthorizeRequestParams{
 		BearerToken: request.Input.BearerToken,
 		JwtSecret:   config.VaultConf.JwtSecret,
 		ScopeId:     request.Input.SpaceId,
-		Namespace:   ioteapermissions.NamespacePolicies,
-		Action:      ioteapermissions.ActionList,
+		Namespace:   gruentpermissions.NamespacePolicies,
+		Action:      gruentpermissions.ActionList,
 	}
 
 	err := request.Authorize(authorizeRequestParams)

@@ -1,16 +1,16 @@
-import ioteaClient from '@iotea/hub/lib/iotea'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import CreateSecretModal from '@iotea/hub/components/modals/CreateSecretModal'
-import SecretsTable from '@iotea/hub/components/organisms/SecretsTable'
+import gruentClient from '@gruent/hub/lib/gruent'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import CreateSecretModal from '@gruent/hub/components/modals/CreateSecretModal'
+import SecretsTable from '@gruent/hub/components/organisms/SecretsTable'
 import { riAddCircleLine, riLockLine } from '@mwarnerdotme/react-remixicon'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import { RemixIcon } from '@mwarnerdotme/react-remixicon'
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import ListTablePlaceholder from '@iotea/hub/components/molecules/ListTablePlaceholder'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import ListTablePlaceholder from '@gruent/hub/components/molecules/ListTablePlaceholder'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 
 export const metadata = {
-  title: 'Secrets | IOTEA',
+  title: 'Secrets | GRUENT',
 }
 
 const SecretsPage = async ({ params }) => {
@@ -19,7 +19,7 @@ const SecretsPage = async ({ params }) => {
   const accessToken = await getAccessToken()
   if (!accessToken) return null
 
-  const { data: secrets, errors } = await ioteaClient(accessToken).secrets.list(spaceId)
+  const { data: secrets, errors } = await gruentClient(accessToken).secrets.list(spaceId)
 
   if (errors && errors.length > 0) {
     return (

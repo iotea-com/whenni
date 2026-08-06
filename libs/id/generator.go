@@ -101,7 +101,7 @@ func (idg *StandardIdGenerator) NewTagId() (*string, error) {
 }
 
 func (idg *MockStandardIdGenerator) generateId(prefix string) (*string, error) {
-	nanoid := "ioteaidstub"
+	nanoid := "gruentidstub"
 	id := fmt.Sprintf("%s%s", prefix, nanoid)
 
 	return &id, nil

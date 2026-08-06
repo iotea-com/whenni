@@ -4,7 +4,7 @@ import { FC, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 import FormFieldText from '../../atoms/FormFieldText'
 import Button from '../../atoms/Button'
-import addNewsletterMember from '@iotea/site/actions/addNewsletterMember'
+import addNewsletterMember from '@gruent/site/actions/addNewsletterMember'
 
 const FormSubmitButton: FC = () => {
   const { pending } = useFormStatus()

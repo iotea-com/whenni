@@ -1,4 +1,4 @@
-package ioteapermissions
+package gruentpermissions
 
 var NamespaceSpaceApiKeys Namespace = "space-api-keys"
 var NamespaceChannels Namespace = "channels"

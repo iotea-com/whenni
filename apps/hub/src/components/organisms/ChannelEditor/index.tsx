@@ -4,8 +4,8 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useDrawChannelEditor } from './useDrawChannelEditor'
 import { useChannelEditorKeyboardEvents } from './events/keyboard'
 import { useChannelEditorMouseEvents } from './events/mouse'
-import isBrowser from '@iotea/libs/frontend/util/isBrowser'
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
+import isBrowser from '@gruent/libs/frontend/util/isBrowser'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
 import {
   RemixIcon,
   riCrosshair2Line,
@@ -13,10 +13,10 @@ import {
   riZoomInLine,
   riZoomOutLine,
 } from '@mwarnerdotme/react-remixicon'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import ChannelValidationErrorModal from './ChannelValidationErrorModal'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import noop from '@iotea/libs/frontend/util/noop'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import noop from '@gruent/libs/frontend/util/noop'
 
 const GRID_SIZE = 24
 const CANVAS_SCALE = 2

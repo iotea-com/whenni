@@ -3,7 +3,7 @@ package get
 import (
 	"time"
 
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
 )
 
 type User struct {

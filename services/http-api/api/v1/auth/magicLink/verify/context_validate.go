@@ -1,10 +1,10 @@
 package magicLinkVerify
 
 import (
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 )
 
-func contextValidate(request *ioteahttp.Request[Input]) error {
+func contextValidate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
 	return nil

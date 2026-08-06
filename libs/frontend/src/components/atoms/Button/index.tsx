@@ -1,7 +1,7 @@
 'use client'
 
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
-import noop from '@iotea/libs/frontend/util/noop'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
+import noop from '@gruent/libs/frontend/util/noop'
 import Link from 'next/link'
 import {
   ButtonHTMLAttributes,

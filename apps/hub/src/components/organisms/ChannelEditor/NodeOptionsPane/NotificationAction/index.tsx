@@ -1,14 +1,14 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { NotificationActionNodeConfig } from '@iotea/libs/engine/nodes/v1/src/action/notification'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { NotificationActionNodeConfig } from '@gruent/libs/engine/nodes/v1/src/action/notification'
 import { Thing, Model } from '@prisma/client'
 import { FC, useEffect, useMemo, useState } from 'react'
 import AwsSESActionOptions from './AwsSESActionOptions'
 import AwsSNSActionOptions from './AwsSNSActionOptions'
 import SendgridActionOptions from './SendgridActionOptions'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { RemixIcon, riAddLine } from '@mwarnerdotme/react-remixicon'
 
 type Props = {
@@ -171,7 +171,7 @@ const NotificationActionOptions: FC<Props> = ({ things, orgId, spaceId, models }
           label="Notification Thing"
           className="grow"
           options={notificationOptions}
-          value={selectedNotificationThing?.id ?? '__IOTEA_IGNORE__'}
+          value={selectedNotificationThing?.id ?? '__GRUENT_IGNORE__'}
           onChange={(e) =>
             setSelectedNotificationThing(
               notificationThings.find((s) => {

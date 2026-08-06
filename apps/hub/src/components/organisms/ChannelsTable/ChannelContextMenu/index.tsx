@@ -1,13 +1,13 @@
 'use client'
 
 import { FC } from 'react'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import ContextMenu from '@iotea/hub/components/atoms/ContextMenu'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import ContextMenu from '@gruent/hub/components/atoms/ContextMenu'
 import {
   handleDeleteChannel,
   handlePublishChannel,
   handleUnpublishChannel,
-} from '@iotea/hub/actions/channels'
+} from '@gruent/hub/actions/channels'
 import { Channel } from '@prisma/client'
 import { riCloudLine, riCloudOffLine, riDeleteBin7Line } from '@mwarnerdotme/react-remixicon'
 

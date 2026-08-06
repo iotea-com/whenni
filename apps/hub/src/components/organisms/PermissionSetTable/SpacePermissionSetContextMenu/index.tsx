@@ -1,16 +1,16 @@
 'use client'
 
 import { FC, useState } from 'react'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { useMutation } from '@tanstack/react-query'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import gruentClient from '@gruent/hub/lib/gruent'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { PermissionSet } from '@prisma/client'
-import ContextMenu from '@iotea/hub/components/atoms/ContextMenu'
-import { handleRemovePermissionSet } from '@iotea/hub/actions/permissionSets'
-import UpdateSpacePermissionSetModal from '@iotea/hub/components/modals/UpdateSpacePermissionSetModal'
+import ContextMenu from '@gruent/hub/components/atoms/ContextMenu'
+import { handleRemovePermissionSet } from '@gruent/hub/actions/permissionSets'
+import UpdateSpacePermissionSetModal from '@gruent/hub/components/modals/UpdateSpacePermissionSetModal'
 import { riDeleteBin7Line, riEdit2Line } from '@mwarnerdotme/react-remixicon'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 type Props = {
   permissionSetId: string
@@ -30,7 +30,7 @@ const SpacePermissionSetContextMenu: FC<Props> = ({ permissionSetId, spaceId, or
     mutationFn: async () => {
       if (!accessToken) return
 
-      const { data: results, errors } = await ioteaClient(accessToken).permissions.list(
+      const { data: results, errors } = await gruentClient(accessToken).permissions.list(
         spaceId ?? orgId,
       )
 

@@ -60,8 +60,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
     npm install -g nx && \
     corepack enable
 
-# Repo is bind-mounted at /whenni (see deploy/engine/local/docker-compose.yaml)
-WORKDIR /whenni
+# Repo is bind-mounted at /gruent (see deploy/engine/local/docker-compose.yaml)
+WORKDIR /gruent
 
 # Command to run the executable
 CMD chmod +x ./deploy/engine/local/config/start.sh && ./deploy/engine/local/config/start.sh

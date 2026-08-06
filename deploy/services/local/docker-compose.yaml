@@ -11,7 +11,7 @@ services:
   emqx:
     container_name: emqx-service
     profiles: [ "source", "action" ]
-    image: iotea-emqx:latest
+    image: gruent-emqx:latest
     ports:
       - "8883:8883" # MQTTS
       # - "8084:8084" # WSS # TODO: enabled WSS in production
@@ -46,7 +46,7 @@ services:
       DOCKER_INFLUXDB_INIT_MODE: setup
       DOCKER_INFLUXDB_INIT_USERNAME: admin
       DOCKER_INFLUXDB_INIT_PASSWORD: admin12345
-      DOCKER_INFLUXDB_INIT_ORG: iotea
+      DOCKER_INFLUXDB_INIT_ORG: gruent
       DOCKER_INFLUXDB_INIT_BUCKET: default
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: my-secret-influxdb2-token
     volumes:

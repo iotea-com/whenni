@@ -1,9 +1,9 @@
 'use server'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { Thing } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 
 export const handleAddThing = async (
   spaceId: string,
@@ -18,7 +18,7 @@ export const handleAddThing = async (
       error: 'Your session is currently inactive. Sign in again to add the thing.',
     }
 
-  const { errors } = await ioteaClient(accessToken).things.create(
+  const { errors } = await gruentClient(accessToken).things.create(
     spaceId,
     name,
     category,
@@ -43,7 +43,7 @@ export const handleUpdateThing = async (
       error: 'Your session is currently inactive. Sign in again to add the thing.',
     }
 
-  const { errors } = await ioteaClient(accessToken).things.update(spaceId, thingId, thingInput)
+  const { errors } = await gruentClient(accessToken).things.update(spaceId, thingId, thingInput)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -59,7 +59,7 @@ export const handleDeleteThing = async (spaceId: string, thingId: string) => {
       error: 'Your session is currently inactive. Sign in again to delete the thing.',
     }
 
-  const { errors } = await ioteaClient(accessToken).things.delete(spaceId, thingId)
+  const { errors } = await gruentClient(accessToken).things.delete(spaceId, thingId)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -79,7 +79,7 @@ export const handleHealthcheckThing = async (
       error: 'Your session is currently inactive. Sign in again to delete the thing.',
     }
 
-  const { errors } = await ioteaClient(accessToken).things.healthcheck(
+  const { errors } = await gruentClient(accessToken).things.healthcheck(
     spaceId,
     thingCategory,
     attributes,

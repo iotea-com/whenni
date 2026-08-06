@@ -1,8 +1,8 @@
 'use server'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { revalidatePath } from 'next/cache'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 
 export const handleCreateTag = async (spaceId: string, name: string) => {
   const accessToken = await getAccessToken()
@@ -12,7 +12,7 @@ export const handleCreateTag = async (spaceId: string, name: string) => {
       error: 'Your session is currently inactive. Sign in again to add the tag.',
     }
 
-  const { data: tag, errors } = await ioteaClient(accessToken).tags.create(spaceId, name)
+  const { data: tag, errors } = await gruentClient(accessToken).tags.create(spaceId, name)
 
   if (errors && errors.length > 0) return { data: null, error: errors[0] }
 
@@ -31,7 +31,7 @@ export const handleApplyTag = async (spaceId: string, tagId: string, subjectId: 
       error: 'Your session is currently inactive. Sign in again to add the tag.',
     }
 
-  const { errors } = await ioteaClient(accessToken).tags.apply(spaceId, tagId, subjectId)
+  const { errors } = await gruentClient(accessToken).tags.apply(spaceId, tagId, subjectId)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -49,7 +49,7 @@ export const handleRemoveTag = async (spaceId: string, tagId: string, subjectId:
       error: 'Your session is currently inactive. Sign in again to add the tag.',
     }
 
-  const { errors } = await ioteaClient(accessToken).tags.remove(spaceId, tagId, subjectId)
+  const { errors } = await gruentClient(accessToken).tags.remove(spaceId, tagId, subjectId)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -67,7 +67,7 @@ export const handleDeleteTag = async (spaceId: string, tagId: string) => {
       error: 'Your session is currently inactive. Sign in again to delete the tag.',
     }
 
-  const { errors } = await ioteaClient(accessToken).models.delete(spaceId, tagId)
+  const { errors } = await gruentClient(accessToken).models.delete(spaceId, tagId)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 

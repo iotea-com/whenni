@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/certificates"
-	"github.com/iotea-com/iotea/libs/secrets"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/certificates"
+	"github.com/ongruent/gruent/libs/secrets"
 )
 
 const MqttBrokerThingCategory ThingCategory = "MQTT_BROKER"

@@ -1,26 +1,26 @@
 package apiKeysAdd
 
 import (
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruentpermissions "github.com/ongruent/gruent/libs/http/permissions"
+	"github.com/ongruent/gruent/services/http-api/config"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func contextValidate(request *ioteahttp.Request[Input]) error {
+func contextValidate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
-	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
+	authorizeRequestParams := gruenthttp.AuthorizeRequestParams{
 		BearerToken: request.Input.BearerToken,
 		JwtSecret:   config.VaultConf.JwtSecret,
 		ScopeId:     request.Input.OrgId,
-		Namespace:   ioteapermissions.NamespaceOrganizationApiKeys,
-		Action:      ioteapermissions.ActionCreate,
+		Namespace:   gruentpermissions.NamespaceOrganizationApiKeys,
+		Action:      gruentpermissions.ActionCreate,
 	}
 
 	if request.Input.SpaceId != "" {
 		authorizeRequestParams.ScopeId = request.Input.SpaceId
-		authorizeRequestParams.Namespace = ioteapermissions.NamespaceSpaceApiKeys
+		authorizeRequestParams.Namespace = gruentpermissions.NamespaceSpaceApiKeys
 	}
 
 	err := request.Authorize(authorizeRequestParams)

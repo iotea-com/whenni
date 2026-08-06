@@ -1,4 +1,4 @@
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
@@ -9,7 +9,7 @@ const handler = async (req: NextRequest) => {
 
   // Verify magic link
   const { data: verificationResponse, errors: tokenErrors } =
-    await ioteaClient('').auth.signin.magicLink.verify(verificationToken)
+    await gruentClient('').auth.signin.magicLink.verify(verificationToken)
 
   if (tokenErrors) redirect(`/magic-link/verify/error?error=${encodeURIComponent(tokenErrors[0])}`)
   if (!verificationResponse)

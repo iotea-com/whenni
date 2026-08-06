@@ -1,13 +1,13 @@
 'use client'
 
 import { FC, createRef, useCallback } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import noop from '@iotea/libs/frontend/util/noop'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import { CreateChannelInput } from '@iotea/libs/iotea-js/src/channels/create'
-import { handleCreateChannel } from '@iotea/hub/actions/channels'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import noop from '@gruent/libs/frontend/util/noop'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import { CreateChannelInput } from '@gruent/libs/gruent-js/src/channels/create'
+import { handleCreateChannel } from '@gruent/hub/actions/channels'
 
 type Props = {
   spaceId: string

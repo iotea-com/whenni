@@ -1,8 +1,8 @@
 'use server'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { revalidatePath } from 'next/cache'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 
 export const handleAddSecret = async (spaceId: string, name: string, value: string) => {
   const accessToken = await getAccessToken()
@@ -12,7 +12,7 @@ export const handleAddSecret = async (spaceId: string, name: string, value: stri
       error: 'Your session is currently inactive. Sign in again to add the space.',
     }
 
-  const { errors } = await ioteaClient(accessToken).secrets.create(spaceId, name, value)
+  const { errors } = await gruentClient(accessToken).secrets.create(spaceId, name, value)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -28,7 +28,7 @@ export const handleDeleteSecret = async (spaceId: string, secretName: string) =>
       error: 'Your session is currently inactive. Sign in again to delete the space.',
     }
 
-  const { errors } = await ioteaClient(accessToken).secrets.delete(spaceId, secretName)
+  const { errors } = await gruentClient(accessToken).secrets.delete(spaceId, secretName)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -44,7 +44,7 @@ export const handleUpdateSecret = async (spaceId: string, name: string, value: s
       error: 'Your session is currently inactive. Sign in again to add the space.',
     }
 
-  const { errors } = await ioteaClient(accessToken).secrets.update(spaceId, name, value)
+  const { errors } = await gruentClient(accessToken).secrets.update(spaceId, name, value)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 

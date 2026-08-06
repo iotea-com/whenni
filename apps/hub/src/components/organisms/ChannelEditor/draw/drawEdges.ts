@@ -1,8 +1,8 @@
-import { ChannelEdge } from '@iotea/libs/engine/channels/channels'
-import theme from '@iotea/libs/frontend/themes/tailwind'
+import { ChannelEdge } from '@gruent/libs/engine/channels/channels'
+import theme from '@gruent/libs/frontend/themes/tailwind'
 import { IoPoint } from '../types/IoPoint'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { Theme } from '@iotea/hub/stores/settingsStore'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { Theme } from '@gruent/hub/stores/settingsStore'
 
 type DrawEdgesParams = {
   context: CanvasRenderingContext2D

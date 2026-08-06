@@ -15,7 +15,7 @@ RUN yarn prisma generate --generator client
 # Copy source code
 COPY ./libs/frontend ./libs/frontend
 COPY ./libs/id ./libs/id
-COPY ./libs/iotea-js ./libs/iotea-js
+COPY ./libs/gruent-js ./libs/gruent-js
 COPY ./libs/http ./libs/http
 COPY ./libs/engine/channels ./libs/engine/channels
 COPY ./libs/engine/nodes/v1 ./libs/engine/nodes/v1

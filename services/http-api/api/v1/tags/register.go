@@ -3,12 +3,12 @@ package tags
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/iotea-com/iotea/services/http-api/api/middleware"
-	tagsApply "github.com/iotea-com/iotea/services/http-api/api/v1/tags/apply"
-	tagsCreate "github.com/iotea-com/iotea/services/http-api/api/v1/tags/create"
-	tagsDelete "github.com/iotea-com/iotea/services/http-api/api/v1/tags/delete"
-	tagsList "github.com/iotea-com/iotea/services/http-api/api/v1/tags/list"
-	tagsRemove "github.com/iotea-com/iotea/services/http-api/api/v1/tags/remove"
+	"github.com/ongruent/gruent/services/http-api/api/middleware"
+	tagsApply "github.com/ongruent/gruent/services/http-api/api/v1/tags/apply"
+	tagsCreate "github.com/ongruent/gruent/services/http-api/api/v1/tags/create"
+	tagsDelete "github.com/ongruent/gruent/services/http-api/api/v1/tags/delete"
+	tagsList "github.com/ongruent/gruent/services/http-api/api/v1/tags/list"
+	tagsRemove "github.com/ongruent/gruent/services/http-api/api/v1/tags/remove"
 )
 
 func Register(app fiber.Router) {

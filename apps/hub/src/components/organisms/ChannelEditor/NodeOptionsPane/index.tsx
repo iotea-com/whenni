@@ -1,6 +1,6 @@
 'use client'
 
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
 import { FC } from 'react'
 import HttpActionOptions from './HttpAction'
 import HttpSourceOptions from './HttpSource'

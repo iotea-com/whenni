@@ -9,7 +9,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { PermissionSet } from '@prisma/client'
-import ListTable from '@iotea/hub/components/atoms/ListTable'
+import ListTable from '@gruent/hub/components/atoms/ListTable'
 import OrgPermissionSetContextMenu from './OrgPermissionSetContextMenu'
 import { useRouter } from 'next/navigation'
 import SpacePermissionSetContextMenu from './SpacePermissionSetContextMenu'

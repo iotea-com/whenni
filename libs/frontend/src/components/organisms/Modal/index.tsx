@@ -1,9 +1,9 @@
 'use client'
 
-import useModal, { closeModal } from '@iotea/libs/frontend/hooks/useModal'
+import useModal, { closeModal } from '@gruent/libs/frontend/hooks/useModal'
 import { CSSProperties, FC, PropsWithChildren, useRef } from 'react'
 
-import noop from '@iotea/libs/frontend/util/noop'
+import noop from '@gruent/libs/frontend/util/noop'
 import Button from '../../atoms/Button'
 import { RemixIcon, riCloseLine } from '@mwarnerdotme/react-remixicon'
 import { useClickOutside } from '@react-hooks-library/core'

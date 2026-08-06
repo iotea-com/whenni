@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/libs/secrets"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/libs/secrets"
+	"github.com/ongruent/gruent/prisma/db"
+	"github.com/ongruent/gruent/services/http-api/config"
 )
 
 type handlerDbMocks struct {

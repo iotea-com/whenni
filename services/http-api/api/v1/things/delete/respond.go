@@ -2,12 +2,12 @@ package thingsDelete
 
 import (
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 )
 
-func respond(request *ioteahttp.Request[Input], _ *Output) {
+func respond(request *gruenthttp.Request[Input], _ *Output) {
 	request.Span.AddEvent("respond")
 
-	response := ioteahttp.NewDeleteResponse()
+	response := gruenthttp.NewDeleteResponse()
 	request.FiberContext.Status(fiber.StatusOK).JSON(response)
 }

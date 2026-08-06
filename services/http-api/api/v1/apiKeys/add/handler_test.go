@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
-	apiKeysAdd "github.com/iotea-com/iotea/services/http-api/api/v1/apiKeys/add"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/prisma/db"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
+	apiKeysAdd "github.com/ongruent/gruent/services/http-api/api/v1/apiKeys/add"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -83,7 +83,7 @@ func TestHandler(t *testing.T) {
 				t.Fatalf("Failed to read response body: %v", err)
 			}
 
-			var response ioteahttp.IoteaApiResponse
+			var response gruenthttp.GruentApiResponse
 			err = json.Unmarshal(responseBodyBytes, &response)
 			if err != nil {
 				t.Fatalf("Failed to unmarshal response body: %v", err)

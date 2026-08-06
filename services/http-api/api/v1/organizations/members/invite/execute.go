@@ -4,15 +4,15 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/smtp"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruenthttputil "github.com/ongruent/gruent/libs/http/util"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/smtp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.OrgId", request.Input.OrgId),
@@ -21,7 +21,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	)
 
 	// Create a new invite token
-	token, err := ioteahttputil.GenerateInvitationToken(request.Input.OrgId, request.Actor.Id, request.Input.Email, config.VaultConf.JwtSecret)
+	token, err := gruenthttputil.GenerateInvitationToken(request.Input.OrgId, request.Actor.Id, request.Input.Email, config.VaultConf.JwtSecret)
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "invite_generation"),
@@ -32,7 +32,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 
 	// Send an email with the token
 	_, smtpSpan := otel.Tracer("smtp").Start(request.Context, "Send invite email")
-	from := "auth@iotea.com"
+	from := "auth@gruent.com"
 
 	to := []string{request.Input.Email}
 
@@ -40,8 +40,8 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	<html>
 		<body>
 			<div>
-				<h1>IOTEA Invitation</h1>
-				<p>You've been invited to join an IOTEA organization!</p>
+				<h1>GRUENT Invitation</h1>
+				<p>You've been invited to join an GRUENT organization!</p>
 				<p>
 					<a href="{{ .AppUrl }}/signup?inviteToken={{ .Token }}" style="
 						display: inline-block;
@@ -59,7 +59,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	</html>
 	`
 
-	const plainBodyTemplate = `IOTEA Invitation
+	const plainBodyTemplate = `GRUENT Invitation
 
 	Copy and paste the link below to sign up and join the organization:
 	{{ .AppUrl }}/signup?inviteToken={{ .Token }}
@@ -70,19 +70,19 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	bodyData := map[string]string{
 		"AppUrl": request.Input.AppUrl,
 		"Token":  *token,
-		"Expiry": fmt.Sprintf("%.0f", ioteahttputil.InvitationTokenExpiry.Minutes()),
+		"Expiry": fmt.Sprintf("%.0f", gruenthttputil.InvitationTokenExpiry.Minutes()),
 	}
 
 	// Create multipart message
-	subject := "IOTEA Invitation"
-	message, err := ioteahttputil.BuildEmail(from, to, subject, plainBodyTemplate, htmlBodyTemplate, bodyData)
+	subject := "GRUENT Invitation"
+	message, err := gruenthttputil.BuildEmail(from, to, subject, plainBodyTemplate, htmlBodyTemplate, bodyData)
 	if err != nil {
 		smtpSpan.SetAttributes(
 			attribute.String("error.type", "multipart_message_build"),
 			attribute.String("error.message", fmt.Sprintf("error building multipart message: %s", err)),
 		)
 		smtpSpan.End()
-		errResponse := ioteahttp.NewErrorResponse([]any{"Unable to send invite email. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Unable to send invite email. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}
@@ -94,7 +94,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.message", fmt.Sprintf("error sending magic link email: %s", err)),
 		)
 		smtpSpan.End()
-		errResponse := ioteahttp.NewErrorResponse([]any{"Unable to send invite email. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Unable to send invite email. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}

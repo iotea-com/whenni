@@ -235,8 +235,8 @@ definitions:
 host: localhost:9001
 info:
   contact: {}
-  description: Bringing connectivity and automation to everyone, everywhere.
-  title: IOTEA
+  description: Connect systems with clarity.
+  title: GRUENT
   version: alpha-v1.0
 paths:
   /api-keys:

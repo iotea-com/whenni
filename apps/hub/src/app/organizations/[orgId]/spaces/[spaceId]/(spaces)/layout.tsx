@@ -1,4 +1,4 @@
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -12,13 +12,13 @@ import {
   riUserCommunityFill,
   riShieldUserLine,
 } from '@mwarnerdotme/react-remixicon'
-import SpaceSelectDropdown from '@iotea/hub/components/organisms/SpaceSelectDropdown'
+import SpaceSelectDropdown from '@gruent/hub/components/organisms/SpaceSelectDropdown'
 import styles from './layout.module.scss'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import FeedbackButton from '@iotea/hub/components/molecules/FeedbackButton'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import FeedbackButton from '@gruent/hub/components/molecules/FeedbackButton'
 
 export const metadata = {
-  title: 'Space dashboard | IOTEA',
+  title: 'Space dashboard | GRUENT',
 }
 
 const Layout = async ({ children, params }) => {
@@ -27,12 +27,12 @@ const Layout = async ({ children, params }) => {
   const accessToken = await getAccessToken()
   if (!accessToken) return null
 
-  const { data: space, errors: _spaceErrors } = await ioteaClient(accessToken).spaces.get(
+  const { data: space, errors: _spaceErrors } = await gruentClient(accessToken).spaces.get(
     orgId,
     spaceId,
   )
 
-  const { data: organization, errors: _organizationErrors } = await ioteaClient(
+  const { data: organization, errors: _organizationErrors } = await gruentClient(
     accessToken,
   ).organizations.get(space?.organizationId ?? '')
 
@@ -48,7 +48,7 @@ const Layout = async ({ children, params }) => {
             <Link href={`/dashboard`}>
               <Image
                 src="/img/logos/app-icon-primary.png"
-                alt="IOTEA logo"
+                alt="GRUENT logo"
                 width={25}
                 height={25}
               />

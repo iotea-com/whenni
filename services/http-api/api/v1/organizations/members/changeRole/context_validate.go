@@ -4,23 +4,23 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruentpermissions "github.com/ongruent/gruent/libs/http/permissions"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func contextValidate(request *ioteahttp.Request[Input]) error {
+func contextValidate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
-	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
+	authorizeRequestParams := gruenthttp.AuthorizeRequestParams{
 		BearerToken:  request.Input.BearerToken,
 		JwtSecret:    config.VaultConf.JwtSecret,
 		ScopeId:      request.Input.OrgId,
-		Namespace:    ioteapermissions.NamespaceMembers,
-		Action:       ioteapermissions.ActionUpdate,
+		Namespace:    gruentpermissions.NamespaceMembers,
+		Action:       gruentpermissions.ActionUpdate,
 		EnforceAdmin: true, // Actor must be a user and an admin to change a member's role
 	}
 
@@ -63,7 +63,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 			attribute.String("context_validation.status", "fail"),
 		)
 
-		errorResponse := ioteahttp.NewErrorResponse([]any{errMsg})
+		errorResponse := gruenthttp.NewErrorResponse([]any{errMsg})
 		marshalledErrorResponse, _ := errorResponse.MarshalJson()
 
 		return fiber.NewError(fiber.StatusBadRequest, string(marshalledErrorResponse))

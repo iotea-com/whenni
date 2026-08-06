@@ -4,15 +4,15 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.UserId", request.Input.UserId),

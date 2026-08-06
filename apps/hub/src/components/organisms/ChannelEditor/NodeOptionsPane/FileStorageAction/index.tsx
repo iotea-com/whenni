@@ -1,13 +1,13 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { FileStorageActionNodeConfig } from '@iotea/libs/engine/nodes/v1/src/action/fileStorage'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { FileStorageActionNodeConfig } from '@gruent/libs/engine/nodes/v1/src/action/fileStorage'
 import { Thing } from '@prisma/client'
 import { FC, useEffect, useMemo, useState } from 'react'
 import S3ActionOptions from './S3ActionOptions'
 import MinioActionOptions from './MinioActionOptions'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { RemixIcon, riAddLine } from '@mwarnerdotme/react-remixicon'
 
 type Props = {
@@ -129,7 +129,7 @@ const FileStorageActionOptions: FC<Props> = ({ things, orgId, spaceId }) => {
           label="File Storage Thing"
           className="grow"
           options={fileStorageThingOptions}
-          value={selectedFileStorageThing?.id ?? '__IOTEA_IGNORE__'}
+          value={selectedFileStorageThing?.id ?? '__GRUENT_IGNORE__'}
           onChange={(e) =>
             setSelectedFileStorageThing(
               fileStorageThings.find((s) => {

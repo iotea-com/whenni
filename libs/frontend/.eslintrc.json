@@ -20,7 +20,7 @@
         ],
         "@next/next/no-html-link-for-pages": [
           "error",
-          "apps/app-iotea-com/src"
+          "apps/app-gruent-com/src"
         ]
       }
     },

@@ -1,12 +1,12 @@
 'use client'
 
 import { FC, useCallback, useMemo, useState } from 'react'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { PermissionSet } from '@prisma/client'
-import ContextMenu from '@iotea/hub/components/atoms/ContextMenu'
-import { handleChangeMemberRole, handleRemoveMember } from '@iotea/hub/actions/members'
-import EditUserPermissionsModal from '@iotea/hub/components/modals/EditUserPermissionsModal'
+import ContextMenu from '@gruent/hub/components/atoms/ContextMenu'
+import { handleChangeMemberRole, handleRemoveMember } from '@gruent/hub/actions/members'
+import EditUserPermissionsModal from '@gruent/hub/components/modals/EditUserPermissionsModal'
 import { riAdminLine, riDeleteBin7Line, riEdit2Line } from '@mwarnerdotme/react-remixicon'
 
 type Props = {

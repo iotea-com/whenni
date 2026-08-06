@@ -3,14 +3,14 @@ package auth
 import (
 	"github.com/gofiber/fiber/v2"
 
-	// "github.com/iotea-com/iotea/libs/http/middleware"
-	"github.com/iotea-com/iotea/services/http-api/api/middleware"
-	magicLinkVerify "github.com/iotea-com/iotea/services/http-api/api/v1/auth/magicLink/verify"
-	"github.com/iotea-com/iotea/services/http-api/api/v1/auth/mqtt"
-	"github.com/iotea-com/iotea/services/http-api/api/v1/auth/refresh"
-	"github.com/iotea-com/iotea/services/http-api/api/v1/auth/signin"
-	"github.com/iotea-com/iotea/services/http-api/api/v1/auth/signup"
-	"github.com/iotea-com/iotea/services/http-api/api/v1/auth/updatePassword"
+	// "github.com/ongruent/gruent/libs/http/middleware"
+	"github.com/ongruent/gruent/services/http-api/api/middleware"
+	magicLinkVerify "github.com/ongruent/gruent/services/http-api/api/v1/auth/magicLink/verify"
+	"github.com/ongruent/gruent/services/http-api/api/v1/auth/mqtt"
+	"github.com/ongruent/gruent/services/http-api/api/v1/auth/refresh"
+	"github.com/ongruent/gruent/services/http-api/api/v1/auth/signin"
+	"github.com/ongruent/gruent/services/http-api/api/v1/auth/signup"
+	"github.com/ongruent/gruent/services/http-api/api/v1/auth/updatePassword"
 )
 
 func Register(app fiber.Router) {

@@ -32,8 +32,8 @@
     "../../apps/hub/dist/.next/types/**/*.ts",
     "../../libs/frontend/**/*.ts",
     "../../libs/frontend/**/*.tsx",
-    "../../libs/iotea-js/**/*.ts",
-    "../../libs/iotea-js/**/*.tsx"
+    "../../libs/gruent-js/**/*.ts",
+    "../../libs/gruent-js/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

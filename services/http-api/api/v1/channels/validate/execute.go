@@ -3,15 +3,15 @@ package channelsValidate
 import (
 	"fmt"
 
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	resolveModels "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models/resolve"
-	resolveThings "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/resolve"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/libs/legacy/engine/channels"
+	resolveModels "github.com/ongruent/gruent/libs/legacy/engine/dependencies/models/resolve"
+	resolveThings "github.com/ongruent/gruent/libs/legacy/engine/dependencies/things/resolve"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),

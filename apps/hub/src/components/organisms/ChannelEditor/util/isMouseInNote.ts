@@ -1,4 +1,4 @@
-import { ChannelNote } from '@iotea/libs/engine/channels/index'
+import { ChannelNote } from '@gruent/libs/engine/channels/index'
 import { calculateNoteDisplay } from './calculateNoteDisplay'
 import { isPointInPolygon } from './isPointInPolygon'
 

@@ -17,12 +17,12 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.iotea.runtime.MainKt")
+    mainClass.set("com.gruent.runtime.MainKt")
 }
 
 tasks.withType<Jar> {
     manifest {
-        attributes["Main-Class"] = "com.iotea.runtime.MainKt"
+        attributes["Main-Class"] = "com.gruent.runtime.MainKt"
     }
 }
 

@@ -1,5 +1,5 @@
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { ChannelEdge, ChannelEdgeConnection, ChannelNote } from '@iotea/libs/engine/channels/index'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { ChannelEdge, ChannelEdgeConnection, ChannelNote } from '@gruent/libs/engine/channels/index'
 
 import { DragEventHandler, MouseEventHandler, RefObject, useCallback, useState } from 'react'
 import { isMouseInIoPoint } from '../util/isMouseInIoPoint'
@@ -7,10 +7,10 @@ import { isMouseInNode } from '../util/isMouseInNode'
 import { IoPoint } from '../types/IoPoint'
 
 import { isMouseOnEdge } from '../util/isMouseOnEdge'
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { isMouseInNote } from '../util/isMouseInNote'
-import { generateEdgeId, generateNodeId, generateNoteId } from '@iotea/hub/util/idGenerator'
+import { generateEdgeId, generateNodeId, generateNoteId } from '@gruent/hub/util/idGenerator'
 
 export const useChannelEditorMouseEvents = (
   editorRef: RefObject<HTMLCanvasElement | null>,
@@ -438,7 +438,7 @@ export const useChannelEditorMouseEvents = (
       if (
         typeof parsedDropData === 'object' &&
         Object.keys(parsedDropData).includes('id') &&
-        parsedDropData.id === '__IOTEA_NOTE__'
+        parsedDropData.id === '__GRUENT_NOTE__'
       ) {
         const newNote = JSON.parse(dropData) as ChannelNote
         newNote.id = generateNoteId()

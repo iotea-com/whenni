@@ -1,4 +1,4 @@
-package ioteapermissions
+package gruentpermissions
 
 var NamespaceOrganizations Namespace = "organizations"
 var NamespaceOrganizationApiKeys Namespace = "organization-api-keys"

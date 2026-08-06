@@ -2,11 +2,11 @@
 
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
-import ChannelEditor from '@iotea/hub/components/organisms/ChannelEditor'
-import type { ChannelConfig } from '@iotea/libs/engine/channels/index'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
+import ChannelEditor from '@gruent/hub/components/organisms/ChannelEditor'
+import type { ChannelConfig } from '@gruent/libs/engine/channels/index'
 import { useQuery } from '@tanstack/react-query'
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import {
   RemixIcon,
   riClipboardFill,
@@ -24,30 +24,30 @@ import {
   riLayout3Line,
   riCloudLine,
 } from '@mwarnerdotme/react-remixicon'
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import NodeLibraryPane from '@iotea/hub/components/organisms/ChannelEditor/NodeLibraryPane'
-import NodeOptionsPane from '@iotea/hub/components/organisms/ChannelEditor/NodeOptionsPane'
-import ChannelOptionsPane from '@iotea/hub/components/organisms/ChannelEditor/ChannelOptionsPane'
-import NoteOptionsPane from '@iotea/hub/components/organisms/ChannelEditor/NoteOptionsPane'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import ChannelExecutionsTable from '@iotea/hub/components/organisms/ChannelExecutionsTable'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import useChannelConfig from '@iotea/libs/frontend/hooks/useChannelConfig'
-import copyToClipboard from '@iotea/libs/frontend/util/copyToClipboard'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import NodeLibraryPane from '@gruent/hub/components/organisms/ChannelEditor/NodeLibraryPane'
+import NodeOptionsPane from '@gruent/hub/components/organisms/ChannelEditor/NodeOptionsPane'
+import ChannelOptionsPane from '@gruent/hub/components/organisms/ChannelEditor/ChannelOptionsPane'
+import NoteOptionsPane from '@gruent/hub/components/organisms/ChannelEditor/NoteOptionsPane'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import ChannelExecutionsTable from '@gruent/hub/components/organisms/ChannelExecutionsTable'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import useChannelConfig from '@gruent/libs/frontend/hooks/useChannelConfig'
+import copyToClipboard from '@gruent/libs/frontend/util/copyToClipboard'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import Link from 'next/link'
 import dayjs from 'dayjs'
 import Loading from '../loading'
-import NodeExecutionLogEntry from '@iotea/libs/frontend/components/molecules/NodeExecutionLogEntry'
+import NodeExecutionLogEntry from '@gruent/libs/frontend/components/molecules/NodeExecutionLogEntry'
 import { Space } from '@prisma/client'
 import { Organization } from '@prisma/client'
-import ContextMenu from '@iotea/hub/components/atoms/ContextMenu'
-import { handleDeleteChannel } from '@iotea/hub/actions/channels'
+import ContextMenu from '@gruent/hub/components/atoms/ContextMenu'
+import { handleDeleteChannel } from '@gruent/hub/actions/channels'
 import { useRouter } from 'next/navigation'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import CreateModelModal from '@iotea/hub/components/modals/CreateModelModal'
-import CreateThingModal from '@iotea/hub/components/modals/CreateThingModal'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import CreateModelModal from '@gruent/hub/components/modals/CreateModelModal'
+import CreateThingModal from '@gruent/hub/components/modals/CreateThingModal'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 type Props = {
   orgId: string
@@ -116,7 +116,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
     queryFn: async () => {
       if (!accessToken) throw new Error('Invalid auth session.')
 
-      const { data: channel, errors } = await ioteaClient(accessToken).channels.get(
+      const { data: channel, errors } = await gruentClient(accessToken).channels.get(
         spaceId,
         channelId,
       )
@@ -151,7 +151,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
         errors,
         totalPages,
         totalResults,
-      } = await ioteaClient(accessToken).channels.executions.list(spaceId, channelId, {
+      } = await gruentClient(accessToken).channels.executions.list(spaceId, channelId, {
         page: channelExecutionsPage,
         statusFilter: channelExecutionsStatusFilter,
       })
@@ -179,7 +179,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
       if (!accessToken) throw new Error('Invalid auth session.')
       if (!currentExecutionId) return undefined
 
-      const { data: execution, errors } = await ioteaClient(accessToken).channels.executions.get(
+      const { data: execution, errors } = await gruentClient(accessToken).channels.executions.get(
         spaceId,
         currentExecutionId,
       )
@@ -232,7 +232,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
     queryFn: async () => {
       if (!accessToken) throw new Error('Invalid auth session.')
 
-      const { data: things, errors } = await ioteaClient(accessToken).things.list(spaceId, {
+      const { data: things, errors } = await gruentClient(accessToken).things.list(spaceId, {
         resultsPerPage: 100,
       })
 
@@ -250,7 +250,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
     queryFn: async () => {
       if (!accessToken) throw new Error('Invalid auth session.')
 
-      const { data: models, errors } = await ioteaClient(accessToken).models.list(spaceId)
+      const { data: models, errors } = await gruentClient(accessToken).models.list(spaceId)
 
       if (errors && errors.length > 0) throw new Error(errors[0])
 
@@ -393,7 +393,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
     if (!accessToken) return
 
     const channelStatusPoller = setInterval(() => {
-      ioteaClient(accessToken)
+      gruentClient(accessToken)
         .channels.status(spaceId, channelId)
         .then(({ data: newChannelStatus, errors: channelStatusErrors }) => {
           if (channelStatusErrors) {
@@ -432,13 +432,13 @@ const ChannelByIdEditClientPage: FC<Props> = ({
   const handleSave = useCallback(async () => {
     if (!accessToken) return
 
-    const { errors } = await ioteaClient(accessToken).channels.updateConfig(
+    const { errors } = await gruentClient(accessToken).channels.updateConfig(
       spaceId,
       channelConfig.id,
       channelConfig,
     )
 
-    const { data: validationErrors } = await ioteaClient(accessToken).channels.validate(
+    const { data: validationErrors } = await gruentClient(accessToken).channels.validate(
       spaceId,
       channelConfig,
     )
@@ -466,7 +466,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
   const handlePublish = useCallback(async () => {
     if (!accessToken) return
 
-    const { errors } = await ioteaClient(accessToken).channels.publish(spaceId, channelId)
+    const { errors } = await gruentClient(accessToken).channels.publish(spaceId, channelId)
 
     if (errors && errors.length > 0) {
       addToast({
@@ -483,7 +483,7 @@ const ChannelByIdEditClientPage: FC<Props> = ({
   const handleUnpublish = useCallback(async () => {
     if (!accessToken) return
 
-    const { errors } = await ioteaClient(accessToken).channels.unpublish(spaceId, channelId)
+    const { errors } = await gruentClient(accessToken).channels.unpublish(spaceId, channelId)
 
     if (errors && errors.length > 0) {
       addToast({

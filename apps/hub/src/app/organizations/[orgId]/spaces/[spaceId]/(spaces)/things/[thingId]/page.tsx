@@ -1,17 +1,17 @@
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import DeleteThingModal from '@iotea/hub/components/modals/DeleteThingModal'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import gruentClient from '@gruent/hub/lib/gruent'
+import DeleteThingModal from '@gruent/hub/components/modals/DeleteThingModal'
 import PolicySection from './PolicySection'
-import { Policy } from '@iotea/libs/iotea-js/src/policies'
-import ThingSettingsForm from '@iotea/hub/components/organisms/ThingSettingsForm'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import ExportThingButton from '@iotea/hub/components/molecules/ExportThingButton'
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import { Policy } from '@gruent/libs/gruent-js/src/policies'
+import ThingSettingsForm from '@gruent/hub/components/organisms/ThingSettingsForm'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import ExportThingButton from '@gruent/hub/components/molecules/ExportThingButton'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 
 export const metadata = {
-  title: 'Thing details | IOTEA',
+  title: 'Thing details | GRUENT',
 }
 
 const ThingDetailsPage = async ({ params }) => {
@@ -20,7 +20,7 @@ const ThingDetailsPage = async ({ params }) => {
   const accessToken = await getAccessToken()
   if (!accessToken) return null
 
-  const { data: secrets, errors } = await ioteaClient(accessToken).secrets.list(spaceId)
+  const { data: secrets, errors } = await gruentClient(accessToken).secrets.list(spaceId)
 
   if (errors && errors.length > 0)
     return (
@@ -46,7 +46,7 @@ const ThingDetailsPage = async ({ params }) => {
       </div>
     )
 
-  const { data: thing, errors: getThingErrors } = await ioteaClient(accessToken).things.get(
+  const { data: thing, errors: getThingErrors } = await gruentClient(accessToken).things.get(
     spaceId,
     thingId,
   )
@@ -82,7 +82,7 @@ const ThingDetailsPage = async ({ params }) => {
   const { policy: policyResponse, policyErrors } = await (async () => {
     if (!attributes || !attributes.certificateId) return { policy: null, policyErrors: null }
 
-    const { data: policy, errors: policyErrors } = await ioteaClient(accessToken).policies.get(
+    const { data: policy, errors: policyErrors } = await gruentClient(accessToken).policies.get(
       spaceId,
       attributes.certificateId,
     )

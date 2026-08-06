@@ -1,8 +1,8 @@
 'use server'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { revalidatePath } from 'next/cache'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 
 export const handleAddPermissionSet = async (
   orgId: string,
@@ -17,7 +17,7 @@ export const handleAddPermissionSet = async (
       error: 'Your session is currently inactive. Sign in again to add the permission set.',
     }
 
-  const { errors } = await ioteaClient(accessToken).permissions.add(
+  const { errors } = await gruentClient(accessToken).permissions.add(
     orgId,
     name,
     permissions,
@@ -42,7 +42,7 @@ export const handleRemovePermissionSet = async (
       error: 'Your session is currently inactive. Sign in again to remove the permission set.',
     }
 
-  const { errors } = await ioteaClient(accessToken).permissions.remove(
+  const { errors } = await gruentClient(accessToken).permissions.remove(
     orgId,
     permissionSetId,
     spaceId,

@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
-import type { ChannelNode } from '@iotea/libs/engine/nodes/v1'
+import type { ChannelNode } from '@gruent/libs/engine/nodes/v1'
 
 import type {
   ChannelConfig,
   ChannelEdge,
   ChannelNote,
   ChannelRuntime,
-} from '@iotea/libs/engine/channels/index'
+} from '@gruent/libs/engine/channels/index'
 
 const useChannelConfig = (
   id: string,

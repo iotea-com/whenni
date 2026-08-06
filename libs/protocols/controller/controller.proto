@@ -1,7 +1,7 @@
 syntax = "proto3";
 package controller;
 
-option go_package = "https://github.com/iotea-com/IoTea/libs/protocols/controller";
+option go_package = "https://github.com/ongruent/gruent/libs/protocols/controller";
 
 service ControllerService {
   rpc Publish (PublishRequest) returns (PublishResponse) {}

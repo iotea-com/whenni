@@ -1,9 +1,9 @@
 package apitest
 
 import (
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/prisma/db"
+	"github.com/ongruent/gruent/services/http-api/util"
 )
 
 func SetupExpectOrgApiKey(dbMocks handlerDbMocks) {

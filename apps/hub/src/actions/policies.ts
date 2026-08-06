@@ -1,9 +1,9 @@
 'use server'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
-import { Policy } from '@iotea/libs/iotea-js/src/policies'
+import gruentClient from '@gruent/hub/lib/gruent'
+import { Policy } from '@gruent/libs/gruent-js/src/policies'
 import { revalidatePath } from 'next/cache'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 
 export const handleUpdatePolicy = async (
   spaceId: string,
@@ -18,7 +18,7 @@ export const handleUpdatePolicy = async (
       error: 'Your session is currently inactive. Sign in again to update the policy.',
     }
 
-  const { errors: updateErrors } = await ioteaClient(accessToken).policies.update(
+  const { errors: updateErrors } = await gruentClient(accessToken).policies.update(
     spaceId,
     certificateId,
     updatedPolicy,

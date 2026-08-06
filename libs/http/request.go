@@ -1,4 +1,4 @@
-package ioteahttp
+package gruenthttp
 
 import (
 	"context"
@@ -10,10 +10,10 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
-	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/libs/id"
-	apisqlc "github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruentpermissions "github.com/ongruent/gruent/libs/http/permissions"
+	gruenthttputil "github.com/ongruent/gruent/libs/http/util"
+	"github.com/ongruent/gruent/libs/id"
+	apisqlc "github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -36,7 +36,7 @@ type Request[I any] struct {
 	Actor        *Actor
 }
 
-var DefaultSpacePermissions = []ioteapermissions.Permission{
+var DefaultSpacePermissions = []gruentpermissions.Permission{
 	"*",
 }
 
@@ -46,8 +46,8 @@ type AuthorizeRequestParams struct {
 	ScopeId      string                     `validate:"required"` // ID of the user, organization, or space that the request is related to
 	Unprotected  bool                       // If true, the request will not be checked for permissions
 	EnforceAdmin bool                       // If true, the request will be checked for admin permissions
-	Namespace    ioteapermissions.Namespace `validate:"required_if=Unprotected false"`
-	Action       ioteapermissions.Action    `validate:"required_if=Unprotected false"`
+	Namespace    gruentpermissions.Namespace `validate:"required_if=Unprotected false"`
+	Action       gruentpermissions.Action    `validate:"required_if=Unprotected false"`
 }
 
 func (r *Request[I]) Authorize(params AuthorizeRequestParams) *fiber.Error {
@@ -140,8 +140,8 @@ func handleApiKey(
 	scopeId string,
 	unprotected bool,
 	enforceAdmin bool,
-	namespace ioteapermissions.Namespace,
-	action ioteapermissions.Action,
+	namespace gruentpermissions.Namespace,
+	action gruentpermissions.Action,
 ) (string, map[string]*PermissionSet, error) {
 	span.AddEvent("recognized API key in Authorization header")
 
@@ -254,15 +254,15 @@ func handleJwt(
 	scopeId string,
 	unprotected bool,
 	enforceAdmin bool,
-	namespace ioteapermissions.Namespace,
-	action ioteapermissions.Action,
+	namespace gruentpermissions.Namespace,
+	action gruentpermissions.Action,
 ) (string, map[string]*PermissionSet, error) {
 	if apisqlc.Pool == nil {
 		return "", nil, fmt.Errorf("database pool is not initialized")
 	}
 
 	// Get subject from JWT as user ID
-	jwtToken, err := jwt.Parse(token, ioteahttputil.ParseJwt(jwtSecret))
+	jwtToken, err := jwt.Parse(token, gruenthttputil.ParseJwt(jwtSecret))
 	if err != nil {
 		return "", nil, fmt.Errorf("could not parse JWT in authorization header: %s", err)
 	}
@@ -487,15 +487,15 @@ func checkPermissions(
 	role string,
 	combinedPermissionSet map[string]*PermissionSet,
 	scopeId string,
-	namespace ioteapermissions.Namespace,
-	action ioteapermissions.Action,
+	namespace gruentpermissions.Namespace,
+	action gruentpermissions.Action,
 ) bool {
 	allow := false
 	if role == "ADMIN" {
 		// bypass permissions check if role is admin
 		allow = true
 	} else {
-		namespaceAll := fmt.Sprintf("%s:%s", namespace, ioteapermissions.ActionAll)
+		namespaceAll := fmt.Sprintf("%s:%s", namespace, gruentpermissions.ActionAll)
 		namespaceAction := fmt.Sprintf("%s:%s", namespace, action)
 
 		for sid, permissionSet := range combinedPermissionSet {

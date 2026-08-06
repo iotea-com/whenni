@@ -2,7 +2,7 @@
 
 import { FC } from 'react'
 import Button, { Props as BaseProps } from '.'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 
 type Props = Omit<BaseProps, 'onClick' | 'href'> & {
   id: string

@@ -1,8 +1,8 @@
-package com.iotea.nodes.action.log
+package com.gruent.nodes.action.log
 
-import com.iotea.nodes.api.Node
-import com.iotea.nodes.api.NodeInfo
-import com.iotea.nodes.api.HostContext
+import com.gruent.nodes.api.Node
+import com.gruent.nodes.api.NodeInfo
+import com.gruent.nodes.api.HostContext
 import com.google.auto.service.AutoService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel

@@ -7,13 +7,13 @@ import (
 	"strings"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
-	sqlcdb "github.com/iotea-com/iotea/db/sqlc"
-	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
-	"github.com/iotea-com/iotea/libs/legacy/engine/observability"
-	"github.com/iotea-com/iotea/libs/secrets"
-	clickhouseService "github.com/iotea-com/iotea/services/http-api/services/clickhouse"
-	ioteaSmtp "github.com/iotea-com/iotea/services/http-api/services/smtp"
-	sqlcService "github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	sqlcdb "github.com/ongruent/gruent/db/sqlc"
+	"github.com/ongruent/gruent/libs/legacy/engine/environment"
+	"github.com/ongruent/gruent/libs/legacy/engine/observability"
+	"github.com/ongruent/gruent/libs/secrets"
+	clickhouseService "github.com/ongruent/gruent/services/http-api/services/clickhouse"
+	gruentSmtp "github.com/ongruent/gruent/services/http-api/services/smtp"
+	sqlcService "github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
@@ -274,18 +274,18 @@ func initClickhouseClient(databaseHost string, databasePort int, databaseUsernam
 func initSmtpClient(smtpHost string, smtpPort int, smtpUser string, smtpPassword string) error {
 	environment := os.Getenv("ENVIRONMENT")
 	if environment == "test" {
-		smtpClient := ioteaSmtp.NewMockSmtpClient()
-		ioteaSmtp.SmtpClient = smtpClient
+		smtpClient := gruentSmtp.NewMockSmtpClient()
+		gruentSmtp.SmtpClient = smtpClient
 		return nil
 	}
 
 	if environment == "development" || environment == "local" {
-		smtpClient := ioteaSmtp.NewSmtpClient(smtpHost, smtpPort, nil, nil)
-		ioteaSmtp.SmtpClient = smtpClient
+		smtpClient := gruentSmtp.NewSmtpClient(smtpHost, smtpPort, nil, nil)
+		gruentSmtp.SmtpClient = smtpClient
 		return nil
 	}
 
-	smtpClient := ioteaSmtp.NewSmtpClient(smtpHost, smtpPort, &smtpUser, &smtpPassword)
-	ioteaSmtp.SmtpClient = smtpClient
+	smtpClient := gruentSmtp.NewSmtpClient(smtpHost, smtpPort, &smtpUser, &smtpPassword)
+	gruentSmtp.SmtpClient = smtpClient
 	return nil
 }

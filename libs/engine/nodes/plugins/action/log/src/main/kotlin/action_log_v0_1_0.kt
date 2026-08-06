@@ -2,7 +2,7 @@
 //
 //   val actionLogV010 = ActionLogV01_0.fromJson(jsonString)
 
-package com.iotea.nodes.action.log
+package com.gruent.nodes.action.log
 
 import com.beust.klaxon.*
 

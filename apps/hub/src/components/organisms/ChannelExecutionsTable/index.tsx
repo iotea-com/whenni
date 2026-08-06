@@ -8,13 +8,13 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import ListTable from '@iotea/hub/components/atoms/ListTable'
+import ListTable from '@gruent/hub/components/atoms/ListTable'
 import Link from 'next/link'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import ListTablePlaceholder from '../../molecules/ListTablePlaceholder'
 import { RemixIcon, riEqualizerLine, riSettings6Line } from '@mwarnerdotme/react-remixicon'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import { useClickOutside } from '@react-hooks-library/core'
 // import IndeterminateCheckbox from "../../atoms/IndeterminateCheckbox"
 

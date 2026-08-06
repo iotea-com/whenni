@@ -9,7 +9,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { AppliedTag, Tag, Thing } from '@prisma/client'
-import ListTable from '@iotea/hub/components/atoms/ListTable'
+import ListTable from '@gruent/hub/components/atoms/ListTable'
 import Link from 'next/link'
 import ThingContextMenu from './ThingContextMenu'
 import { useRouter } from 'next/navigation'
@@ -21,7 +21,7 @@ import {
   riInformationLine,
 } from '@mwarnerdotme/react-remixicon'
 import { RemixIcon } from '@mwarnerdotme/react-remixicon'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import TagMenu from '../../modals/TagMenu'
 import SearchBar from '../../molecules/SearchBar'
 import { useClickOutside } from '@react-hooks-library/core'

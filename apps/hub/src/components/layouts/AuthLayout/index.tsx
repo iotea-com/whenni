@@ -1,4 +1,4 @@
-import getAccessToken, { getSession } from '@iotea/hub/util/getAccessToken'
+import getAccessToken, { getSession } from '@gruent/hub/util/getAccessToken'
 import { redirect } from 'next/navigation'
 // import CallbackUrlRedirect from './CallbackUrlRedirect'
 

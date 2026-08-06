@@ -1,4 +1,4 @@
-import { calculateHeadingSlug } from '@iotea/libs/frontend/util/calculateBlogPostSlug'
+import { calculateHeadingSlug } from '@gruent/libs/frontend/util/calculateBlogPostSlug'
 import Link from 'next/link'
 
 type Props = {

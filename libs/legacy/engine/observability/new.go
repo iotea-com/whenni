@@ -6,7 +6,7 @@ import (
 
 	"github.com/agoda-com/opentelemetry-logs-go/logs"
 	"github.com/go-playground/validator/v10"
-	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
+	"github.com/ongruent/gruent/libs/legacy/engine/environment"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/trace"

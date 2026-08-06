@@ -4,7 +4,7 @@ Cypress.Commands.add('login', () => {
   cy.request({
     method: 'POST',
     url: 'http://localhost:4200/api/signin',
-    body: { email: 'test@iotea.com', password: 'iotea!', method: 'password' },
+    body: { email: 'test@gruent.com', password: 'gruent!', method: 'password' },
   }).then((res) => {
     if (!res.headers['set-cookie']) throw new Error('did not recognize cookies in signin response')
 

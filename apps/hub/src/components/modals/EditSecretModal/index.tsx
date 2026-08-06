@@ -1,13 +1,13 @@
 'use client'
 
 import { FC, useCallback, useRef } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
 import { useMutation } from '@tanstack/react-query'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
 import { useRouter } from 'next/navigation'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { handleUpdateSecret } from '@iotea/hub/actions/secrets'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { handleUpdateSecret } from '@gruent/hub/actions/secrets'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 
 type Props = {
   spaceId: string

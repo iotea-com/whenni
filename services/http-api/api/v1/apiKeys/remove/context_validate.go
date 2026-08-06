@@ -2,29 +2,29 @@ package apiKeysRemove
 
 import (
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruentpermissions "github.com/ongruent/gruent/libs/http/permissions"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func contextValidate(request *ioteahttp.Request[Input]) error {
+func contextValidate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
-	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
+	authorizeRequestParams := gruenthttp.AuthorizeRequestParams{
 		BearerToken: request.Input.BearerToken,
 		JwtSecret:   config.VaultConf.JwtSecret,
 		ScopeId:     request.Input.OrgId,
-		Namespace:   ioteapermissions.NamespaceOrganizationApiKeys,
-		Action:      ioteapermissions.ActionDelete,
+		Namespace:   gruentpermissions.NamespaceOrganizationApiKeys,
+		Action:      gruentpermissions.ActionDelete,
 	}
 
 	if request.Input.SpaceId != "" {
 		authorizeRequestParams.ScopeId = request.Input.SpaceId
-		authorizeRequestParams.Namespace = ioteapermissions.NamespaceSpaceApiKeys
+		authorizeRequestParams.Namespace = gruentpermissions.NamespaceSpaceApiKeys
 	}
 
 	err := request.Authorize(authorizeRequestParams)
@@ -70,7 +70,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 			attribute.String("error.message", errMsg),
 			attribute.String("context_validation.status", "fail"),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{errMsg})
+		errResponse := gruenthttp.NewErrorResponse([]any{errMsg})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return fiber.NewError(fiber.StatusConflict, string(marshalledErrResponse))
 	}
@@ -83,7 +83,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 			attribute.String("error.message", errMsg),
 			attribute.String("context_validation.status", "fail"),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{errMsg})
+		errResponse := gruenthttp.NewErrorResponse([]any{errMsg})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return fiber.NewError(fiber.StatusConflict, string(marshalledErrResponse))
 	}

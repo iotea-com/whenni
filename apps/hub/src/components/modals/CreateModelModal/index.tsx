@@ -1,12 +1,12 @@
 'use client'
 
 import { FC, useCallback, useState } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import { CreateModelInput } from '@iotea/libs/iotea-js/src/models/create'
-import { handleAddModel } from '@iotea/hub/actions/models'
-import { ModelAttributes } from '@iotea/libs/engine/dependencies/models'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import { CreateModelInput } from '@gruent/libs/gruent-js/src/models/create'
+import { handleAddModel } from '@gruent/hub/actions/models'
+import { ModelAttributes } from '@gruent/libs/engine/dependencies/models'
 import ModelSettingsForm from '../../organisms/ModelSettingsForm'
 
 type Props = {

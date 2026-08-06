@@ -1,11 +1,11 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { ChannelNode, ExistenceConditionalNodeConfig } from '@iotea/libs/engine/nodes/v1'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { ChannelNode, ExistenceConditionalNodeConfig } from '@gruent/libs/engine/nodes/v1'
 import { Model } from '@prisma/client'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { ModelAttribute, ModelAttributes } from '@iotea/libs/engine/dependencies/models'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import { ModelAttribute, ModelAttributes } from '@gruent/libs/engine/dependencies/models'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { RemixIcon, riAddLine } from '@mwarnerdotme/react-remixicon'
 
 type Props = {
@@ -133,7 +133,7 @@ const ExistenceConditionalOptions: FC<Props> = ({ models }) => {
           label="Model"
           className="grow"
           options={modelOptions}
-          value={model ? model.id : '__IOTEA_IGNORE__'}
+          value={model ? model.id : '__GRUENT_IGNORE__'}
           onChange={(e) => setModel(models.find((m) => m.id === e.target.value))}
         />
         <Button className="my-3" onClick={() => openModal('createModel')}>
@@ -149,7 +149,7 @@ const ExistenceConditionalOptions: FC<Props> = ({ models }) => {
           multiple
           onChange={(e) => {
             const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value)
-            setAttributeIds(selectedOptions.filter((id) => id !== '__IOTEA_IGNORE__'))
+            setAttributeIds(selectedOptions.filter((id) => id !== '__GRUENT_IGNORE__'))
           }}
         />
       )}

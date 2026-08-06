@@ -1,8 +1,8 @@
 package prisma
 
 import (
-	"github.com/iotea-com/iotea/prisma/db"
+	"github.com/ongruent/gruent/prisma/db"
 )
 
-// IOTEA database client
+// GRUENT database client
 var Client *db.PrismaClient

@@ -1,6 +1,6 @@
 'use client'
 
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
 import { Thing } from '@prisma/client'
 import { Dispatch, FC, useEffect, useMemo, useState } from 'react'
 

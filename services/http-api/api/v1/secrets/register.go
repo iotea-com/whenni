@@ -3,11 +3,11 @@ package secrets
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/iotea-com/iotea/services/http-api/api/middleware"
-	secretsCreate "github.com/iotea-com/iotea/services/http-api/api/v1/secrets/create"
-	secretsDelete "github.com/iotea-com/iotea/services/http-api/api/v1/secrets/delete"
-	secretsList "github.com/iotea-com/iotea/services/http-api/api/v1/secrets/list"
-	secretsUpdate "github.com/iotea-com/iotea/services/http-api/api/v1/secrets/update"
+	"github.com/ongruent/gruent/services/http-api/api/middleware"
+	secretsCreate "github.com/ongruent/gruent/services/http-api/api/v1/secrets/create"
+	secretsDelete "github.com/ongruent/gruent/services/http-api/api/v1/secrets/delete"
+	secretsList "github.com/ongruent/gruent/services/http-api/api/v1/secrets/list"
+	secretsUpdate "github.com/ongruent/gruent/services/http-api/api/v1/secrets/update"
 )
 
 func Register(app fiber.Router) {

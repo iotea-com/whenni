@@ -3,10 +3,10 @@ package policies
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/iotea-com/iotea/services/http-api/api/middleware"
-	policiesGet "github.com/iotea-com/iotea/services/http-api/api/v1/policies/get"
-	policiesList "github.com/iotea-com/iotea/services/http-api/api/v1/policies/list"
-	policiesUpdate "github.com/iotea-com/iotea/services/http-api/api/v1/policies/update"
+	"github.com/ongruent/gruent/services/http-api/api/middleware"
+	policiesGet "github.com/ongruent/gruent/services/http-api/api/v1/policies/get"
+	policiesList "github.com/ongruent/gruent/services/http-api/api/v1/policies/list"
+	policiesUpdate "github.com/ongruent/gruent/services/http-api/api/v1/policies/update"
 )
 
 func Register(app fiber.Router) {

@@ -6,16 +6,16 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	pbController "github.com/iotea-com/iotea/libs/protocols/controller"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	pbController "github.com/ongruent/gruent/libs/protocols/controller"
+	"github.com/ongruent/gruent/services/http-api/config"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.ChannelId", request.Input.ChannelId),
@@ -43,7 +43,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.type", "grpc_request"),
 			attribute.String("error.message", fmt.Sprintf("failed to setup controller grpc client: endpoint is %v and error is %v", config.VaultConf.ControllerGrpcServiceUrl, err)),
 		)
-		response := ioteahttp.NewErrorResponse([]any{
+		response := gruenthttp.NewErrorResponse([]any{
 			"Could not get the status of the channel at this time. Please try again.",
 		})
 		responseJson, _ := response.MarshalJson()
@@ -63,7 +63,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.type", "grpc_request"),
 			attribute.String("error.message", fmt.Sprintf("could not get the status of the channel from the controller: %s", err)),
 		)
-		response := ioteahttp.NewErrorResponse([]any{
+		response := gruenthttp.NewErrorResponse([]any{
 			"Could not get the status of the channel at this time. Please try again.",
 		})
 		responseJson, _ := response.MarshalJson()

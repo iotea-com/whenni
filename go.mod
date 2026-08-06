@@ -1,4 +1,4 @@
-module github.com/iotea-com/iotea
+module github.com/ongruent/gruent
 
 go 1.25.0
 

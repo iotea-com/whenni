@@ -3,9 +3,9 @@ package users
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/iotea-com/iotea/services/http-api/api/middleware"
-	"github.com/iotea-com/iotea/services/http-api/api/v1/users/get"
-	"github.com/iotea-com/iotea/services/http-api/api/v1/users/search"
+	"github.com/ongruent/gruent/services/http-api/api/middleware"
+	"github.com/ongruent/gruent/services/http-api/api/v1/users/get"
+	"github.com/ongruent/gruent/services/http-api/api/v1/users/search"
 )
 
 func Register(app fiber.Router) {

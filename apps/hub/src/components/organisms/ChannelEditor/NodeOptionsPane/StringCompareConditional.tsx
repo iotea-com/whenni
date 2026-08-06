@@ -1,11 +1,11 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
 import {
   StringCompareConditionalNodeConfig,
   StringComparison,
   StringComparisonOperator,
-} from '@iotea/libs/engine/nodes/v1/src/conditional/stringCompare'
+} from '@gruent/libs/engine/nodes/v1/src/conditional/stringCompare'
 import { Model } from '@prisma/client'
 import {
   ChangeEvent,
@@ -17,13 +17,13 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { ModelAttributes } from '@iotea/libs/engine/dependencies/models'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
+import { ModelAttributes } from '@gruent/libs/engine/dependencies/models'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
 import { riAddLine, riCloseLine } from '@mwarnerdotme/react-remixicon'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
 import { RemixIcon } from '@mwarnerdotme/react-remixicon'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 
 type Props = {
   models: Model[]
@@ -113,7 +113,7 @@ const StringCompareConditionalOptions: FC<Props> = ({ models, orgId, spaceId }) 
           label="Model"
           className="grow"
           options={modelOptions}
-          value={model ? model.id : '__IOTEA_IGNORE__'}
+          value={model ? model.id : '__GRUENT_IGNORE__'}
           onChange={(e) => setModel(models.find((m) => m.id === e.target.value))}
         />
         <Button className="my-3" onClick={() => openModal('createModel')}>

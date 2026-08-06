@@ -67,7 +67,7 @@ RUN touch ~/.zshrc && \
 # -----------------------------------------------------------------------------------------------------
 #                                                                                                 Build
 # ---------------------------------------------------------------------------------------------------*/
-WORKDIR /whenni
+WORKDIR /gruent
 
 RUN source ~/.zshrc && \
     go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
@@ -79,12 +79,12 @@ COPY ./go.mod ./go.mod
 COPY ./go.sum ./go.sum
 
 # Create sqlc client
-WORKDIR /whenni/db
+WORKDIR /gruent/db
 RUN source ~/.zshrc && \
     sqlc generate
 
 # Download dependencies first (this layer will be cached)
-WORKDIR /whenni
+WORKDIR /gruent
 RUN go mod download
 
 # Copy the rest of the project
@@ -98,7 +98,7 @@ COPY ./libs/secrets ./libs/secrets
 COPY ./services/http-api ./services/http-api
 
 # Go to the http-api service directory
-WORKDIR /whenni/services/http-api
+WORKDIR /gruent/services/http-api
 
 # Build-time variables
 ARG GIT_BRANCH
@@ -144,11 +144,11 @@ LABEL branch=${GIT_BRANCH} \
     go-version=${GO_VERSION}
 
 # Create a non-root user with a specific UID/GID
-RUN groupadd -r whenni --gid=1000 && \
-    useradd -r -g whenni --uid=1000 --create-home --shell=/sbin/nologin whenni && \
+RUN groupadd -r gruent --gid=1000 && \
+    useradd -r -g gruent --uid=1000 --create-home --shell=/sbin/nologin gruent && \
     # Add docker group with GID 999 (common docker group GID)
     groupadd -r docker --gid=999 && \
-    usermod -aG docker whenni
+    usermod -aG docker gruent
 
 # Setup system and clean up in the same layer to keep image size small
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -169,15 +169,15 @@ RUN echo '#!/bin/sh\n\
     chmod +x /start.sh
 
 # Copy binary
-COPY --from=builder /whenni/services/http-api/http-api /http-api
+COPY --from=builder /gruent/services/http-api/http-api /http-api
 
 # Set proper permissions
-RUN chown whenni:whenni /http-api /start.sh && \
+RUN chown gruent:gruent /http-api /start.sh && \
     chmod 755 /http-api
 
 # Switch to non-root user
-USER whenni
+USER gruent
 
 # Start
-WORKDIR /home/whenni
+WORKDIR /home/gruent
 ENTRYPOINT ["/start.sh"]

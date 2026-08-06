@@ -1,8 +1,8 @@
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { decodeJwt } from 'jose'
-import { refresh, signout } from '@iotea/hub/actions/auth'
+import { refresh, signout } from '@gruent/hub/actions/auth'
 import { useCallback, useEffect, useState } from 'react'
-import { useAuthProvider } from '@iotea/hub/contexts/Auth'
+import { useAuthProvider } from '@gruent/hub/contexts/Auth'
 
 const useAuth = () => {
   const { accessToken } = useAuthProvider()

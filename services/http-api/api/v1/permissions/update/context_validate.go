@@ -4,23 +4,23 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruentpermissions "github.com/ongruent/gruent/libs/http/permissions"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func contextValidate(request *ioteahttp.Request[Input]) error {
+func contextValidate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
-	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
+	authorizeRequestParams := gruenthttp.AuthorizeRequestParams{
 		BearerToken: request.Input.BearerToken,
 		JwtSecret:   config.VaultConf.JwtSecret,
 		ScopeId:     request.Input.OrgId,
-		Namespace:   ioteapermissions.NamespacePermissions,
-		Action:      ioteapermissions.ActionUpdate,
+		Namespace:   gruentpermissions.NamespacePermissions,
+		Action:      gruentpermissions.ActionUpdate,
 	}
 
 	if request.Input.SpaceId != "" {
@@ -57,7 +57,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 			attribute.String("error.type", "context_validation"),
 			attribute.String("error.message", errMessage),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{errMessage})
+		errResponse := gruenthttp.NewErrorResponse([]any{errMessage})
 		responseJson, _ := errResponse.MarshalJson()
 		return fiber.NewError(fiber.StatusBadRequest, string(responseJson))
 	}
@@ -68,7 +68,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 			attribute.String("error.type", "context_validation"),
 			attribute.String("error.message", errMessage),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{errMessage})
+		errResponse := gruenthttp.NewErrorResponse([]any{errMessage})
 		responseJson, _ := errResponse.MarshalJson()
 		return fiber.NewError(fiber.StatusBadRequest, string(responseJson))
 	}

@@ -1,16 +1,16 @@
-import { verifyInvitationToken } from '@iotea/hub/actions/members'
-import SignUpForm from '@iotea/hub/components/organisms/SignUpForm'
+import { verifyInvitationToken } from '@gruent/hub/actions/members'
+import SignUpForm from '@gruent/hub/components/organisms/SignUpForm'
 
 export const metadata = {
-  title: 'Sign up | IOTEA',
+  title: 'Sign up | GRUENT',
   description:
     'The internet of things just got easier. Drag-and-drop connections to automate tasks and scale within minutes. Create an account to get started for free.',
   openGraph: {
     type: 'website',
-    url: `https://app.iotea.com/signup`,
+    url: `https://app.gruent.com/signup`,
     description:
       'The internet of things just got easier. Drag-and-drop connections to automate tasks and scale within minutes. Create an account to get started for free.',
-    images: ['https://iotea.com/img/logos/app-icon-primary.png'],
+    images: ['https://gruent.com/img/logos/app-icon-primary.png'],
   },
 }
 

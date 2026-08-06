@@ -1,11 +1,11 @@
 'use client'
 
 import { FC, useState } from 'react'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import ContextMenu from '@iotea/hub/components/atoms/ContextMenu'
-import { handleDeleteSecret } from '@iotea/hub/actions/secrets'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
-import EditSecretModal from '@iotea/hub/components/modals/EditSecretModal'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import ContextMenu from '@gruent/hub/components/atoms/ContextMenu'
+import { handleDeleteSecret } from '@gruent/hub/actions/secrets'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
+import EditSecretModal from '@gruent/hub/components/modals/EditSecretModal'
 import { riDeleteBin7Line, riPencilLine } from '@mwarnerdotme/react-remixicon'
 
 type Props = {

@@ -1,9 +1,9 @@
-package ioteahttp
+package gruenthttp
 
 import "encoding/json"
 
 // Structured format for every API response. Contains data, errors, and pagination.
-type IoteaApiResponse struct {
+type GruentApiResponse struct {
 	Data           any   `json:"data"`
 	Errors         []any `json:"errors"`
 	Page           *int  `json:"page,omitempty"`
@@ -14,8 +14,8 @@ type IoteaApiResponse struct {
 
 // Creates a new API response object for a GET (Object) route. The data parameter should be a
 // unique instance of a struct.
-func NewGetResponse(data any) IoteaApiResponse {
-	r := IoteaApiResponse{
+func NewGetResponse(data any) GruentApiResponse {
+	r := GruentApiResponse{
 		Data:   data,
 		Errors: nil,
 	}
@@ -24,8 +24,8 @@ func NewGetResponse(data any) IoteaApiResponse {
 }
 
 // Creates a new API response object for a GET (List) route. The data parameter should be a slice.
-func NewListResponse(data any, page *int, totalPages *int, totalResults *int, resultsPerPage *int) IoteaApiResponse {
-	r := IoteaApiResponse{
+func NewListResponse(data any, page *int, totalPages *int, totalResults *int, resultsPerPage *int) GruentApiResponse {
+	r := GruentApiResponse{
 		Data:           data,
 		Errors:         nil,
 		Page:           page,
@@ -38,8 +38,8 @@ func NewListResponse(data any, page *int, totalPages *int, totalResults *int, re
 }
 
 // Creates a new API response object for a POST route.
-func NewCreateResponse(data any) IoteaApiResponse {
-	r := IoteaApiResponse{
+func NewCreateResponse(data any) GruentApiResponse {
+	r := GruentApiResponse{
 		Data:   data,
 		Errors: nil,
 	}
@@ -48,8 +48,8 @@ func NewCreateResponse(data any) IoteaApiResponse {
 }
 
 // Creates a new API response object for a PUT or PATCH route.
-func NewUpdateResponse(data any, errors []any) IoteaApiResponse {
-	r := IoteaApiResponse{
+func NewUpdateResponse(data any, errors []any) GruentApiResponse {
+	r := GruentApiResponse{
 		Data:   data,
 		Errors: errors,
 	}
@@ -58,8 +58,8 @@ func NewUpdateResponse(data any, errors []any) IoteaApiResponse {
 }
 
 // Creates a new API response object for a DELETE route.
-func NewDeleteResponse() IoteaApiResponse {
-	r := IoteaApiResponse{
+func NewDeleteResponse() GruentApiResponse {
+	r := GruentApiResponse{
 		Data:   nil,
 		Errors: nil,
 	}
@@ -68,11 +68,11 @@ func NewDeleteResponse() IoteaApiResponse {
 }
 
 // Marshals the API response instance to a JSON string.
-func (r IoteaApiResponse) MarshalJson() ([]byte, error) {
+func (r GruentApiResponse) MarshalJson() ([]byte, error) {
 	var errors []any
 	errors = append(errors, r.Errors...)
 
-	apiResponse := IoteaApiResponse{
+	apiResponse := GruentApiResponse{
 		Data:       r.Data,
 		Errors:     errors,
 		Page:       r.Page,

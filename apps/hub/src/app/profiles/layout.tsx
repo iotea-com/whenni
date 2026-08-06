@@ -2,11 +2,11 @@ import { RemixIcon, riHome4Line, riUser3Line } from '@mwarnerdotme/react-remixic
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.css'
-import getAccessToken, { getSession } from '@iotea/hub/util/getAccessToken'
-import FeedbackButton from '@iotea/hub/components/molecules/FeedbackButton'
+import getAccessToken, { getSession } from '@gruent/hub/util/getAccessToken'
+import FeedbackButton from '@gruent/hub/components/molecules/FeedbackButton'
 
 export const metadata = {
-  title: 'Profile | IOTEA',
+  title: 'Profile | GRUENT',
 }
 
 const Layout = async ({ children }) => {
@@ -23,7 +23,7 @@ const Layout = async ({ children }) => {
             <Link href={`/dashboard`}>
               <Image
                 src="/img/logos/app-icon-primary.png"
-                alt="IOTEA logo"
+                alt="GRUENT logo"
                 width={25}
                 height={25}
               />

@@ -5,8 +5,8 @@ import (
 	"sort"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/services/http-api/config"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -15,7 +15,7 @@ type Secret struct {
 	Name string `json:"name"`
 }
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
@@ -30,7 +30,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		)
 		secretSpan.End()
 
-		errorResponse := ioteahttp.NewErrorResponse([]any{"secrets client not initialized"})
+		errorResponse := gruenthttp.NewErrorResponse([]any{"secrets client not initialized"})
 		responseJson, _ := errorResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusBadRequest, string(responseJson))
 	}
@@ -45,7 +45,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			)
 			secretSpan.End()
 
-			errorResponse := ioteahttp.NewErrorResponse([]any{err.Error()})
+			errorResponse := gruenthttp.NewErrorResponse([]any{err.Error()})
 			responseJson, _ := errorResponse.MarshalJson()
 			return nil, fiber.NewError(fiber.StatusBadRequest, string(responseJson))
 		}

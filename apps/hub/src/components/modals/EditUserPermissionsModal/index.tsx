@@ -1,11 +1,11 @@
 'use client'
 
 import { FC, useCallback, useRef } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
 import { useMutation } from '@tanstack/react-query'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
 import { useRouter } from 'next/navigation'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
 import { PermissionSet } from '@prisma/client'
 
 type Props = {
@@ -32,7 +32,7 @@ const EditMemberPermissionsModal: FC<Props> = ({
   const updateMemberPermissionSetMutation = useMutation({
     mutationKey: ['updateMemberPermissionSetMutation', orgId, userId, initialPermissionSetId],
     mutationFn: async (_permissionSetId: string) => {
-      // const { data: _results, error } = await ioteaClient(
+      // const { data: _results, error } = await gruentClient(
       //   session.jwt,
       // ).spaces.profiles.
 

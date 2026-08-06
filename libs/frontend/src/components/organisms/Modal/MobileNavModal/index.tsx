@@ -1,7 +1,7 @@
 'use client'
 
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
 import { RemixIcon, riCloseFill } from '@mwarnerdotme/react-remixicon'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -17,7 +17,7 @@ const MobileNavModal = () => {
       />
       <Image
         src="/img/logos/mark-cutout-secondary.png"
-        alt="IOTEA logo"
+        alt="GRUENT logo"
         width={30}
         height={30}
         className="mb-4"

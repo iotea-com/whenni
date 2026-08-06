@@ -1,14 +1,14 @@
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import DeleteOrganizationModal from '@iotea/hub/components/modals/DeleteOrganizationModal'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import OrganizationSettingsForm from '@iotea/hub/components/organisms/OrganizationSettingsForm'
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import DeleteOrganizationModal from '@gruent/hub/components/modals/DeleteOrganizationModal'
+import gruentClient from '@gruent/hub/lib/gruent'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import OrganizationSettingsForm from '@gruent/hub/components/organisms/OrganizationSettingsForm'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 
 export const metadata = {
-  title: 'Organization settings | IOTEA',
+  title: 'Organization settings | GRUENT',
 }
 
 const OrganizationSettingsPage = async ({ params }) => {
@@ -17,7 +17,7 @@ const OrganizationSettingsPage = async ({ params }) => {
   const accessToken = await getAccessToken()
   if (!accessToken) return null
 
-  const { data: organization, errors } = await ioteaClient(accessToken).organizations.get(orgId)
+  const { data: organization, errors } = await gruentClient(accessToken).organizations.get(orgId)
 
   if (errors && errors.length > 0) {
     return (

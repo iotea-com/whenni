@@ -1,11 +1,11 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { MessageQueueActionNodeConfig } from '@iotea/libs/engine/nodes/v1/src/action/messageQueue'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { MessageQueueActionNodeConfig } from '@gruent/libs/engine/nodes/v1/src/action/messageQueue'
 import { Thing } from '@prisma/client'
 import { FC, useEffect, useState } from 'react'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 
 type Props = {
   things: Thing[]

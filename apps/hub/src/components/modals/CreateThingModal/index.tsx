@@ -1,12 +1,12 @@
 'use client'
 
 import { FC, useCallback, useEffect, useRef } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
 import { useQuery } from '@tanstack/react-query'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import gruentClient from '@gruent/hub/lib/gruent'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import CreateThingForm from '../../organisms/ThingCreateForm'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 export const ThingCategoryOptions = [
   {
@@ -92,7 +92,7 @@ const CreateThingModal: FC<Props> = ({ orgId, spaceId, onClose, onSubmit }) => {
     queryFn: async () => {
       if (!accessToken) throw new Error('Current session is not active')
 
-      const { data: secrets, errors } = await ioteaClient(accessToken).secrets.list(spaceId)
+      const { data: secrets, errors } = await gruentClient(accessToken).secrets.list(spaceId)
 
       if (errors && errors.length > 0) throw new Error(errors[0])
 

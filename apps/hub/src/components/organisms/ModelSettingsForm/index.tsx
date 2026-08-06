@@ -1,10 +1,10 @@
 'use client'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import gruentClient from '@gruent/hub/lib/gruent'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import {
   RemixIcon,
   riCloseLine,
@@ -15,9 +15,9 @@ import {
 import { Model } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import { FC, FormEventHandler, useCallback, useEffect, useMemo, useState, useRef } from 'react'
-import { generateModelAttributeId } from '@iotea/hub/util/idGenerator'
-import { ModelAttribute, ModelAttributes } from '@iotea/libs/engine/dependencies/models'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import { generateModelAttributeId } from '@gruent/hub/util/idGenerator'
+import { ModelAttribute, ModelAttributes } from '@gruent/libs/engine/dependencies/models'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 // Add interface for the ref
 export interface ModelSettingsFormRef {
@@ -378,7 +378,7 @@ const ModelSettingsForm: FC<Props> = ({
       if (!accessToken) return
       if (!attributes) return
 
-      const { errors } = await ioteaClient(accessToken).models.update(spaceId, model)
+      const { errors } = await gruentClient(accessToken).models.update(spaceId, model)
 
       if (errors && errors.length > 0) {
         addToast({

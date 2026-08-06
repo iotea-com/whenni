@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
+	"github.com/ongruent/gruent/libs/legacy/engine/environment"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 )

@@ -1,7 +1,7 @@
 'use client'
 
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
 
 const ChannelValidationErrorModal = () => {
   const validationErrors = useChannelEditorStore((state) => state.validationErrors)

@@ -8,7 +8,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import ListTable from '@iotea/hub/components/atoms/ListTable'
+import ListTable from '@gruent/hub/components/atoms/ListTable'
 import SecretContextMenu from './SecretContextMenu'
 import { riInformationLine } from '@mwarnerdotme/react-remixicon'
 import { RemixIcon } from '@mwarnerdotme/react-remixicon'

@@ -7,14 +7,14 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/iotea-com/iotea/libs/telemetry"
-	"github.com/iotea-com/iotea/services/http-api/api"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	"github.com/ongruent/gruent/libs/telemetry"
+	"github.com/ongruent/gruent/services/http-api/api"
+	"github.com/ongruent/gruent/services/http-api/config"
 )
 
-// @title IOTEA
+// @title GRUENT
 // @version alpha-v1.0
-// @description Bringing connectivity and automation to everyone, everywhere.
+// @description Connect systems with clarity.
 // @schemes https http
 // @host localhost:9001
 // @BasePath /v1

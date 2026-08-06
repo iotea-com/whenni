@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/iotea-com/iotea/libs/val"
+	"github.com/ongruent/gruent/libs/val"
 )
 
 const HttpServerThingCategory ThingCategory = "HTTP_SERVER"

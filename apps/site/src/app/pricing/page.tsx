@@ -1,5 +1,5 @@
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import ChannelsCostCalculator from '@iotea/libs/frontend/components/organisms/GridExamplePriceCalculator'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import ChannelsCostCalculator from '@gruent/libs/frontend/components/organisms/GridExamplePriceCalculator'
 import {
   RemixIcon,
   ri24HoursFill,
@@ -24,21 +24,21 @@ import {
 } from '@mwarnerdotme/react-remixicon'
 
 import styles from './page.module.scss'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import { Metadata } from 'next'
 import RuntimeSelector from './RuntimeSelector'
 
 export const metadata: Metadata = {
-  title: 'Usage-based pricing for your IoT & automation needs | IOTEA',
+  title: 'Usage-based pricing for your IoT & automation needs | GRUENT',
   description:
     'Pay only for what you use. Predictable pricing without hidden fees. Get started in minutes.',
   openGraph: {
     type: 'website',
-    url: `https://iotea.com/pricing`,
-    title: 'Usage-based pricing for your IoT & automation needs | IOTEA',
+    url: `https://gruent.com/pricing`,
+    title: 'Usage-based pricing for your IoT & automation needs | GRUENT',
     description:
       'Pay only for what you use. Predictable pricing without hidden fees. Get started in minutes.',
-    images: ['https://iotea.com/img/logos/app-icon-primary.png'],
+    images: ['https://gruent.com/img/logos/app-icon-primary.png'],
   },
 }
 
@@ -446,7 +446,7 @@ const Pricing = async ({ searchParams }) => {
                       <RemixIcon icon={riSwap3Fill} size="lg" className="text-green-700" /> API
                     </h4>
                     <p className="text-gray-500 max-w-lg">
-                      Programmatic access to all IOTEA API routes.
+                      Programmatic access to all GRUENT API routes.
                     </p>
                   </div>
                   <div

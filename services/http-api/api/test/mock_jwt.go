@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/config"
 )
 
 func NewMockJwt(t *testing.T, testUserId string) string {

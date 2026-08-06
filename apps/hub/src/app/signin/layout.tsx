@@ -1,4 +1,4 @@
-import AuthLayout from '@iotea/hub/components/layouts/AuthLayout'
+import AuthLayout from '@gruent/hub/components/layouts/AuthLayout'
 
 const Layout = async ({ children }) => {
   return <AuthLayout>{children}</AuthLayout>

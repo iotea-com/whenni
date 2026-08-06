@@ -1,4 +1,4 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
 import { FC, useCallback } from 'react'
 
 type Props = {}

@@ -3,8 +3,8 @@ package channelExecutions
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/iotea-com/iotea/services/http-api/api/v1/channels/executions/get"
-	"github.com/iotea-com/iotea/services/http-api/api/v1/channels/executions/list"
+	"github.com/ongruent/gruent/services/http-api/api/v1/channels/executions/get"
+	"github.com/ongruent/gruent/services/http-api/api/v1/channels/executions/list"
 )
 
 func Register(app fiber.Router) {

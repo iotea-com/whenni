@@ -9,7 +9,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { ApiKey, PermissionSet } from '@prisma/client'
-import ListTable from '@iotea/hub/components/atoms/ListTable'
+import ListTable from '@gruent/hub/components/atoms/ListTable'
 import ApiKeyContextMenu from './ApiKeyContextMenu'
 import {
   RemixIcon,
@@ -18,8 +18,8 @@ import {
   riKeyLine,
   riListSettingsLine,
 } from '@mwarnerdotme/react-remixicon'
-import copyToClipboard from '@iotea/libs/frontend/util/copyToClipboard'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import copyToClipboard from '@gruent/libs/frontend/util/copyToClipboard'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { useRouter } from 'next/navigation'
 // import IndeterminateCheckbox from "../../atoms/IndeterminateCheckbox"
 
@@ -161,7 +161,7 @@ const ApiKeysTable: FC<Props> = ({
   return (
     <ListTable
       title="API Keys"
-      description={`Programmatically access the IOTEA platform.`}
+      description={`Programmatically access the GRUENT platform.`}
       table={table}
       page={page}
       totalPages={totalPages}

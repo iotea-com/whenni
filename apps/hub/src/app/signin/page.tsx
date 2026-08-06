@@ -1,15 +1,15 @@
-import SignInForm from '@iotea/hub/components/organisms/SignInForm'
+import SignInForm from '@gruent/hub/components/organisms/SignInForm'
 
 export const metadata = {
-  title: 'Sign in | IOTEA',
+  title: 'Sign in | GRUENT',
   description:
-    'Integrating devices and services just got a lot easier. Drag-and-drop connections to automate tasks and scale within minutes. Try IOTEA during our beta launch.',
+    'Integrating devices and services just got a lot easier. Drag-and-drop connections to automate tasks and scale within minutes. Try GRUENT during our beta launch.',
   openGraph: {
     type: 'website',
-    url: `https://app.iotea.com/signin`,
+    url: `https://app.gruent.com/signin`,
     description:
-      'Integrating devices and services just got a lot easier. Drag-and-drop connections to automate tasks and scale within minutes. Try IOTEA during our beta launch.',
-    images: ['https://iotea.com/img/logos/app-icon-primary.png'],
+      'Integrating devices and services just got a lot easier. Drag-and-drop connections to automate tasks and scale within minutes. Try GRUENT during our beta launch.',
+    images: ['https://gruent.com/img/logos/app-icon-primary.png'],
   },
 }
 

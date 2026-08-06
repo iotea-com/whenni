@@ -1,13 +1,13 @@
 'use client'
 
 import { FC, useCallback, useRef } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import { handleAddPermissionSet } from '@iotea/hub/actions/permissionSets'
-import { defaultOrgPermissions, defaultSpacePermissions } from '@iotea/libs/http/permissions'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import { handleAddPermissionSet } from '@gruent/hub/actions/permissionSets'
+import { defaultOrgPermissions, defaultSpacePermissions } from '@gruent/libs/http/permissions'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
 
 type Props = {
   orgId: string

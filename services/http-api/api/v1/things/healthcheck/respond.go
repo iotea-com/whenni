@@ -2,12 +2,12 @@ package thingsHealthcheck
 
 import (
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 )
 
-func respond(request *ioteahttp.Request[Input], output *Output) {
+func respond(request *gruenthttp.Request[Input], output *Output) {
 	request.Span.AddEvent("respond")
 
-	response := ioteahttp.NewUpdateResponse(nil, nil)
+	response := gruenthttp.NewUpdateResponse(nil, nil)
 	request.FiberContext.Status(fiber.StatusOK).JSON(response)
 }

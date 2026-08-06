@@ -1,13 +1,13 @@
 'use client'
 
-import useSettingsStore from '@iotea/hub/stores/settingsStore'
+import useSettingsStore from '@gruent/hub/stores/settingsStore'
 import { RemixIcon, riMessage3Fill } from '@mwarnerdotme/react-remixicon'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import { FC } from 'react'
 
 const DiscordLink = 'https://discord.gg/prAJjW426d'
-// const GithubLink = 'https://github.com/iotea-com/iotea'
+// const GithubLink = 'https://github.com/ongruent/gruent'
 
 type Props = {
   hidden?: boolean

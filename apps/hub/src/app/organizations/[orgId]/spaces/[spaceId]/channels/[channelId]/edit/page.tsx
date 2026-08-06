@@ -1,9 +1,9 @@
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 import ChannelByIdEditClientPage from './client'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import gruentClient from '@gruent/hub/lib/gruent'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 export const metadata = {
-  title: 'Edit channel | IOTEA',
+  title: 'Edit channel | GRUENT',
 }
 
 const ChannelByIdEditPage = async ({ params }) => {
@@ -12,7 +12,7 @@ const ChannelByIdEditPage = async ({ params }) => {
   const accessToken = await getAccessToken()
   if (!accessToken) return null
 
-  const { data: space, errors: spaceErrors } = await ioteaClient(accessToken).spaces.get(
+  const { data: space, errors: spaceErrors } = await gruentClient(accessToken).spaces.get(
     orgId,
     spaceId,
   )
@@ -30,7 +30,7 @@ const ChannelByIdEditPage = async ({ params }) => {
     )
   }
 
-  const { data: organization, errors: organizationErrors } = await ioteaClient(
+  const { data: organization, errors: organizationErrors } = await gruentClient(
     accessToken,
   ).organizations.get(space?.organizationId ?? '')
 

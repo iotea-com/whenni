@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
 )
 
 func TestRegister(t *testing.T) {

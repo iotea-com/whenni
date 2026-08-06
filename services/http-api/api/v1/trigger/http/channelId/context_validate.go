@@ -1,9 +1,9 @@
 package channelId
 
 import (
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 )
 
-func contextValidate(_ *ioteahttp.Request[Input]) error {
+func contextValidate(_ *gruenthttp.Request[Input]) error {
 	return nil
 }

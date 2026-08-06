@@ -2,8 +2,8 @@ package modelsUpdate
 
 import (
 	"github.com/gofiber/fiber/v2"
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/models"
 )
 
 type ModelPayload struct {

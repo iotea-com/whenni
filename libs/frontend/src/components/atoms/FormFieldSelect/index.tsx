@@ -1,7 +1,7 @@
 'use client'
 
 import { ChangeEvent, FC, useMemo, useRef, useState, useEffect } from 'react'
-import noop from '@iotea/libs/frontend/util/noop'
+import noop from '@gruent/libs/frontend/util/noop'
 import {
   RemixIcon,
   riArrowDownSLine,

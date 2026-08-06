@@ -1,10 +1,10 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
-import { ChannelNode, BooleanConditionalNodeConfig } from '@iotea/libs/engine/nodes/v1'
-import { BooleanCondition } from '@iotea/libs/engine/nodes/v1/src/conditional/boolean'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
+import { ChannelNode, BooleanConditionalNodeConfig } from '@gruent/libs/engine/nodes/v1'
+import { BooleanCondition } from '@gruent/libs/engine/nodes/v1/src/conditional/boolean'
 import { RemixIcon, riAddLine, riCloseLine } from '@mwarnerdotme/react-remixicon'
 import {
   ChangeEvent,
@@ -16,7 +16,7 @@ import {
   useState,
   useCallback,
 } from 'react'
-import { ModelAttributes } from '@iotea/libs/engine/dependencies/models'
+import { ModelAttributes } from '@gruent/libs/engine/dependencies/models'
 import { Model } from '@prisma/client'
 
 type Props = {
@@ -110,7 +110,7 @@ const BooleanConditionalOptions: FC<Props> = ({ models, orgId, spaceId }) => {
           label="Model"
           className="grow"
           options={modelOptions}
-          value={model ? model.id : '__IOTEA_IGNORE__'}
+          value={model ? model.id : '__GRUENT_IGNORE__'}
           onChange={(e) => setModel(models.find((m) => m.id === e.target.value))}
         />
         <Button className="my-3" onClick={() => openModal('createModel')}>

@@ -17,14 +17,14 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@iotea/hub/*": ["apps/hub/src/*"],
-      "@iotea/libs/engine/channels/*": ["libs/engine/channels/*"],
-      "@iotea/libs/engine/dependencies/*": ["libs/engine/dependencies/*"],
-      "@iotea/libs/engine/nodes/*": ["libs/engine/nodes/*"],
-      "@iotea/libs/frontend/*": ["libs/frontend/src/*"],
-      "@iotea/libs/http/*": ["libs/http/*"],
-      "@iotea/libs/iotea-js/*": ["libs/iotea-js/*"],
-      "@iotea/site/*": ["apps/site/src/*"]
+      "@gruent/hub/*": ["apps/hub/src/*"],
+      "@gruent/libs/engine/channels/*": ["libs/engine/channels/*"],
+      "@gruent/libs/engine/dependencies/*": ["libs/engine/dependencies/*"],
+      "@gruent/libs/engine/nodes/*": ["libs/engine/nodes/*"],
+      "@gruent/libs/frontend/*": ["libs/frontend/src/*"],
+      "@gruent/libs/http/*": ["libs/http/*"],
+      "@gruent/libs/gruent-js/*": ["libs/gruent-js/*"],
+      "@gruent/site/*": ["apps/site/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

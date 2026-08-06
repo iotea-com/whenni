@@ -9,8 +9,8 @@ receivers:
 exporters:
   clickhouse:
     endpoint: "clickhouse://clickhouse:9000"
-    username: "iotea"
-    password: "iotea"
+    username: "gruent"
+    password: "gruent"
     database: "default"
     ttl: 8h
     create_schema: false

@@ -1,5 +1,5 @@
-import notion from '@iotea/site/lib/notion'
-import NotionBlockRenderer from '@iotea/libs/frontend/components/templates/NotionBlockRenderer'
+import notion from '@gruent/site/lib/notion'
+import NotionBlockRenderer from '@gruent/libs/frontend/components/templates/NotionBlockRenderer'
 import type { Metadata, ResolvingMetadata } from 'next'
 import Link from 'next/link'
 import {
@@ -11,15 +11,15 @@ import dayjs from 'dayjs'
 import {
   calculateBlogPostSlug,
   slugToNotionQuery,
-} from '@iotea/libs/frontend/util/calculateBlogPostSlug'
+} from '@gruent/libs/frontend/util/calculateBlogPostSlug'
 import styles from './page.module.scss'
 import { notFound } from 'next/navigation'
 import TableOfContents from './TableOfContents'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import { RemixIcon, riGitForkLine, riPriceTagLine } from '@mwarnerdotme/react-remixicon'
 
 import Image from 'next/image'
-import redis from '@iotea/site/lib/upstash'
+import redis from '@gruent/site/lib/upstash'
 
 type MetadataCache = {
   pageId: string
@@ -98,8 +98,8 @@ const buildMetadataCache = async (slug: string) => {
   const authorName = (() => {
     return page.properties.Author.type === 'people' &&
       (page.properties.Author.people[0] as UserObjectResponse).name
-      ? ((page.properties.Author.people[0] as UserObjectResponse).name ?? 'IOTEA')
-      : 'IOTEA'
+      ? ((page.properties.Author.people[0] as UserObjectResponse).name ?? 'GRUENT')
+      : 'GRUENT'
   })()
 
   const metadataCache: MetadataCache = {
@@ -134,7 +134,7 @@ export async function generateMetadata({ params }, _parent: ResolvingMetadata): 
       description: metadataCache.description,
       openGraph: {
         type: 'article',
-        url: `https://iotea.com/blog/${slug}`,
+        url: `https://gruent.com/blog/${slug}`,
         title: metadataCache.title,
         description: metadataCache.description,
         images: metadataCache.coverImageUrl ? [metadataCache.coverImageUrl] : [],

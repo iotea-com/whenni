@@ -1,16 +1,16 @@
-import ioteaClient from '@iotea/hub/lib/iotea'
-import CreateThingModal from '@iotea/hub/components/modals/CreateThingModal'
-import ThingsTable from '@iotea/hub/components/organisms/ThingsTable'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import gruentClient from '@gruent/hub/lib/gruent'
+import CreateThingModal from '@gruent/hub/components/modals/CreateThingModal'
+import ThingsTable from '@gruent/hub/components/organisms/ThingsTable'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import { RemixIcon, riAddCircleLine, riRouterLine } from '@mwarnerdotme/react-remixicon'
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import ListTablePlaceholder from '@iotea/hub/components/molecules/ListTablePlaceholder'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import ListTablePlaceholder from '@gruent/hub/components/molecules/ListTablePlaceholder'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 import { Tag } from '@prisma/client'
 
 export const metadata = {
-  title: 'Things | IOTEA',
+  title: 'Things | GRUENT',
 }
 
 const ThingsPage = async ({ params, searchParams }) => {
@@ -28,7 +28,7 @@ const ThingsPage = async ({ params, searchParams }) => {
     page,
     totalPages,
     totalResults,
-  } = await ioteaClient(accessToken).things.list(spaceId, {
+  } = await gruentClient(accessToken).things.list(spaceId, {
     page: requestedPage,
     filter,
     tagFilter,
@@ -61,7 +61,7 @@ const ThingsPage = async ({ params, searchParams }) => {
   }
 
   const { data: tagListResponse, errors: tagListErrors } =
-    await ioteaClient(accessToken).tags.list(spaceId)
+    await gruentClient(accessToken).tags.list(spaceId)
 
   if (tagListErrors && tagListErrors.length > 0) {
     return (

@@ -3,7 +3,7 @@ package models_test
 import (
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/models"
 	"github.com/stretchr/testify/require"
 )
 

@@ -2,12 +2,12 @@ package tagsCreate
 
 import (
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 )
 
-func respond(request *ioteahttp.Request[Input], output *Output) {
+func respond(request *gruenthttp.Request[Input], output *Output) {
 	request.Span.AddEvent("respond")
 
-	response := ioteahttp.NewCreateResponse(output)
+	response := gruenthttp.NewCreateResponse(output)
 	request.FiberContext.Status(fiber.StatusCreated).JSON(response)
 }

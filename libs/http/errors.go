@@ -1,4 +1,4 @@
-package ioteahttp
+package gruenthttp
 
 import (
 	"fmt"
@@ -8,13 +8,13 @@ import (
 
 // A normalized object for input validation errors. Contains a slice of human-readable error
 // messages. Can be converted to an API response object.
-type IoteaValidationError struct {
+type GruentValidationError struct {
 	Errors []string
 }
 
 // Creates a custom error message mapping based on `validator` validation errors.
-func NewIoteaValidationError(validationErrors validator.ValidationErrors) IoteaValidationError {
-	ioteaValidationError := IoteaValidationError{
+func NewGruentValidationError(validationErrors validator.ValidationErrors) GruentValidationError {
+	gruentValidationError := GruentValidationError{
 		Errors: []string{},
 	}
 
@@ -23,26 +23,26 @@ func NewIoteaValidationError(validationErrors validator.ValidationErrors) IoteaV
 		switch ve.Tag() {
 		case "required":
 			e := fmt.Sprintf("Missing '%s'. This is a required field.", ve.Field())
-			ioteaValidationError.Errors = append(ioteaValidationError.Errors, e)
+			gruentValidationError.Errors = append(gruentValidationError.Errors, e)
 		case "min":
 			if ve.Type().Name() == "string" {
 				e := fmt.Sprintf("Invalid '%s'. Try again with at least %s characters.", ve.Field(), ve.Param())
-				ioteaValidationError.Errors = append(ioteaValidationError.Errors, e)
+				gruentValidationError.Errors = append(gruentValidationError.Errors, e)
 			}
 		case "max":
 			e := fmt.Sprintf("Invalid '%s'. Try again with less than %s characters.", ve.Field(), ve.Param())
-			ioteaValidationError.Errors = append(ioteaValidationError.Errors, e)
+			gruentValidationError.Errors = append(gruentValidationError.Errors, e)
 		default:
 			e := fmt.Sprintf("Invalid '%s'.", ve.Field())
-			ioteaValidationError.Errors = append(ioteaValidationError.Errors, e)
+			gruentValidationError.Errors = append(gruentValidationError.Errors, e)
 		}
 	}
 
-	return ioteaValidationError
+	return gruentValidationError
 }
 
-// Converts the validation error object to an IOTEA API response object.
-func (r IoteaValidationError) MarshalResponse() IoteaApiResponse {
+// Converts the validation error object to an GRUENT API response object.
+func (r GruentValidationError) MarshalResponse() GruentApiResponse {
 	var errors []any
 	for _, err := range r.Errors {
 		errors = append(errors, err)
@@ -55,8 +55,8 @@ func (r IoteaValidationError) MarshalResponse() IoteaApiResponse {
 
 // Creates a generic error API response. Sets data to null and errors to a slice of anything
 // (ideally human-readable strings).
-func NewErrorResponse(errors []any) IoteaApiResponse {
-	r := IoteaApiResponse{
+func NewErrorResponse(errors []any) GruentApiResponse {
+	r := GruentApiResponse{
 		Data:   nil,
 		Errors: errors,
 	}

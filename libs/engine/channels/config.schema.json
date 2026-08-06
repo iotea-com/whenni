@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/iotea-com/iotea/libs/engine/channels/config.schema.json",
+  "$id": "https://github.com/ongruent/gruent/libs/engine/channels/config.schema.json",
   "title": "ChannelConfig",
   "type": "object",
   "properties": {

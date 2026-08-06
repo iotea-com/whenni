@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Button from '../../atoms/Button'
 import { RemixIcon, riMenu2Fill } from '@mwarnerdotme/react-remixicon'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 
 const Navbar: FC = () => {
   return (
@@ -16,7 +16,7 @@ const Navbar: FC = () => {
           <Link href="/">
             <Image
               src="/img/logos/wordmark-secondary.png"
-              alt="IOTEA logo"
+              alt="GRUENT logo"
               width={100}
               height={100}
             />
@@ -52,7 +52,7 @@ const Navbar: FC = () => {
               {/* <li>
                 <Button
                   text="Sign In"
-                  href="https://app.iotea.com/sign-in"
+                  href="https://app.gruent.com/sign-in"
                   variant="underline"
                 />
               </li>

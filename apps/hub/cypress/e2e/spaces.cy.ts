@@ -4,7 +4,7 @@ const nanoidAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 describe('Spaces', () => {
   beforeEach(() => {
-    cy.login('test@iotea.com', 'iotea!')
+    cy.login('test@gruent.com', 'gruent!')
   })
 
   const suiteCache = new Map([])

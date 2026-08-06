@@ -1,4 +1,4 @@
-package ioteapermissions
+package gruentpermissions
 
 import (
 	"fmt"

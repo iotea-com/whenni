@@ -7,22 +7,22 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/certificates"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/certificates"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/things"
 	"github.com/jackc/pgx/v5"
 
-	mqttPolicies "github.com/iotea-com/iotea/libs/http/policies"
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/libs/secrets"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	mqttPolicies "github.com/ongruent/gruent/libs/http/policies"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/libs/secrets"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.Name", request.Input.Name),
@@ -151,7 +151,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		}
 		output.Thing = thing
 	default:
-		response := ioteahttp.NewErrorResponse([]any{
+		response := gruenthttp.NewErrorResponse([]any{
 			"Invalid category.",
 		})
 
@@ -162,7 +162,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	return &output, nil
 }
 
-func handleCreateMqttClient(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateMqttClient(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	mqttClient, err := things.NewMqttClientFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -173,7 +173,7 @@ func handleCreateMqttClient(request *ioteahttp.Request[Input], thingId string) (
 	// Request a new certificate
 	certRequest := secrets.CertRequest{
 		CommonName: "localhost",
-		AltNames:   "localhost,emqx,emqx-mqtts.services.svc.cluster.local,mqtts.iotea.com",
+		AltNames:   "localhost,emqx,emqx-mqtts.services.svc.cluster.local,mqtts.gruent.com",
 		IpSans:     "127.0.0.1",
 		Ttl:        "8760h",
 		KeyType:    "ec",
@@ -253,7 +253,7 @@ func handleCreateMqttClient(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateMqttBroker(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateMqttBroker(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	mqttBroker, err := things.NewMqttBrokerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -299,7 +299,7 @@ func handleCreateMqttBroker(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateHttpServer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateHttpServer(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	httpServer, err := things.NewHttpServerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -330,7 +330,7 @@ func handleCreateHttpServer(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateKafkaCluster(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateKafkaCluster(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	kafkaCluster, err := things.NewKafkaClusterFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -361,7 +361,7 @@ func handleCreateKafkaCluster(request *ioteahttp.Request[Input], thingId string)
 	return thing, nil
 }
 
-func handleCreateKafkaProducer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateKafkaProducer(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	kafkaProducer, err := things.NewKafkaProducerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -392,7 +392,7 @@ func handleCreateKafkaProducer(request *ioteahttp.Request[Input], thingId string
 	return thing, nil
 }
 
-func handleCreateKafkaConsumer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateKafkaConsumer(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	kafkaConsumer, err := things.NewKafkaConsumerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -423,7 +423,7 @@ func handleCreateKafkaConsumer(request *ioteahttp.Request[Input], thingId string
 	return thing, nil
 }
 
-func handleCreateNatsServer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateNatsServer(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	natsServer, err := things.NewNatsServerFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -454,7 +454,7 @@ func handleCreateNatsServer(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateNatsClient(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateNatsClient(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	natsClient, err := things.NewNatsClientFromAttributes(request.Input.Attributes)
 	err = handleCreateAttributesError(request, err)
@@ -485,7 +485,7 @@ func handleCreateNatsClient(request *ioteahttp.Request[Input], thingId string) (
 	return thing, nil
 }
 
-func handleCreateS3Bucket(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateS3Bucket(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	s3Bucket, err := things.NewS3BucketFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -516,7 +516,7 @@ func handleCreateS3Bucket(request *ioteahttp.Request[Input], thingId string) (*s
 	return thing, nil
 }
 
-func handleCreateMinioBucket(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateMinioBucket(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	minioBucket, err := things.NewMinioBucketFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -547,7 +547,7 @@ func handleCreateMinioBucket(request *ioteahttp.Request[Input], thingId string) 
 	return thing, nil
 }
 
-func handleCreateInfluxDbDatabase(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateInfluxDbDatabase(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	influxDbDatabase, err := things.NewInfluxDbDatabaseFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -578,7 +578,7 @@ func handleCreateInfluxDbDatabase(request *ioteahttp.Request[Input], thingId str
 	return thing, nil
 }
 
-func handleCreateClickhouseDatabase(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateClickhouseDatabase(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	clickhouseDatabase, err := things.NewClickhouseDatabaseFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -609,7 +609,7 @@ func handleCreateClickhouseDatabase(request *ioteahttp.Request[Input], thingId s
 	return thing, nil
 }
 
-func handleCreateAwsSES(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateAwsSES(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	awsSES, err := things.NewAwsSESFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -640,7 +640,7 @@ func handleCreateAwsSES(request *ioteahttp.Request[Input], thingId string) (*sql
 	return thing, nil
 }
 
-func handleCreateAwsSNS(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateAwsSNS(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	awsSNS, err := things.NewAwsSNSFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -671,7 +671,7 @@ func handleCreateAwsSNS(request *ioteahttp.Request[Input], thingId string) (*sql
 	return thing, nil
 }
 
-func handleCreateSendgridClient(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateSendgridClient(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	sendgridClient, err := things.NewSendgridClientFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -702,7 +702,7 @@ func handleCreateSendgridClient(request *ioteahttp.Request[Input], thingId strin
 	return thing, nil
 }
 
-func handleCreateMongoDbServer(request *ioteahttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
+func handleCreateMongoDbServer(request *gruenthttp.Request[Input], thingId string) (*sqldb.AppThing, error) {
 	// Create attributes
 	mongoDbServer, err := things.NewMongoDbServerFromAttributes(request.Input.Attributes, config.SecretsClient, request.Input.SpaceId)
 	err = handleCreateAttributesError(request, err)
@@ -770,11 +770,11 @@ func insertThingIntoDatabase(ctx context.Context, params insertThingIntoDatabase
 	return &thing, nil
 }
 
-func handleCreateAttributesError(request *ioteahttp.Request[Input], err error) error {
+func handleCreateAttributesError(request *gruenthttp.Request[Input], err error) error {
 	if err != nil {
 		if err, ok := err.(validator.ValidationErrors); ok {
 			request.Span.SetAttributes(attribute.String("validationError", err.Error()))
-			validationError := ioteahttp.NewIoteaValidationError(err)
+			validationError := gruenthttp.NewGruentValidationError(err)
 			response := validationError.MarshalResponse()
 			responseJson, err := response.MarshalJson()
 			if err != nil {

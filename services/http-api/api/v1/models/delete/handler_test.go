@@ -8,11 +8,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/id"
-	ioteachannels "github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	"github.com/iotea-com/iotea/prisma/db"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
-	modelsDelete "github.com/iotea-com/iotea/services/http-api/api/v1/models/delete"
+	"github.com/ongruent/gruent/libs/id"
+	gruentchannels "github.com/ongruent/gruent/libs/legacy/engine/channels"
+	"github.com/ongruent/gruent/prisma/db"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
+	modelsDelete "github.com/ongruent/gruent/services/http-api/api/v1/models/delete"
 	"github.com/steebchen/prisma-client-go/runtime/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -92,12 +92,12 @@ func TestHandler(t *testing.T) {
 			testSpaceId, _ := id.Generator.NewSpaceId()
 			testModelId, _ := id.Generator.NewModelId()
 
-			exampleConfigWithStruct := ioteachannels.Channel{
-				Nodes: []ioteachannels.Node{
+			exampleConfigWithStruct := gruentchannels.Channel{
+				Nodes: []gruentchannels.Node{
 					{
-						Metadata: ioteachannels.NodeMetadata{
-							Dependencies: ioteachannels.NodeDependencies{
-								Models: []ioteachannels.NodeModelDependency{
+						Metadata: gruentchannels.NodeMetadata{
+							Dependencies: gruentchannels.NodeDependencies{
+								Models: []gruentchannels.NodeModelDependency{
 									{
 										ModelId: *testModelId,
 									},

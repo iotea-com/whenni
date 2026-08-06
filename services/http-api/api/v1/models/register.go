@@ -3,12 +3,12 @@ package models
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/iotea-com/iotea/services/http-api/api/middleware"
-	modelsCreate "github.com/iotea-com/iotea/services/http-api/api/v1/models/create"
-	modelsDelete "github.com/iotea-com/iotea/services/http-api/api/v1/models/delete"
-	modelsGet "github.com/iotea-com/iotea/services/http-api/api/v1/models/get"
-	modelsList "github.com/iotea-com/iotea/services/http-api/api/v1/models/list"
-	modelsUpdate "github.com/iotea-com/iotea/services/http-api/api/v1/models/update"
+	"github.com/ongruent/gruent/services/http-api/api/middleware"
+	modelsCreate "github.com/ongruent/gruent/services/http-api/api/v1/models/create"
+	modelsDelete "github.com/ongruent/gruent/services/http-api/api/v1/models/delete"
+	modelsGet "github.com/ongruent/gruent/services/http-api/api/v1/models/get"
+	modelsList "github.com/ongruent/gruent/services/http-api/api/v1/models/list"
+	modelsUpdate "github.com/ongruent/gruent/services/http-api/api/v1/models/update"
 )
 
 func Register(app fiber.Router) {

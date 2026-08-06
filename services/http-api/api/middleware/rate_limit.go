@@ -7,8 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/storage/redis"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/services/http-api/config"
 )
 
 var redisStore = redis.New(redis.Config{
@@ -38,7 +38,7 @@ var userRateLimiterConfig = limiter.Config{
 	Storage:           redisStore,
 	LimiterMiddleware: limiter.SlidingWindow{},
 	LimitReached: func(c *fiber.Ctx) error {
-		responseBody := ioteahttp.NewErrorResponse(
+		responseBody := gruenthttp.NewErrorResponse(
 			[]any{"Too many requests"},
 		)
 
@@ -55,7 +55,7 @@ var ipRateLimiterConfig = limiter.Config{
 	Storage:           redisStore,
 	LimiterMiddleware: limiter.SlidingWindow{},
 	LimitReached: func(ctx *fiber.Ctx) error {
-		responseBody := ioteahttp.NewErrorResponse(
+		responseBody := gruenthttp.NewErrorResponse(
 			[]any{"Too many requests"},
 		)
 
