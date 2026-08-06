@@ -1,4 +1,4 @@
-import SignInForm from '@iotea/hub/components/organisms/SignInForm'
+import SignInForm from '@gruent/hub/components/organisms/SignInForm'
 
 const VerifyEmailPage = async ({ searchParams }) => {
   const { email } = await searchParams

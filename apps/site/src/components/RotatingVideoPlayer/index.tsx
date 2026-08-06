@@ -1,6 +1,6 @@
 'use client'
 
-import isBrowser from '@iotea/libs/frontend/util/isBrowser'
+import isBrowser from '@gruent/libs/frontend/util/isBrowser'
 import { useMemo, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 

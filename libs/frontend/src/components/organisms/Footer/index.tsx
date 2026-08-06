@@ -23,7 +23,7 @@ const Footer = async () => {
           <section className="flex flex-col">
             <Image
               src="/img/logos/mark-cutout-secondary.png"
-              alt="IOTEA logo"
+              alt="GRUENT logo"
               width={30}
               height={30}
             />
@@ -35,32 +35,32 @@ const Footer = async () => {
                 </Link>
               </li>
               <li>
-                <Link href="https://x.com/iotea_com" target="_blank">
+                <Link href="https://x.com/gruent_com" target="_blank">
                   <RemixIcon icon={riTwitterXFill} />
                 </Link>
               </li>
               <li>
-                <Link href="https://bsky.app/profile/iotea.bsky.social" target="_blank">
+                <Link href="https://bsky.app/profile/gruent.bsky.social" target="_blank">
                   <RemixIcon icon={riBlueskyFill} />
                 </Link>
               </li>
               <li>
-                <Link href="https://github.com/iotea-com" target="_blank">
+                <Link href="https://github.com/ongruent" target="_blank">
                   <RemixIcon icon={riGithubFill} />
                 </Link>
               </li>
               <li>
-                <Link href="https://linkedin.com/company/iotea-com" target="_blank">
+                <Link href="https://linkedin.com/company/gruent" target="_blank">
                   <RemixIcon icon={riLinkedinFill} />
                 </Link>
               </li>
               <li>
-                <Link href="https://youtube.com/@iotea-com" target="_blank">
+                <Link href="https://youtube.com/@gruent" target="_blank">
                   <RemixIcon icon={riYoutubeFill} />
                 </Link>
               </li>
             </ul>
-            <p className="mt-2 text-gray-500">&copy; {new Date().getFullYear()} IOTEA, Inc.</p>
+            <p className="mt-2 text-gray-500">&copy; {new Date().getFullYear()} GRUENT, Inc.</p>
             <p className="text-gray-400 text-sm">
               Made with <RemixIcon className="text-red-700" icon={riHeartFill} /> and plenty of{' '}
               <RemixIcon className="text-green-700" icon={riCupFill} />
@@ -79,7 +79,7 @@ const Footer = async () => {
                 <Link href="/pricing">Pricing</Link>
               </li>
               <li>
-                <Link href="mailto:careers@iotea.com?subject=I'd like to work at IOTEA">
+                <Link href="mailto:careers@gruent.com?subject=I'd like to work at GRUENT">
                   Careers
                 </Link>
               </li>

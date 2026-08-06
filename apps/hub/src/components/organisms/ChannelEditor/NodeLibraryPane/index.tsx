@@ -1,6 +1,6 @@
 import { DragEvent, FC, useMemo, useState } from 'react'
 import NodeLibrarySection from './NodeLibrarySection'
-import { ChannelNodeType, defaultNodes } from '@iotea/libs/engine/nodes/v1'
+import { ChannelNodeType, defaultNodes } from '@gruent/libs/engine/nodes/v1'
 import {
   RemixIcon,
   riCloseFill,
@@ -27,7 +27,7 @@ const NodeLibraryPane: FC = () => {
 
   const handleNoteDragStart = (e: DragEvent<HTMLDivElement>) => {
     const defaultNoteValue = {
-      id: '__IOTEA_NOTE__',
+      id: '__GRUENT_NOTE__',
       coordinates: {
         x: 0,
         y: 0,

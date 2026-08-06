@@ -2,12 +2,12 @@ package policiesList
 
 import (
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 )
 
-func respond(request *ioteahttp.Request[Input], output *Output) {
+func respond(request *gruenthttp.Request[Input], output *Output) {
 	request.Span.AddEvent("respond")
 
-	response := ioteahttp.NewListResponse(output.Certificates, &output.Page, &output.TotalPages, &output.TotalResults, &output.ResultsPerPage)
+	response := gruenthttp.NewListResponse(output.Certificates, &output.Page, &output.TotalPages, &output.TotalResults, &output.ResultsPerPage)
 	request.FiberContext.Status(fiber.StatusOK).JSON(response)
 }

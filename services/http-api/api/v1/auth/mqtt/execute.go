@@ -8,16 +8,16 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	mqttPolicies "github.com/iotea-com/iotea/libs/http/policies"
-	"github.com/iotea-com/iotea/libs/val"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	mqttPolicies "github.com/ongruent/gruent/libs/http/policies"
+	"github.com/ongruent/gruent/libs/val"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 
 	// Extract cert SN

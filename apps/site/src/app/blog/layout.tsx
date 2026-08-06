@@ -1,4 +1,4 @@
-import Container from '@iotea/libs/frontend/components/templates/Container'
+import Container from '@gruent/libs/frontend/components/templates/Container'
 
 const BlogDetailsLayout = ({ children }) => {
   return (

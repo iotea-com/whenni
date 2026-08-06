@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	"github.com/ongruent/gruent/libs/legacy/engine/channels"
 )
 
 type FindConfig struct {

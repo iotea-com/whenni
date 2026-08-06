@@ -70,7 +70,7 @@
       "configurations": {
         "local": {
           "tags": [
-            "iotea-http-api:local"
+            "gruent-http-api:local"
           ],
           "platforms": [],
           "file": "services/http-api/deploy/development/Dockerfile"

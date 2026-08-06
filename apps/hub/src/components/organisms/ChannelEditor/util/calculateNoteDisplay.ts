@@ -1,6 +1,6 @@
-import { ChannelNote } from '@iotea/libs/engine/channels/index'
+import { ChannelNote } from '@gruent/libs/engine/channels/index'
 
-import theme from '@iotea/libs/frontend/themes/tailwind'
+import theme from '@gruent/libs/frontend/themes/tailwind'
 
 type NoteDisplay = {
   x: number

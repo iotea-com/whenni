@@ -9,8 +9,8 @@ import {
 import { Organization, Space } from '@prisma/client'
 import { useClickOutside } from '@react-hooks-library/core'
 import { FC, useMemo, useRef, useState } from 'react'
-import CreateSpaceModal from '@iotea/hub/components/modals/CreateSpaceModal'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import CreateSpaceModal from '@gruent/hub/components/modals/CreateSpaceModal'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import Link from 'next/link'
 
 type Props = {

@@ -1,13 +1,13 @@
 'use client'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { Channel } from '@prisma/client'
 import { FC, useCallback, useEffect } from 'react'
-import useChannelConfig from '@iotea/libs/frontend/hooks/useChannelConfig'
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
+import useChannelConfig from '@gruent/libs/frontend/hooks/useChannelConfig'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
 import { useDebounce } from '@react-hooks-library/core'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 type Props = {
   channel: Channel
@@ -34,7 +34,7 @@ const ChannelOptionsPane: FC<Props> = ({ channel, spaceId }) => {
     if (!accessToken) return
     if (debouncedChannelConfig.nodes.length === 0) return
 
-    const { data: validationErrors } = await ioteaClient(accessToken).channels.validate(
+    const { data: validationErrors } = await gruentClient(accessToken).channels.validate(
       spaceId,
       debouncedChannelConfig,
     )

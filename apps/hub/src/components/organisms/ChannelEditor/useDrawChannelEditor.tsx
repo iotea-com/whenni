@@ -1,9 +1,9 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import useSettingsStore from '@iotea/hub/stores/settingsStore'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import useSettingsStore from '@gruent/hub/stores/settingsStore'
 import { drawBlankCanvas, drawGrid, drawNodes, drawEdges, drawNotes } from './draw'
-import theme from '@iotea/libs/frontend/themes/tailwind'
+import theme from '@gruent/libs/frontend/themes/tailwind'
 
 export const useDrawChannelEditor = (
   editorRef: RefObject<HTMLCanvasElement | null>,

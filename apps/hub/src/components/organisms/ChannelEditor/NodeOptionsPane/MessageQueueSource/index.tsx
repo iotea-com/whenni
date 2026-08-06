@@ -1,13 +1,13 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { MessageQueueSourceNodeConfig } from '@iotea/libs/engine/nodes/v1/src/source/messageQueue'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { MessageQueueSourceNodeConfig } from '@gruent/libs/engine/nodes/v1/src/source/messageQueue'
 import { Thing } from '@prisma/client'
 import { FC, useEffect, useMemo, useState } from 'react'
 import KafkaActionOptions from './KafkaSourceOptions'
 import NatsSourceOptions from './NatsSourceOptions'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { RemixIcon, riAddLine } from '@mwarnerdotme/react-remixicon'
 
 type Props = {
@@ -137,7 +137,7 @@ const MessageQueueSourceOptions: FC<Props> = ({ things, orgId, spaceId }) => {
           label="Message Queue Client"
           className="grow"
           options={messageQueueClientOptions}
-          value={selectedMessageQueueClient?.id ?? '__IOTEA_IGNORE__'}
+          value={selectedMessageQueueClient?.id ?? '__GRUENT_IGNORE__'}
           onChange={(e) =>
             setSelectedMessageQueueClient(
               messageQueueClients.find((s) => {

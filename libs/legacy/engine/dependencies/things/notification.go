@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/iotea-com/iotea/libs/secrets"
+	"github.com/ongruent/gruent/libs/secrets"
 )
 
 const AwsSNSThingCategory ThingCategory = "AWS_SNS_ENDPOINT"

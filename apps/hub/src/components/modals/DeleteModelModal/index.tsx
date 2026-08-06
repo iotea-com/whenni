@@ -1,10 +1,10 @@
 'use client'
 
-import useAuth from '@iotea/hub/hooks/useAuth'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import useAuth from '@gruent/hub/hooks/useAuth'
+import gruentClient from '@gruent/hub/lib/gruent'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { Model } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
@@ -25,7 +25,7 @@ const DeleteModelModal: FC<Props> = ({ orgId, spaceId, model }) => {
     mutationFn: async () => {
       if (!accessToken) return
 
-      const { errors } = await ioteaClient(accessToken).models.delete(spaceId, model.id)
+      const { errors } = await gruentClient(accessToken).models.delete(spaceId, model.id)
 
       if (errors && errors.length > 0) {
         addToast({

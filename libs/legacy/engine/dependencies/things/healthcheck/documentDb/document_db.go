@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/things"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

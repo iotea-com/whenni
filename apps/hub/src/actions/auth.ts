@@ -1,7 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import ioteaClient from '../lib/iotea'
+import gruentClient from '../lib/gruent'
 import { redirect } from 'next/navigation'
 
 export async function signInWithCredentials({
@@ -13,7 +13,7 @@ export async function signInWithCredentials({
   password: string
   redirectTo: string
 }): Promise<{ error: string | null; redirect?: string }> {
-  const { data: signinResponse, errors } = await ioteaClient('').auth.signin.credentials(
+  const { data: signinResponse, errors } = await gruentClient('').auth.signin.credentials(
     email,
     password,
     {
@@ -51,7 +51,7 @@ export async function signInWithMagicLink({
   appUrl: string
   redirectTo: string
 }): Promise<{ error: string | null; redirect?: string }> {
-  const { errors } = await ioteaClient('').auth.signin.magicLink.send(email, appUrl, { redirectTo })
+  const { errors } = await gruentClient('').auth.signin.magicLink.send(email, appUrl, { redirectTo })
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -69,7 +69,7 @@ export async function signup({
   inviteToken?: string
   origin: string
 }) {
-  const { errors } = await ioteaClient('').auth.signup(email, password, origin, inviteToken)
+  const { errors } = await gruentClient('').auth.signup(email, password, origin, inviteToken)
 
   return { error: errors?.[0] ?? null }
 }
@@ -80,7 +80,7 @@ export async function refresh() {
 
   if (!refreshToken) return { error: 'No refresh token found' }
 
-  const { data: refreshResponse, errors } = await ioteaClient('').auth.refresh(refreshToken)
+  const { data: refreshResponse, errors } = await gruentClient('').auth.refresh(refreshToken)
   if (errors && errors.length > 0) return { error: errors[0] }
 
   if (!refreshResponse) return { error: 'Invalid response from server. Please try again.' }

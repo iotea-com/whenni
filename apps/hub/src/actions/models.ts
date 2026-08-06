@@ -1,9 +1,9 @@
 'use server'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
-import { CreateModelInput } from '@iotea/libs/iotea-js/src/models/create'
+import gruentClient from '@gruent/hub/lib/gruent'
+import { CreateModelInput } from '@gruent/libs/gruent-js/src/models/create'
 import { revalidatePath } from 'next/cache'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 
 export const handleAddModel = async (spaceId: string, modelInput: CreateModelInput) => {
   const accessToken = await getAccessToken()
@@ -13,7 +13,7 @@ export const handleAddModel = async (spaceId: string, modelInput: CreateModelInp
       error: 'Your session is currently inactive. Sign in again to add the model.',
     }
 
-  const { errors } = await ioteaClient(accessToken).models.create(spaceId, modelInput)
+  const { errors } = await gruentClient(accessToken).models.create(spaceId, modelInput)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -29,7 +29,7 @@ export const handleDeleteModel = async (spaceId: string, modelId: string) => {
       error: 'Your session is currently inactive. Sign in again to delete the model.',
     }
 
-  const { errors } = await ioteaClient(accessToken).models.delete(spaceId, modelId)
+  const { errors } = await gruentClient(accessToken).models.delete(spaceId, modelId)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 

@@ -1,8 +1,8 @@
 'use client'
 
-import { handleDeleteSpace } from '@iotea/hub/actions/spaces'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { handleDeleteSpace } from '@gruent/hub/actions/spaces'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { Space } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'

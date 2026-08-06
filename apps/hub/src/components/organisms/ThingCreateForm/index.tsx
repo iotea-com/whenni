@@ -1,7 +1,7 @@
 'use client'
 
-import { ThingCategoryOptions } from '@iotea/hub/components/modals/CreateThingModal'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { ThingCategoryOptions } from '@gruent/hub/components/modals/CreateThingModal'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { useSearchParams } from 'next/navigation'
 import {
   forwardRef,
@@ -13,12 +13,12 @@ import {
   useState,
 } from 'react'
 import MqttClient from '../ThingFormPartials/MqttClient'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import HttpServer from '../ThingFormPartials/HttpServer'
 import MqttBroker from '../ThingFormPartials/MqttBroker'
-import { handleAddThing, handleHealthcheckThing } from '@iotea/hub/actions/things'
+import { handleAddThing, handleHealthcheckThing } from '@gruent/hub/actions/things'
 import KafkaCluster from '../ThingFormPartials/KafkaCluster'
 import KafkaProducer from '../ThingFormPartials/KafkaProducer'
 import NatsServer from '../ThingFormPartials/NatsServer'
@@ -32,7 +32,7 @@ import AwsSESEndpoint from '../ThingFormPartials/AwsSesEndpoint'
 import AwsSNSEndpoint from '../ThingFormPartials/AwsSnsEndpoint'
 import SendgridClient from '../ThingFormPartials/SendgridClient'
 import MongoDbServer from '../ThingFormPartials/MongoDbServer'
-import FormFieldTextArea from '@iotea/libs/frontend/components/atoms/FormFieldTextArea'
+import FormFieldTextArea from '@gruent/libs/frontend/components/atoms/FormFieldTextArea'
 
 type Props = {
   orgId: string

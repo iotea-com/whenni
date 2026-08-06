@@ -1,8 +1,8 @@
 'use server'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { revalidatePath } from 'next/cache'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 
 export const handleAddApiKey = async (
   orgId: string,
@@ -17,7 +17,7 @@ export const handleAddApiKey = async (
       error: 'Your session is currently inactive. Sign in again to add the API key.',
     }
 
-  const { errors } = await ioteaClient(accessToken).apiKeys.add(
+  const { errors } = await gruentClient(accessToken).apiKeys.add(
     orgId,
     permissionSetId,
     name,
@@ -38,7 +38,7 @@ export const handleDeleteApiKey = async (orgId: string, apiKeyId: string, spaceI
       error: 'Your session is currently inactive. Sign in again to delete the API key.',
     }
 
-  const { errors } = await ioteaClient(accessToken).apiKeys.remove(orgId, apiKeyId, spaceId)
+  const { errors } = await gruentClient(accessToken).apiKeys.remove(orgId, apiKeyId, spaceId)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 

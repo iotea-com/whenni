@@ -1,4 +1,4 @@
-import notion from '@iotea/site/lib/notion'
+import notion from '@gruent/site/lib/notion'
 import {
   PageObjectResponse,
   QueryDataSourceResponse,
@@ -6,24 +6,24 @@ import {
 } from '@notionhq/client/build/src/api-endpoints'
 import Image from 'next/image'
 import Link from 'next/link'
-import { calculateBlogPostSlug } from '@iotea/libs/frontend/util/calculateBlogPostSlug'
+import { calculateBlogPostSlug } from '@gruent/libs/frontend/util/calculateBlogPostSlug'
 
 import styles from './page.module.scss'
 import { Metadata } from 'next'
 import dayjs from 'dayjs'
-import redis from '@iotea/site/lib/upstash'
+import redis from '@gruent/site/lib/upstash'
 
 const CacheTime = 60 * 60 * 24 // 1 day
 
 export const metadata: Metadata = {
-  title: 'Updates, announcements, and guides | IOTEA Blog',
-  description: 'Explore the latest developments in the internet of things in the IOTEA blog.',
+  title: 'Updates, announcements, and guides | GRUENT Blog',
+  description: 'Explore the latest developments in the internet of things in the GRUENT blog.',
   openGraph: {
     type: 'website',
-    url: `https://iotea.com/blog`,
-    title: 'Updates, announcements, and guides | IOTEA Blog',
-    description: 'Explore the latest developments in the internet of things in the IOTEA blog.',
-    images: ['https://iotea.com/img/logos/app-icon-primary.png'],
+    url: `https://gruent.com/blog`,
+    title: 'Updates, announcements, and guides | GRUENT Blog',
+    description: 'Explore the latest developments in the internet of things in the GRUENT blog.',
+    images: ['https://gruent.com/img/logos/app-icon-primary.png'],
   },
 }
 
@@ -115,7 +115,7 @@ const BlogPage = async ({ searchParams }) => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-4xl mb-3">IOTEA Blog</h1>
+      <h1 className="text-4xl mb-3">GRUENT Blog</h1>
       <nav className="flex gap-4 mb-6">
         {Array.from(postCountByTag.values())
           .sort((a, b) => {

@@ -1,6 +1,6 @@
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
 
-import theme from '@iotea/libs/frontend/themes/tailwind'
+import theme from '@gruent/libs/frontend/themes/tailwind'
 
 import nodeIcons, { cloneImage } from './nodeIcons'
 

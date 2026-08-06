@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/iotea-com/iotea/libs/protocols/controller"
+	pb "github.com/ongruent/gruent/libs/protocols/controller"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 )

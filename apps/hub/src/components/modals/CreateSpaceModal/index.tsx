@@ -1,14 +1,14 @@
 'use client'
 
 import { FC, createRef, useCallback } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { useRouter } from 'next/navigation'
-import noop from '@iotea/libs/frontend/util/noop'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import { handleAddSpace } from '@iotea/hub/actions/spaces'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import noop from '@gruent/libs/frontend/util/noop'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import { handleAddSpace } from '@gruent/hub/actions/spaces'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 type Props = {
   orgId: string

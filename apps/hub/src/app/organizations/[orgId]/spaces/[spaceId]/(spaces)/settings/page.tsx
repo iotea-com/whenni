@@ -1,13 +1,13 @@
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import DeleteSpaceModal from '@iotea/hub/components/modals/DeleteSpaceModal'
-import SpaceSettingsForm from '@iotea/hub/components/organisms/SpaceSettingsForm'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import DeleteSpaceModal from '@gruent/hub/components/modals/DeleteSpaceModal'
+import SpaceSettingsForm from '@gruent/hub/components/organisms/SpaceSettingsForm'
+import gruentClient from '@gruent/hub/lib/gruent'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 export const metadata = {
-  title: 'Space settings | IOTEA',
+  title: 'Space settings | GRUENT',
 }
 
 const SpaceSettingsPage = async ({ params }) => {
@@ -16,7 +16,7 @@ const SpaceSettingsPage = async ({ params }) => {
   const accessToken = await getAccessToken()
   if (!accessToken) return null
 
-  const { data: space, errors } = await ioteaClient(accessToken).spaces.get(orgId, spaceId)
+  const { data: space, errors } = await gruentClient(accessToken).spaces.get(orgId, spaceId)
 
   if (errors && errors.length > 0) {
     return (

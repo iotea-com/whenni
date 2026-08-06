@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
-	channelsDelete "github.com/iotea-com/iotea/services/http-api/api/v1/channels/delete"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/prisma/db"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
+	channelsDelete "github.com/ongruent/gruent/services/http-api/api/v1/channels/delete"
 	"github.com/steebchen/prisma-client-go/runtime/types"
 	"github.com/stretchr/testify/assert"
 )

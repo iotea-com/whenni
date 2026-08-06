@@ -1,11 +1,11 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { ChannelNode, MqttSourceNodeConfig } from '@iotea/libs/engine/nodes/v1'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { ChannelNode, MqttSourceNodeConfig } from '@gruent/libs/engine/nodes/v1'
 import { Thing } from '@prisma/client'
 import { FC, useEffect, useMemo, useState } from 'react'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { RemixIcon, riAddLine } from '@mwarnerdotme/react-remixicon'
 
 type Props = {
@@ -106,7 +106,7 @@ const MqttSourceOptions: FC<Props> = ({ things }) => {
           label="MQTT Client"
           className="grow"
           options={mqttClientOptions}
-          value={selectedMqttClient?.id ?? '__IOTEA_IGNORE__'}
+          value={selectedMqttClient?.id ?? '__GRUENT_IGNORE__'}
           onChange={(e) =>
             setSelectedMqttClient(
               mqttClients.find((c) => {

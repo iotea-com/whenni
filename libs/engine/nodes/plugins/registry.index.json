@@ -3,18 +3,18 @@
     "name": "log",
     "version": "0.1.0",
     "manifest": "log/node.json",
-    "schema": "/Users/mwarner/Projects/iotea/libs/engine/nodes/plugins/action/log/0.1.0/config.schema.json"
+    "schema": "/Users/mwarner/Projects/gruent/libs/engine/nodes/plugins/action/log/0.1.0/config.schema.json"
   },
   {
     "name": "threshold",
     "version": "0.1.0",
     "manifest": "threshold/node.json",
-    "schema": "/Users/mwarner/Projects/iotea/libs/engine/nodes/plugins/conditional/threshold/0.1.0/config.schema.json"
+    "schema": "/Users/mwarner/Projects/gruent/libs/engine/nodes/plugins/conditional/threshold/0.1.0/config.schema.json"
   },
   {
     "name": "http",
     "version": "0.1.0",
     "manifest": "http/node.json",
-    "schema": "/Users/mwarner/Projects/iotea/libs/engine/nodes/plugins/source/http/0.1.0/config.schema.json"
+    "schema": "/Users/mwarner/Projects/gruent/libs/engine/nodes/plugins/source/http/0.1.0/config.schema.json"
   }
 ]

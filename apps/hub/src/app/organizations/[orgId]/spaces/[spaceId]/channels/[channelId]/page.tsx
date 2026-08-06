@@ -1,10 +1,10 @@
-import ioteaClient from '@iotea/hub/lib/iotea'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import ChannelExecutionsTable from '@iotea/hub/components/organisms/ChannelExecutionsTable'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import gruentClient from '@gruent/hub/lib/gruent'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import ChannelExecutionsTable from '@gruent/hub/components/organisms/ChannelExecutionsTable'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 export const metadata = {
-  title: 'Channel details | IOTEA',
+  title: 'Channel details | GRUENT',
 }
 
 const ChannelDetailsPage = async ({ params, searchParams }) => {
@@ -14,7 +14,7 @@ const ChannelDetailsPage = async ({ params, searchParams }) => {
   const accessToken = await getAccessToken()
   if (!accessToken) return null
 
-  const { data: channel, errors: getChannelErrors } = await ioteaClient(accessToken).channels.get(
+  const { data: channel, errors: getChannelErrors } = await gruentClient(accessToken).channels.get(
     spaceId,
     channelId,
   )
@@ -37,7 +37,7 @@ const ChannelDetailsPage = async ({ params, searchParams }) => {
     page,
     totalPages,
     totalResults,
-  } = await ioteaClient(accessToken).channels.executions.list(spaceId, channelId, {
+  } = await gruentClient(accessToken).channels.executions.list(spaceId, channelId, {
     page: requestedPage,
   })
 
@@ -53,7 +53,7 @@ const ChannelDetailsPage = async ({ params, searchParams }) => {
       </div>
     )
 
-  const { data: channelStatus, errors: _channelStatusErrors } = await ioteaClient(
+  const { data: channelStatus, errors: _channelStatusErrors } = await gruentClient(
     accessToken,
   ).channels.status(spaceId, channelId)
 

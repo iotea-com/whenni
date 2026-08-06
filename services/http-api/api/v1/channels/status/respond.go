@@ -2,20 +2,20 @@ package channelsStatus
 
 import (
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 )
 
 type ResponseBody struct {
 	Status string `json:"status"`
 }
 
-func respond(request *ioteahttp.Request[Input], output *Output) {
+func respond(request *gruenthttp.Request[Input], output *Output) {
 	request.Span.AddEvent("respond")
 
 	responseBody := ResponseBody{
 		Status: output.Status,
 	}
 
-	response := ioteahttp.NewGetResponse(responseBody)
+	response := gruenthttp.NewGetResponse(responseBody)
 	request.FiberContext.Status(fiber.StatusOK).JSON(response)
 }

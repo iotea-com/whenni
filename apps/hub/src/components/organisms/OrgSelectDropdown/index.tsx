@@ -11,7 +11,7 @@ import { useClickOutside } from '@react-hooks-library/core'
 import { useRouter } from 'next/navigation'
 import { FC, useRef, useState } from 'react'
 import CreateOrganizationModal from '../../modals/CreateOrganizationModal'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 
 type Props = {
   organizations: Organization[]

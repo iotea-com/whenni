@@ -1,7 +1,7 @@
 'use client'
 
 import { ChangeEvent, FC, useMemo } from 'react'
-import noop from '@iotea/libs/frontend/util/noop'
+import noop from '@gruent/libs/frontend/util/noop'
 
 type Props = {
   name: string

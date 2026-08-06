@@ -98,5 +98,5 @@ tasks.register("jarSize") {
     }
 }
 
-group = "com.iotea.nodes"
+group = "com.gruent.nodes"
 version = "0.1.0"

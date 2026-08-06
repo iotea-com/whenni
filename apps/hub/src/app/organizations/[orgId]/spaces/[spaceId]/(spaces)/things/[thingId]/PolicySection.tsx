@@ -1,15 +1,15 @@
 'use client'
 
-import { handleUpdatePolicy } from '@iotea/hub/actions/policies'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import { Policy } from '@iotea/libs/iotea-js/src/policies'
+import { handleUpdatePolicy } from '@gruent/hub/actions/policies'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import { Policy } from '@gruent/libs/gruent-js/src/policies'
 import { RemixIcon, riCloseLine } from '@mwarnerdotme/react-remixicon'
 import { FC, useCallback, useMemo, useState } from 'react'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import gruentClient from '@gruent/hub/lib/gruent'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 type Props = {
   policy: Policy
@@ -100,7 +100,7 @@ const PolicySection: FC<Props> = ({ policy, revoke, spaceId, certificateId, clas
     if (!accessToken) return
 
     // Retrieve certificate bundle
-    const { data: certificateResponseData, errors } = await ioteaClient(
+    const { data: certificateResponseData, errors } = await gruentClient(
       accessToken,
     ).certificates.get(spaceId, certificateId)
 

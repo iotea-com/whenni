@@ -1,9 +1,9 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { HttpResponseActionNodeConfig } from '@iotea/libs/engine/nodes/v1/src/action/httpResponse'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { HttpResponseActionNodeConfig } from '@gruent/libs/engine/nodes/v1/src/action/httpResponse'
 import { Thing } from '@prisma/client'
 import { FC, useEffect, useState } from 'react'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
 
 type Props = {
   things: Thing[]

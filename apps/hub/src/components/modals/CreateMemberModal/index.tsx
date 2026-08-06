@@ -1,13 +1,13 @@
 'use client'
 
 import { FC, useMemo, useState } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import { handleAddMember, handleInviteMember } from '@iotea/hub/actions/members'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import gruentClient from '@gruent/hub/lib/gruent'
+import { handleAddMember, handleInviteMember } from '@gruent/hub/actions/members'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
 import { useDebounce } from '@react-hooks-library/core'
 import {
   RemixIcon,
@@ -15,7 +15,7 @@ import {
   riMailAddLine,
   riMailCheckLine,
 } from '@mwarnerdotme/react-remixicon'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 type Props = {
   orgId: string
@@ -34,7 +34,7 @@ const CreateMemberModal: FC<Props> = ({ orgId }) => {
     queryFn: async () => {
       if (!accessToken) return []
 
-      const { data: users, errors } = await ioteaClient(accessToken).users.search(
+      const { data: users, errors } = await gruentClient(accessToken).users.search(
         debouncedEmailInput,
         orgId,
       )

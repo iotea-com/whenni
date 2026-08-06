@@ -1,9 +1,9 @@
 'use client'
 
 import { FC } from 'react'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import ContextMenu from '@iotea/hub/components/atoms/ContextMenu'
-import { handleDeleteThing } from '@iotea/hub/actions/things'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import ContextMenu from '@gruent/hub/components/atoms/ContextMenu'
+import { handleDeleteThing } from '@gruent/hub/actions/things'
 import { riDeleteBin7Line } from '@mwarnerdotme/react-remixicon'
 type Props = {
   thingId: string

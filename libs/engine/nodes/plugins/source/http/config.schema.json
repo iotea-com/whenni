@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/iotea-com/iotea/libs/engine/nodes/src/source/http/0.1.0/config.schema.json",
+  "$id": "https://github.com/ongruent/gruent/libs/engine/nodes/src/source/http/0.1.0/config.schema.json",
   "title": "HttpSourceConfig",
   "type": "object",
   "properties": {

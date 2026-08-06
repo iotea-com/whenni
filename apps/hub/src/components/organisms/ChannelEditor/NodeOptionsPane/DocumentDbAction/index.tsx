@@ -1,12 +1,12 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { DocumentDbActionNodeConfig } from '@iotea/libs/engine/nodes/v1/src/action/documentDb'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { DocumentDbActionNodeConfig } from '@gruent/libs/engine/nodes/v1/src/action/documentDb'
 import { Thing, Model } from '@prisma/client'
 import { FC, useEffect, useMemo, useState } from 'react'
 import MongoDbActionOptions from './MongoDbActionOptions'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { RemixIcon, riAddLine } from '@mwarnerdotme/react-remixicon'
 
 type Props = {
@@ -134,7 +134,7 @@ const DocumentDbActionOptions: FC<Props> = ({ things, orgId, spaceId, models }) 
           label="Document Database Thing"
           className="grow"
           options={documentDbOptions}
-          value={selectedDocumentDatabaseThing?.id ?? '__IOTEA_IGNORE__'}
+          value={selectedDocumentDatabaseThing?.id ?? '__GRUENT_IGNORE__'}
           onChange={(e) =>
             setSelectedDocumentDbThing(
               documentDbThings.find((s) => {

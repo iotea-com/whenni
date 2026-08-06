@@ -1,11 +1,11 @@
 'use client'
 
-import useAuth from '@iotea/hub/hooks/useAuth'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import useAuth from '@gruent/hub/hooks/useAuth'
+import gruentClient from '@gruent/hub/lib/gruent'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { Thing } from '@prisma/client'
 import { useQuery } from '@tanstack/react-query'
 import { Dispatch, FC, useEffect, useMemo, useState } from 'react'
@@ -52,7 +52,7 @@ const MqttClient: FC<Props> = ({ setFormData, spaceId, secretOptions, initial })
     queryFn: async () => {
       if (!accessToken) throw new Error('Invalid auth session.')
 
-      const { data: things, errors } = await ioteaClient(accessToken).things.list(spaceId, {
+      const { data: things, errors } = await gruentClient(accessToken).things.list(spaceId, {
         category: 'MQTT_BROKER',
       })
 

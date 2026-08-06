@@ -1,5 +1,5 @@
-import { Theme } from '@iotea/hub/stores/settingsStore'
-import theme from '@iotea/libs/frontend/themes/tailwind'
+import { Theme } from '@gruent/hub/stores/settingsStore'
+import theme from '@gruent/libs/frontend/themes/tailwind'
 
 type DrawBlankCanvasParams = {
   context: CanvasRenderingContext2D

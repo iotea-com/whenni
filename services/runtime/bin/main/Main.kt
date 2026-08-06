@@ -1,7 +1,7 @@
-package com.iotea.runtime
+package com.gruent.runtime
 
-import com.iotea.nodes.api.Node
-import com.iotea.nodes.api.HostContext
+import com.gruent.nodes.api.Node
+import com.gruent.nodes.api.HostContext
 import java.io.FileNotFoundException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -29,7 +29,7 @@ class PluginLoader {
       Node::class.java.classLoader
     )
 
-    val serviceConfigUrl = loader.getResource("META-INF/services/com.iotea.nodes.api.Node")
+    val serviceConfigUrl = loader.getResource("META-INF/services/com.gruent.nodes.api.Node")
     if (serviceConfigUrl != null) {
       val services = serviceConfigUrl.readText()
       println("Services registered from node plugin: $services")
@@ -91,13 +91,13 @@ fun main() {
 
               // For the log action node, create ActionLogV01_0 config directly
               val configClass = node.javaClass.classLoader
-                .loadClass("com.iotea.nodes.action.log.ActionLogV01_0")
+                .loadClass("com.gruent.nodes.action.log.ActionLogV01_0")
               val constructor = configClass.getConstructor(String::class.java, String::class.java)
               val config = constructor.newInstance("Hello from runtime!", null)
 
               // Cast to the generic Node interface and call start directly
               @Suppress("UNCHECKED_CAST")
-              val typedNode = node as com.iotea.nodes.api.Node<Any, ByteArray, Any>
+              val typedNode = node as com.gruent.nodes.api.Node<Any, ByteArray, Any>
               typedNode.start(HostCtx, scope, config, inputChannel, outputChannels)
 
               // Start a co-routine that publishes messages
@@ -120,7 +120,7 @@ fun main() {
             else -> {
               // For other nodes, use a generic approach
               @Suppress("UNCHECKED_CAST")
-              val genericNode = node as com.iotea.nodes.api.Node<Any, ByteArray, Any>
+              val genericNode = node as com.gruent.nodes.api.Node<Any, ByteArray, Any>
               genericNode.start(HostCtx, scope, Any(), inputChannel, outputChannels)
             }
           }

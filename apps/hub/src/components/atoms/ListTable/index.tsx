@@ -2,7 +2,7 @@
 
 import { FC, PropsWithChildren, useMemo } from 'react'
 import { Table, flexRender } from '@tanstack/react-table'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import {
   RemixIcon,
   riArrowLeftDoubleLine,

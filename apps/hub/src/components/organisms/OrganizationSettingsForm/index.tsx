@@ -1,10 +1,10 @@
 'use client'
 
-import useAuth from '@iotea/hub/hooks/useAuth'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import useAuth from '@gruent/hub/hooks/useAuth'
+import gruentClient from '@gruent/hub/lib/gruent'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { Organization } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import { FC, FormEventHandler, useCallback, useState } from 'react'
@@ -23,7 +23,7 @@ const OrganizationSettingsForm: FC<Props> = ({ organization: initialOrganization
     mutationFn: async (organization: Organization) => {
       if (!accessToken) return
 
-      const { errors } = await ioteaClient(accessToken).organizations.update(organization)
+      const { errors } = await gruentClient(accessToken).organizations.update(organization)
 
       if (errors && errors.length > 0) {
         addToast({

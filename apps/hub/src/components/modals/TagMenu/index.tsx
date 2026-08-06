@@ -1,9 +1,9 @@
 'use client'
 
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useRef, useState } from 'react'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { Thing, Model, Channel, Tag, AppliedTag } from '@prisma/client'
-import { handleApplyTag, handleCreateTag, handleRemoveTag } from '@iotea/hub/actions/tags'
+import { handleApplyTag, handleCreateTag, handleRemoveTag } from '@gruent/hub/actions/tags'
 import { RemixIcon, riAddLine, riCloseLine, riLoader2Line } from '@mwarnerdotme/react-remixicon'
 import { useClickOutside } from '@react-hooks-library/core'
 

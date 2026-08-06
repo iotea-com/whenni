@@ -1,10 +1,10 @@
 'use client'
 
-import useAuth from '@iotea/hub/hooks/useAuth'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import useAuth from '@gruent/hub/hooks/useAuth'
+import gruentClient from '@gruent/hub/lib/gruent'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { Space } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import { FC, FormEventHandler, useCallback, useState } from 'react'
@@ -24,7 +24,7 @@ const SpaceSettingsForm: FC<Props> = ({ orgId, space: initialSpace }) => {
     mutationFn: async (space: Space) => {
       if (!accessToken) return
 
-      const { errors } = await ioteaClient(accessToken).spaces.update(orgId, space.id, space)
+      const { errors } = await gruentClient(accessToken).spaces.update(orgId, space.id, space)
 
       if (errors && errors.length > 0) {
         addToast({

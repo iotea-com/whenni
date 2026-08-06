@@ -1,10 +1,10 @@
-import { ChannelEdge } from '@iotea/libs/engine/channels/channels'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
+import { ChannelEdge } from '@gruent/libs/engine/channels/channels'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
 import { IoPoint } from '../types/IoPoint'
-import { Theme } from '@iotea/hub/stores/settingsStore'
+import { Theme } from '@gruent/hub/stores/settingsStore'
 import { calculateNodeDisplay } from '../util/calculateNodeDisplay'
 import { isCurrentEdgeAttachedToIoPoint } from '../util/isCurrentEdgeAttachedToIoPoint'
-import theme from '@iotea/libs/frontend/themes/tailwind'
+import theme from '@gruent/libs/frontend/themes/tailwind'
 import nodeIcons from '../util/nodeIcons'
 
 type DrawNodesParams = {

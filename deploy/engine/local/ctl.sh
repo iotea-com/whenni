@@ -6,7 +6,7 @@ set -euo pipefail
 export VAULT_ADDR_1="http://127.0.0.1:8200"
 export VAULT_ADDR_2="http://vault:8200"
 VAULT_USERNAME="service"
-VAULT_PASSWORD="iotea"
+VAULT_PASSWORD="gruent"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 

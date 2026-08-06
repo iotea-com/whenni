@@ -1,6 +1,6 @@
-import { ChannelNote } from '@iotea/libs/engine/channels/channels'
+import { ChannelNote } from '@gruent/libs/engine/channels/channels'
 import { calculateNoteDisplay } from '../util/calculateNoteDisplay'
-import { Theme } from '@iotea/hub/stores/settingsStore'
+import { Theme } from '@gruent/hub/stores/settingsStore'
 import { wrapText } from '../util/wrapText'
 
 type DrawNotesParams = {

@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/things"
 	"github.com/minio/minio-go/v7"
 	minioCredentials "github.com/minio/minio-go/v7/pkg/credentials"
 )

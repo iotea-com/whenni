@@ -1,9 +1,9 @@
 'use client'
 
-import { ModelAttributes } from '@iotea/libs/engine/dependencies/models'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import copyToClipboard from '@iotea/libs/frontend/util/copyToClipboard'
+import { ModelAttributes } from '@gruent/libs/engine/dependencies/models'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import copyToClipboard from '@gruent/libs/frontend/util/copyToClipboard'
 import { FC, useCallback } from 'react'
 
 type Props = {

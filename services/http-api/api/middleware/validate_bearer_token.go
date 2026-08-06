@@ -8,9 +8,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/keyauth"
 	"github.com/golang-jwt/jwt/v5"
-	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruenthttputil "github.com/ongruent/gruent/libs/http/util"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -20,7 +20,7 @@ var keyauthConfig = keyauth.Config{
 		requestSpan := trace.SpanFromContext(ctx.UserContext())
 
 		// Check if token is a JWT
-		t, err := jwt.Parse(token, ioteahttputil.ParseJwt(config.VaultConf.JwtSecret))
+		t, err := jwt.Parse(token, gruenthttputil.ParseJwt(config.VaultConf.JwtSecret))
 		if err != nil {
 			requestSpan.AddEvent(fmt.Sprintf("error validating token as JWT in authorization header: %s", err))
 		} else {

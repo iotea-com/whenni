@@ -1,8 +1,8 @@
-import { ChannelNode, defaultNodes } from '@iotea/libs/engine/nodes/v1'
+import { ChannelNode, defaultNodes } from '@gruent/libs/engine/nodes/v1'
 import { DragEvent, FC } from 'react'
 import styles from './NodeLibrarySectionNode.module.scss'
 import { RemixIcon, riDraggable } from '@mwarnerdotme/react-remixicon'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 
 type Props = {
   label: string

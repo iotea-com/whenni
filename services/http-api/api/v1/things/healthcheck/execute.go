@@ -4,21 +4,21 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
-	documentDbHealthcheck "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/healthcheck/documentDb"
-	fileStorageHealthcheck "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/healthcheck/fileStorage"
-	httpHealthcheck "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/healthcheck/http"
-	messageQueueHealthcheck "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/healthcheck/messageQueue"
-	mqttHealthcheck "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/healthcheck/mqtt"
-	notificationHealthcheck "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/healthcheck/notification"
-	timeSeriesDbHealthcheck "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/healthcheck/timeSeriesDb"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/things"
+	documentDbHealthcheck "github.com/ongruent/gruent/libs/legacy/engine/dependencies/things/healthcheck/documentDb"
+	fileStorageHealthcheck "github.com/ongruent/gruent/libs/legacy/engine/dependencies/things/healthcheck/fileStorage"
+	httpHealthcheck "github.com/ongruent/gruent/libs/legacy/engine/dependencies/things/healthcheck/http"
+	messageQueueHealthcheck "github.com/ongruent/gruent/libs/legacy/engine/dependencies/things/healthcheck/messageQueue"
+	mqttHealthcheck "github.com/ongruent/gruent/libs/legacy/engine/dependencies/things/healthcheck/mqtt"
+	notificationHealthcheck "github.com/ongruent/gruent/libs/legacy/engine/dependencies/things/healthcheck/notification"
+	timeSeriesDbHealthcheck "github.com/ongruent/gruent/libs/legacy/engine/dependencies/things/healthcheck/timeSeriesDb"
+	"github.com/ongruent/gruent/services/http-api/config"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.ThingCategory", request.Input.ThingCategory),
@@ -188,7 +188,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		err = fileStorageHealthcheck.S3Bucket(attrs)
 		return nil, handleError(request.Span, err)
 	default:
-		errResponse := ioteahttp.NewErrorResponse([]any{fmt.Sprintf("unrecognized thing category: %s", request.Input.ThingCategory)})
+		errResponse := gruenthttp.NewErrorResponse([]any{fmt.Sprintf("unrecognized thing category: %s", request.Input.ThingCategory)})
 		response, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusBadRequest, string(response))
 	}
@@ -200,7 +200,7 @@ func handleError(span trace.Span, err error) error {
 	}
 
 	span.SetAttributes(attribute.String("error", err.Error()))
-	errResponse := ioteahttp.NewErrorResponse([]any{err.Error()})
+	errResponse := gruenthttp.NewErrorResponse([]any{err.Error()})
 	response, _ := errResponse.MarshalJson()
 	return fiber.NewError(fiber.StatusBadRequest, string(response))
 }

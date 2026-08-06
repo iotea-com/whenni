@@ -5,27 +5,27 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
-	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	resolveModels "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models/resolve"
-	resolveThings "github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things/resolve"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruentpermissions "github.com/ongruent/gruent/libs/http/permissions"
+	"github.com/ongruent/gruent/libs/legacy/engine/channels"
+	resolveModels "github.com/ongruent/gruent/libs/legacy/engine/dependencies/models/resolve"
+	resolveThings "github.com/ongruent/gruent/libs/legacy/engine/dependencies/things/resolve"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func contextValidate(request *ioteahttp.Request[Input]) error {
+func contextValidate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
-	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
+	authorizeRequestParams := gruenthttp.AuthorizeRequestParams{
 		BearerToken: request.Input.BearerToken,
 		JwtSecret:   config.VaultConf.JwtSecret,
 		ScopeId:     request.Input.SpaceId,
-		Namespace:   ioteapermissions.NamespaceChannels,
-		Action:      ioteapermissions.ActionUpdate,
+		Namespace:   gruentpermissions.NamespaceChannels,
+		Action:      gruentpermissions.ActionUpdate,
 	}
 
 	authorizeErr := request.Authorize(authorizeRequestParams)
@@ -51,7 +51,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 			)
 			dbSpan.End()
 
-			errorResponse := ioteahttp.NewErrorResponse([]any{message})
+			errorResponse := gruenthttp.NewErrorResponse([]any{message})
 			responseJson, _ := errorResponse.MarshalJson()
 			return fiber.NewError(fiber.StatusBadRequest, string(responseJson))
 		}
@@ -64,7 +64,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 		)
 		dbSpan.End()
 
-		errorResponse := ioteahttp.NewErrorResponse([]any{message})
+		errorResponse := gruenthttp.NewErrorResponse([]any{message})
 		responseJson, _ := errorResponse.MarshalJson()
 		return fiber.NewError(fiber.StatusBadRequest, string(responseJson))
 	}
@@ -74,7 +74,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 	var c = &channels.Channel{}
 	err = json.Unmarshal(channelRecord.Config, c)
 	if err != nil {
-		errorResponse := ioteahttp.NewErrorResponse([]any{err.Error()})
+		errorResponse := gruenthttp.NewErrorResponse([]any{err.Error()})
 		responseJson, _ := errorResponse.MarshalJson()
 		return fiber.NewError(fiber.StatusBadRequest, string(responseJson))
 	}
@@ -129,7 +129,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 		for i, err := range combinedErrors {
 			errorsAny[i] = err
 		}
-		errorResponse := ioteahttp.NewErrorResponse(errorsAny)
+		errorResponse := gruenthttp.NewErrorResponse(errorsAny)
 		responseJson, err := errorResponse.MarshalJson()
 		if err != nil {
 			request.Span.SetAttributes(
@@ -137,7 +137,7 @@ func contextValidate(request *ioteahttp.Request[Input]) error {
 				attribute.String("error.message", err.Error()),
 				attribute.String("context_validation.status", "fail"),
 			)
-			errorResponse = ioteahttp.NewErrorResponse([]any{err.Error()})
+			errorResponse = gruenthttp.NewErrorResponse([]any{err.Error()})
 			responseJson, _ = errorResponse.MarshalJson()
 			return fiber.NewError(fiber.StatusBadRequest, string(responseJson))
 		}

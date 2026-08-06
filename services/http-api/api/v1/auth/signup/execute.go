@@ -5,17 +5,17 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.Email", request.Input.Email),
@@ -28,7 +28,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.type", "id_generation"),
 			attribute.String("error.message", fmt.Sprintf("error generating user ID: %s", err)),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{"Error creating user. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Error creating user. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}
@@ -40,7 +40,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.type", "password_hashing"),
 			attribute.String("error.message", fmt.Sprintf("error hashing password: %s", err)),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{"Error creating user. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Error creating user. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}
@@ -61,7 +61,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.message", fmt.Sprintf("error creating user: %s", err)),
 		)
 		dbSpan.End()
-		errResponse := ioteahttp.NewErrorResponse([]any{"Error creating user. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Error creating user. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}
@@ -87,7 +87,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 				attribute.String("error.message", fmt.Sprintf("error parsing invite token: %s", err)),
 			)
 			dbSpan.End()
-			errResponse := ioteahttp.NewErrorResponse([]any{"Error parsing invite token. A user has been created, but you must be manually added to the organization."})
+			errResponse := gruenthttp.NewErrorResponse([]any{"Error parsing invite token. A user has been created, but you must be manually added to the organization."})
 			marshalledErrResponse, _ := errResponse.MarshalJson()
 			return nil, fiber.NewError(fiber.StatusConflict, string(marshalledErrResponse))
 		}
@@ -102,7 +102,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 				attribute.String("error.message", fmt.Sprintf("error getting default org permission set: %s", err)),
 			)
 			dbSpan.End()
-			errResponse := ioteahttp.NewErrorResponse([]any{"Error adding new user to organization. Please add the user to the organization manually."})
+			errResponse := gruenthttp.NewErrorResponse([]any{"Error adding new user to organization. Please add the user to the organization manually."})
 			marshalledErrResponse, _ := errResponse.MarshalJson()
 			return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 		}
@@ -117,7 +117,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 				attribute.String("error.message", fmt.Sprintf("error getting default org permission set: %s", err)),
 			)
 			dbSpan.End()
-			errResponse := ioteahttp.NewErrorResponse([]any{"Error adding new user to organization. Please add the user to the organization manually."})
+			errResponse := gruenthttp.NewErrorResponse([]any{"Error adding new user to organization. Please add the user to the organization manually."})
 			marshalledErrResponse, _ := errResponse.MarshalJson()
 			return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 		}

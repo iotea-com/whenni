@@ -20,7 +20,7 @@
 				"push": false,
 				"load": true,
 				"tags": [
-					"iotea-emqx:latest"
+					"gruent-emqx:latest"
 				],
 				"platforms": []
 			}

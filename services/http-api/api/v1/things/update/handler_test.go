@@ -11,13 +11,13 @@ import (
 	"testing"
 	"time"
 
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/libs/id"
-	ioteachannel "github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	"github.com/iotea-com/iotea/prisma/db"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
-	thingsUpdate "github.com/iotea-com/iotea/services/http-api/api/v1/things/update"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/libs/id"
+	gruentchannel "github.com/ongruent/gruent/libs/legacy/engine/channels"
+	"github.com/ongruent/gruent/prisma/db"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
+	thingsUpdate "github.com/ongruent/gruent/services/http-api/api/v1/things/update"
+	"github.com/ongruent/gruent/services/http-api/util"
 	"github.com/steebchen/prisma-client-go/runtime/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -119,7 +119,7 @@ func TestHandler(t *testing.T) {
 				t.Fatalf("Failed to read response body: %v", err)
 			}
 
-			var response ioteahttp.IoteaApiResponse
+			var response gruenthttp.GruentApiResponse
 			err = json.Unmarshal(responseBodyBytes, &response)
 			if err != nil {
 				t.Fatalf("Failed to unmarshal response body: %v", err)
@@ -157,12 +157,12 @@ func TestHandler(t *testing.T) {
 			testSpaceId, _ := id.Generator.NewSpaceId()
 			testThingId, _ := id.Generator.NewThingId()
 
-			exampleConfigWithThing := ioteachannel.Channel{
-				Nodes: []ioteachannel.Node{
+			exampleConfigWithThing := gruentchannel.Channel{
+				Nodes: []gruentchannel.Node{
 					{
-						Metadata: ioteachannel.NodeMetadata{
-							Dependencies: ioteachannel.NodeDependencies{
-								Things: []ioteachannel.NodeThingDependency{
+						Metadata: gruentchannel.NodeMetadata{
+							Dependencies: gruentchannel.NodeDependencies{
+								Things: []gruentchannel.NodeThingDependency{
 									{
 										ThingId: *testThingId,
 									},

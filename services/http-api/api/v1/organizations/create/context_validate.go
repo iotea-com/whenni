@@ -1,15 +1,15 @@
 package organizationsCreate
 
 import (
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/services/http-api/config"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/services/http-api/config"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func contextValidate(request *ioteahttp.Request[Input]) error {
+func contextValidate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("contextValidate")
 
-	authorizeRequestParams := ioteahttp.AuthorizeRequestParams{
+	authorizeRequestParams := gruenthttp.AuthorizeRequestParams{
 		BearerToken: request.Input.BearerToken,
 		JwtSecret:   config.VaultConf.JwtSecret,
 		ScopeId:     "user",

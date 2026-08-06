@@ -1,11 +1,11 @@
-import ioteaClient from '@iotea/hub/lib/iotea'
-import NodeExecutionLogEntry from '@iotea/libs/frontend/components/molecules/NodeExecutionLogEntry'
+import gruentClient from '@gruent/hub/lib/gruent'
+import NodeExecutionLogEntry from '@gruent/libs/frontend/components/molecules/NodeExecutionLogEntry'
 import Link from 'next/link'
 import dayjs from 'dayjs'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 export const metadata = {
-  title: 'Channel execution details | IOTEA',
+  title: 'Channel execution details | GRUENT',
 }
 
 const ChannelExecutionByIdPage = async ({ params }) => {
@@ -14,7 +14,7 @@ const ChannelExecutionByIdPage = async ({ params }) => {
   const accessToken = await getAccessToken()
   if (!accessToken) return null
 
-  const { data: channelExecution, errors: getChannelExecutionErrors } = await ioteaClient(
+  const { data: channelExecution, errors: getChannelExecutionErrors } = await gruentClient(
     accessToken,
   ).channels.executions.get(spaceId, channelExecutionId)
 

@@ -1,6 +1,6 @@
 'use client'
 
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
 
 type RuntimeSelectorProps = {
   runtime: 'sm' | 'md' | 'lg'

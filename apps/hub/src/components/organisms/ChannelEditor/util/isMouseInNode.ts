@@ -1,4 +1,4 @@
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
 import { calculateNodeDisplay } from './calculateNodeDisplay'
 import { isPointInPolygon } from './isPointInPolygon'
 

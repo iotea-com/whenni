@@ -1,12 +1,12 @@
-import CreateSpaceModal from '@iotea/hub/components/modals/CreateSpaceModal'
+import CreateSpaceModal from '@gruent/hub/components/modals/CreateSpaceModal'
 import { RemixIcon, riAddCircleLine, riArrowRightLine } from '@mwarnerdotme/react-remixicon'
 import Link from 'next/link'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import getAccessToken, { getSession } from '@iotea/hub/util/getAccessToken'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import gruentClient from '@gruent/hub/lib/gruent'
+import getAccessToken, { getSession } from '@gruent/hub/util/getAccessToken'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 export const metadata = {
-  title: 'Organization spaces | IOTEA',
+  title: 'Organization spaces | GRUENT',
 }
 
 const DashboardPage = async ({ params }) => {
@@ -16,7 +16,7 @@ const DashboardPage = async ({ params }) => {
 
   const { orgId } = await params
 
-  const { data: organization, errors } = await ioteaClient(accessToken).organizations.get(orgId)
+  const { data: organization, errors } = await gruentClient(accessToken).organizations.get(orgId)
 
   if (errors && errors.length > 0) {
     return (

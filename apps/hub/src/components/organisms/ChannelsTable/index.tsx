@@ -9,8 +9,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { AppliedTag, Channel, Tag } from '@prisma/client'
-import ChannelContextMenu from '@iotea/hub/components/organisms/ChannelsTable/ChannelContextMenu'
-import ListTable from '@iotea/hub/components/atoms/ListTable'
+import ChannelContextMenu from '@gruent/hub/components/organisms/ChannelsTable/ChannelContextMenu'
+import ListTable from '@gruent/hub/components/atoms/ListTable'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -23,7 +23,7 @@ import {
   riInformationLine,
 } from '@mwarnerdotme/react-remixicon'
 import TagMenu from '../../modals/TagMenu'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import { useClickOutside } from '@react-hooks-library/core'
 import SearchBar from '../../molecules/SearchBar'
 // import IndeterminateCheckbox from "../../atoms/IndeterminateCheckbox"

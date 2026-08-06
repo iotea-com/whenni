@@ -1,8 +1,8 @@
 'use client'
 
-import { handleDeleteOrganization } from '@iotea/hub/actions/organizations'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { handleDeleteOrganization } from '@gruent/hub/actions/organizations'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { Organization } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'

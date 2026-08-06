@@ -1,9 +1,9 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
-import { ChannelNode, TransformNodeConfig } from '@iotea/libs/engine/nodes/v1'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
+import { ChannelNode, TransformNodeConfig } from '@gruent/libs/engine/nodes/v1'
 import { Model } from '@prisma/client'
 import {
   ChangeEvent,
@@ -15,7 +15,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { ModelAttributes } from '@iotea/libs/engine/dependencies/models'
+import { ModelAttributes } from '@gruent/libs/engine/dependencies/models'
 import { RemixIcon, riAddLine, riArrowLeftLine } from '@mwarnerdotme/react-remixicon'
 
 type Props = {
@@ -133,7 +133,7 @@ const TransformProcessingOptions: FC<Props> = ({ models, orgId, spaceId }) => {
           label="Input"
           className="grow"
           options={modelOptions}
-          value={inputModel ? inputModel.id : '__IOTEA_IGNORE__'}
+          value={inputModel ? inputModel.id : '__GRUENT_IGNORE__'}
           onChange={(e) => setInputModel(models.find((m) => m.id === e.target.value))}
         />
         <Button text="Create input model" className="my-3" onClick={() => openModal('createModel')}>
@@ -146,7 +146,7 @@ const TransformProcessingOptions: FC<Props> = ({ models, orgId, spaceId }) => {
           label="Output"
           className="grow"
           options={modelOptions}
-          value={outputModel ? outputModel.id : '__IOTEA_IGNORE__'}
+          value={outputModel ? outputModel.id : '__GRUENT_IGNORE__'}
           onChange={(e) => setOutputModel(models.find((m) => m.id === e.target.value))}
         />
         <Button
@@ -245,7 +245,7 @@ const TransformNodeModal: FC<TransformModalProps> = ({
 
     const updatedTransformation = new Map(transformation)
     updatedTransformation.set(inputKey, outputKey)
-    if (outputKey === '__IOTEA_IGNORE__') updatedTransformation.delete(inputKey)
+    if (outputKey === '__GRUENT_IGNORE__') updatedTransformation.delete(inputKey)
 
     setTransformation(updatedTransformation)
   }
@@ -281,7 +281,7 @@ const TransformNodeModal: FC<TransformModalProps> = ({
 
         <div className="space-y-2">
           {outputAttributes.map(({ key, value }) => {
-            const defaultValue = transformation.get(value) ?? '__IOTEA_IGNORE__'
+            const defaultValue = transformation.get(value) ?? '__GRUENT_IGNORE__'
 
             return (
               <div key={value} className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">

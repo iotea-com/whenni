@@ -1,12 +1,12 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { ChannelNode, MetricActionNodeConfig } from '@iotea/libs/engine/nodes/v1'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { ChannelNode, MetricActionNodeConfig } from '@gruent/libs/engine/nodes/v1'
 import { Model, Thing } from '@prisma/client'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { RemixIcon, riAddLine } from '@mwarnerdotme/react-remixicon'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
-import { ModelAttributes } from '@iotea/libs/engine/dependencies/models'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
+import { ModelAttributes } from '@gruent/libs/engine/dependencies/models'
 
 type Props = {
   models: Model[]
@@ -177,7 +177,7 @@ const MetricAction: FC<Props> = ({ models, things }) => {
           label="Model"
           className="grow"
           options={modelOptions}
-          value={selectedModel ? selectedModel.id : '__IOTEA_IGNORE__'}
+          value={selectedModel ? selectedModel.id : '__GRUENT_IGNORE__'}
           onChange={(e) => setSelectedModel(models.find((m) => m.id === e.target.value))}
         />
         <Button text="Create model" className="my-3" onClick={() => openModal('createModel')}>
@@ -189,7 +189,7 @@ const MetricAction: FC<Props> = ({ models, things }) => {
           name="attribute"
           label="Value"
           options={numericAttributeOptions}
-          value={selectedAttribute || '__IOTEA_IGNORE__'}
+          value={selectedAttribute || '__GRUENT_IGNORE__'}
           onChange={(e) => setSelectedAttribute(e.target.value)}
         />
       )}
@@ -207,7 +207,7 @@ const MetricAction: FC<Props> = ({ models, things }) => {
           name="metadata"
           label="Metadata"
           options={metadataOptions}
-          value={selectedMetadata || '__IOTEA_IGNORE__'}
+          value={selectedMetadata || '__GRUENT_IGNORE__'}
           onChange={(e) => setSelectedMetadata(e.target.value)}
         />
       )}
@@ -224,7 +224,7 @@ const MetricAction: FC<Props> = ({ models, things }) => {
         name="clickhouseDatabase"
         label="Clickhouse Database"
         options={clickhouseOptions}
-        value={selectedClickhouse ? selectedClickhouse.id : '__IOTEA_IGNORE__'}
+        value={selectedClickhouse ? selectedClickhouse.id : '__GRUENT_IGNORE__'}
         onChange={(e) =>
           setSelectedClickhouse(
             things.find((s) => {

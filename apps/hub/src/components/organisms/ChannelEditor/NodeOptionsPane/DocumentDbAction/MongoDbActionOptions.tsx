@@ -1,17 +1,17 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
 import {
   MongoDbActionSubnodeConfig,
   MongoDbQueryMethod,
   MongoDbQueryMethodOptions,
-} from '@iotea/libs/engine/nodes/v1/src/action/documentDb/lib/mongodb'
+} from '@gruent/libs/engine/nodes/v1/src/action/documentDb/lib/mongodb'
 import { Thing, Model } from '@prisma/client'
 import { FC, useEffect, useMemo, useState } from 'react'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 
 type Props = {
   things: Thing[]
@@ -395,7 +395,7 @@ const MongoDbActionOptions: FC<Props> = ({
             name="templateModel"
             label="Template model (optional)"
             options={modelOptions} // Populate the model dropdown
-            value={selectedTemplateModel?.id || '__IOTEA_IGNORE__'}
+            value={selectedTemplateModel?.id || '__GRUENT_IGNORE__'}
             onChange={(e) => setSelectedTemplateModel(models.find((m) => m.id === e.target.value))}
           />
         </>

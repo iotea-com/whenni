@@ -1,0 +1,15 @@
+go 1.25.0
+
+use (
+	./db
+	./libs/engine
+	./libs/http
+	./libs/id
+	./libs/legacy
+	./libs/protocols
+	./libs/secrets
+	./libs/telemetry
+	./libs/val
+	./services/controller
+	./services/http-api
+)

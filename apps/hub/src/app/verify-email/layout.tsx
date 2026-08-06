@@ -1,7 +1,7 @@
-import AuthLayout from '@iotea/hub/components/layouts/AuthLayout'
+import AuthLayout from '@gruent/hub/components/layouts/AuthLayout'
 
 export const metadata = {
-  title: 'Verify email | IOTEA',
+  title: 'Verify email | GRUENT',
 }
 
 const Layout = async ({ children }) => {

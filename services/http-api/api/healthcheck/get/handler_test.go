@@ -5,8 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/iotea-com/iotea/services/http-api/api/healthcheck/get"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
+	"github.com/ongruent/gruent/services/http-api/api/healthcheck/get"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
 	"github.com/stretchr/testify/assert"
 )
 

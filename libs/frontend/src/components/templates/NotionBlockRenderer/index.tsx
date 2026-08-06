@@ -1,5 +1,5 @@
 import { RemixIcon, riLightbulbFill } from '@mwarnerdotme/react-remixicon'
-import { calculateHeadingSlug } from '@iotea/libs/frontend/util/calculateBlogPostSlug'
+import { calculateHeadingSlug } from '@gruent/libs/frontend/util/calculateBlogPostSlug'
 import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import ImageBlock from './ImageBlock'
 import RichTextBlock from './RichTextItemBlock'

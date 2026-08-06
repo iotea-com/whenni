@@ -1,12 +1,12 @@
-import ToastNotificationContainer from '@iotea/libs/frontend/components/templates/ToastNotificationContainer'
+import ToastNotificationContainer from '@gruent/libs/frontend/components/templates/ToastNotificationContainer'
 import './styles.css'
-import SettingsLoader from '@iotea/hub/components/templates/SettingsLoader'
-import Providers from '@iotea/hub/contexts/Providers'
+import SettingsLoader from '@gruent/hub/components/templates/SettingsLoader'
+import Providers from '@gruent/hub/contexts/Providers'
 import { cookies } from 'next/headers'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Hub | IOTEA',
+  title: 'Hub | GRUENT',
 }
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {

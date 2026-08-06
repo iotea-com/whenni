@@ -9,11 +9,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	mqttPolicies "github.com/iotea-com/iotea/libs/http/policies"
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
-	mqttAuth "github.com/iotea-com/iotea/services/http-api/api/v1/auth/mqtt"
+	mqttPolicies "github.com/ongruent/gruent/libs/http/policies"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/prisma/db"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
+	mqttAuth "github.com/ongruent/gruent/services/http-api/api/v1/auth/mqtt"
 	"github.com/steebchen/prisma-client-go/runtime/types"
 	"github.com/stretchr/testify/assert"
 )

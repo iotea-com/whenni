@@ -1,14 +1,14 @@
 'use client'
 
-import updatePassword from '@iotea/hub/actions/updatePassword'
-import useSettingsStore, { Theme } from '@iotea/hub/stores/settingsStore'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import updatePassword from '@gruent/hub/actions/updatePassword'
+import useSettingsStore, { Theme } from '@gruent/hub/stores/settingsStore'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { FC, useState } from 'react'
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { signout } from '@iotea/hub/actions/auth'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { signout } from '@gruent/hub/actions/auth'
 
 const UserPage: FC = () => {
   const theme = useSettingsStore((state) => state.theme)

@@ -1,15 +1,15 @@
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import ModelSettingsForm from '@iotea/hub/components/organisms/ModelSettingsForm'
-import DeleteModelModal from '@iotea/hub/components/modals/DeleteModelModal'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import ExportModelButton from '@iotea/hub/components/molecules/ExportModelButton'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import ModelSettingsForm from '@gruent/hub/components/organisms/ModelSettingsForm'
+import DeleteModelModal from '@gruent/hub/components/modals/DeleteModelModal'
+import gruentClient from '@gruent/hub/lib/gruent'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import ExportModelButton from '@gruent/hub/components/molecules/ExportModelButton'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 
 export const metadata = {
-  title: 'Model details | IOTEA',
+  title: 'Model details | GRUENT',
 }
 
 const ModelDetailsPage = async ({ params }) => {
@@ -18,7 +18,7 @@ const ModelDetailsPage = async ({ params }) => {
   const accessToken = await getAccessToken()
   if (!accessToken) return null
 
-  const { data: model, errors } = await ioteaClient(accessToken).models.get(spaceId, modelId)
+  const { data: model, errors } = await gruentClient(accessToken).models.get(spaceId, modelId)
 
   if (errors && errors.length > 0)
     return (

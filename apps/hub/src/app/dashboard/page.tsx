@@ -1,12 +1,12 @@
-import CreateOrganizationModal from '@iotea/hub/components/modals/CreateOrganizationModal'
+import CreateOrganizationModal from '@gruent/hub/components/modals/CreateOrganizationModal'
 import { RemixIcon, riAddCircleLine, riArrowRightLine } from '@mwarnerdotme/react-remixicon'
 import Link from 'next/link'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import getAccessToken, { getSession } from '@iotea/hub/util/getAccessToken'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import gruentClient from '@gruent/hub/lib/gruent'
+import getAccessToken, { getSession } from '@gruent/hub/util/getAccessToken'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 export const metadata = {
-  title: 'Dashboard | IOTEA',
+  title: 'Dashboard | GRUENT',
 }
 
 const DashboardPage = async () => {
@@ -15,7 +15,7 @@ const DashboardPage = async () => {
 
   if (!accessToken || !userId) return null
 
-  const { data: user, errors } = await ioteaClient(accessToken).users.get(userId)
+  const { data: user, errors } = await gruentClient(accessToken).users.get(userId)
 
   if (errors && errors.length > 0) {
     return (
@@ -46,7 +46,7 @@ const DashboardPage = async () => {
   return (
     <div>
       <CreateOrganizationModal />
-      <h1 className="text-2xl mb-6">Welcome to IOTEA</h1>
+      <h1 className="text-2xl mb-6">Welcome to GRUENT</h1>
       <section id="spaces">
         <div className="flex items-end mb-4">
           <div>

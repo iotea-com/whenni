@@ -1,4 +1,4 @@
-import { Theme } from '@iotea/hub/stores/settingsStore'
+import { Theme } from '@gruent/hub/stores/settingsStore'
 
 type DrawGridParams = {
   context: CanvasRenderingContext2D

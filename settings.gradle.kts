@@ -9,7 +9,7 @@ plugins {
   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-rootProject.name = "iotea"
+rootProject.name = "gruent"
 
 // ---- Explicit modules
 include(":services:runtime")

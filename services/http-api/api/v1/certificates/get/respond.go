@@ -8,15 +8,15 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 )
 
-func respond(request *ioteahttp.Request[Input], output *Output) {
+func respond(request *gruenthttp.Request[Input], output *Output) {
 	request.Span.AddEvent("respond")
 
 	// Validate that all of the assets in the bundle are present
 	if output.Certificate != nil || output.PrivateKey != nil || output.CaCert != nil {
-		errorResponse := ioteahttp.NewErrorResponse([]any{"Missing certificate, private key, or CA certificate for the certificate bundle."})
+		errorResponse := gruenthttp.NewErrorResponse([]any{"Missing certificate, private key, or CA certificate for the certificate bundle."})
 		errorResponseJson, _ := errorResponse.MarshalJson()
 		request.FiberContext.Status(fiber.StatusBadRequest).JSON(errorResponseJson)
 	}
@@ -26,28 +26,28 @@ func respond(request *ioteahttp.Request[Input], output *Output) {
 	zipWriter := zip.NewWriter(buf)
 
 	if err := addFileToZip(zipWriter, "certificate.crt", *output.Certificate); err != nil {
-		errorResponse := ioteahttp.NewErrorResponse([]any{"Could not add the certificate to the certificate bundle."})
+		errorResponse := gruenthttp.NewErrorResponse([]any{"Could not add the certificate to the certificate bundle."})
 		errorResponseJson, _ := errorResponse.MarshalJson()
 		request.FiberContext.Status(fiber.StatusInternalServerError).JSON(errorResponseJson)
 		return
 	}
 
 	if err := addFileToZip(zipWriter, "private.key", *output.PrivateKey); err != nil {
-		errorResponse := ioteahttp.NewErrorResponse([]any{"Could not add the private key to the certificate bundle."})
+		errorResponse := gruenthttp.NewErrorResponse([]any{"Could not add the private key to the certificate bundle."})
 		errorResponseJson, _ := errorResponse.MarshalJson()
 		request.FiberContext.Status(fiber.StatusInternalServerError).JSON(errorResponseJson)
 		return
 	}
 
 	if err := addFileToZip(zipWriter, "ca.crt", *output.CaCert); err != nil {
-		errorResponse := ioteahttp.NewErrorResponse([]any{"Could not add the CA certificate to the certificate bundle."})
+		errorResponse := gruenthttp.NewErrorResponse([]any{"Could not add the CA certificate to the certificate bundle."})
 		errorResponseJson, _ := errorResponse.MarshalJson()
 		request.FiberContext.Status(fiber.StatusInternalServerError).JSON(errorResponseJson)
 		return
 	}
 
 	if err := zipWriter.Close(); err != nil {
-		errorResponse := ioteahttp.NewErrorResponse([]any{"Could not create the certificate bundle."})
+		errorResponse := gruenthttp.NewErrorResponse([]any{"Could not create the certificate bundle."})
 		errorResponseJson, _ := errorResponse.MarshalJson()
 		request.FiberContext.Status(fiber.StatusInternalServerError).JSON(errorResponseJson)
 		return

@@ -8,10 +8,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/prisma/db"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
-	organizationsMembersRemove "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/members/remove"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/prisma/db"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
+	organizationsMembersRemove "github.com/ongruent/gruent/services/http-api/api/v1/organizations/members/remove"
 	"github.com/stretchr/testify/assert"
 )
 

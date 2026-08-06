@@ -9,7 +9,7 @@ import (
 
 	"runtime"
 
-	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
+	"github.com/ongruent/gruent/libs/legacy/engine/environment"
 	"github.com/rs/zerolog/log"
 
 	"github.com/docker/docker/client"

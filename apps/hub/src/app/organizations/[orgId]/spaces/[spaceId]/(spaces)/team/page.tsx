@@ -1,20 +1,20 @@
-import ioteaClient from '@iotea/hub/lib/iotea'
-import CreatePermissionSetModal from '@iotea/hub/components/modals/CreatePermissionSetModal'
-import MembersTable from '@iotea/hub/components/organisms/MembersTable'
-import ApiKeysTable from '@iotea/hub/components/organisms/ApiKeyTable'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import PermissionSetTable from '@iotea/hub/components/organisms/PermissionSetTable'
-import SearchBar from '@iotea/hub/components/molecules/SearchBar'
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import CreateApiKeyModal from '@iotea/hub/components/modals/CreateApiKeyModal'
+import gruentClient from '@gruent/hub/lib/gruent'
+import CreatePermissionSetModal from '@gruent/hub/components/modals/CreatePermissionSetModal'
+import MembersTable from '@gruent/hub/components/organisms/MembersTable'
+import ApiKeysTable from '@gruent/hub/components/organisms/ApiKeyTable'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import PermissionSetTable from '@gruent/hub/components/organisms/PermissionSetTable'
+import SearchBar from '@gruent/hub/components/molecules/SearchBar'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import CreateApiKeyModal from '@gruent/hub/components/modals/CreateApiKeyModal'
 import { riAddCircleLine, riTerminalBoxLine } from '@mwarnerdotme/react-remixicon'
 import { RemixIcon } from '@mwarnerdotme/react-remixicon'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import ListTablePlaceholder from '@iotea/hub/components/molecules/ListTablePlaceholder'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import ListTablePlaceholder from '@gruent/hub/components/molecules/ListTablePlaceholder'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 
 export const metadata = {
-  title: 'Team | IOTEA',
+  title: 'Team | GRUENT',
 }
 
 const TeamPage = async ({ params, searchParams }) => {
@@ -36,7 +36,7 @@ const TeamPage = async ({ params, searchParams }) => {
     page: membersPage,
     totalPages: membersTotalPages,
     totalResults: totalMembers,
-  } = await ioteaClient(accessToken).organizations.members.list(orgId, {
+  } = await gruentClient(accessToken).organizations.members.list(orgId, {
     page: requestedMembersTablePage,
     filter: membersTableFilter,
   })
@@ -74,7 +74,7 @@ const TeamPage = async ({ params, searchParams }) => {
     page: permissionSetsPage,
     totalPages: permissionSetsTotalPages,
     totalResults: totalPermissionSets,
-  } = await ioteaClient(accessToken).permissions.list(spaceId, {
+  } = await gruentClient(accessToken).permissions.list(spaceId, {
     page: requestedPermissionsTablePage,
   })
 
@@ -111,7 +111,7 @@ const TeamPage = async ({ params, searchParams }) => {
     page: apiKeysPage,
     totalPages: apiKeysTotalPages,
     totalResults: totalApiKeys,
-  } = await ioteaClient(accessToken).apiKeys.list(
+  } = await gruentClient(accessToken).apiKeys.list(
     orgId,
     {
       page: requestedApiKeysTablePage,
@@ -200,7 +200,7 @@ const TeamPage = async ({ params, searchParams }) => {
           {Number(totalApiKeys) <= 0 && (
             <ListTablePlaceholder
               title="API Keys"
-              description="Programmatically access the IOTEA platform."
+              description="Programmatically access the GRUENT platform."
             >
               <RemixIcon icon={riTerminalBoxLine} className="text-gray-600 mb-2" size="3x" />
               <p className="text-gray-600 text-center mb-2">No API keys... yet!</p>

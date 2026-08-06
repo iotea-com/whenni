@@ -1,9 +1,9 @@
-import ModelImportForm from '@iotea/hub/components/organisms/ModelImportForm'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import ioteaClient from '@iotea/hub/lib/iotea'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import ModelImportForm from '@gruent/hub/components/organisms/ModelImportForm'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import gruentClient from '@gruent/hub/lib/gruent'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 export const metadata = {
-  title: 'Import a model | IOTEA',
+  title: 'Import a model | GRUENT',
 }
 
 const ImportModelPage = async ({ params }) => {
@@ -16,7 +16,7 @@ const ImportModelPage = async ({ params }) => {
       error: 'Your session is currently inactive. Sign in again to create the channel.',
     }
 
-  const { data: secrets, errors } = await ioteaClient(accessToken).secrets.list(spaceId)
+  const { data: secrets, errors } = await gruentClient(accessToken).secrets.list(spaceId)
 
   if (errors && errors.length > 0)
     return (

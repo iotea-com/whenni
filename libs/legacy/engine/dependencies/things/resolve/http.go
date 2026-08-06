@@ -10,16 +10,16 @@ import (
 	"strings"
 
 	"github.com/docker/docker/client"
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
-	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
-	"github.com/iotea-com/iotea/libs/secrets"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/things"
+	"github.com/ongruent/gruent/libs/legacy/engine/environment"
+	"github.com/ongruent/gruent/libs/secrets"
 )
 
 const (
 	// This network is the one spawn up with the docker compose file
 	// in the local environment at deploy/engine/local/docker-compose.yaml
-	LocalEnvDockerNetworkName = "iotea_network"
+	LocalEnvDockerNetworkName = "gruent_network"
 )
 
 func resolveHttpServerDependency(

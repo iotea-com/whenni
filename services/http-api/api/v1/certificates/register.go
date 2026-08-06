@@ -3,8 +3,8 @@ package certificates
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/iotea-com/iotea/services/http-api/api/middleware"
-	certificatesGet "github.com/iotea-com/iotea/services/http-api/api/v1/certificates/get"
+	"github.com/ongruent/gruent/services/http-api/api/middleware"
+	certificatesGet "github.com/ongruent/gruent/services/http-api/api/v1/certificates/get"
 )
 
 func Register(app fiber.Router) {

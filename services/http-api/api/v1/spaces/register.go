@@ -3,11 +3,11 @@ package spaces
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/iotea-com/iotea/services/http-api/api/middleware"
-	spacesCreate "github.com/iotea-com/iotea/services/http-api/api/v1/spaces/create"
-	spacesDelete "github.com/iotea-com/iotea/services/http-api/api/v1/spaces/delete"
-	spacesGet "github.com/iotea-com/iotea/services/http-api/api/v1/spaces/get"
-	spacesUpdate "github.com/iotea-com/iotea/services/http-api/api/v1/spaces/update"
+	"github.com/ongruent/gruent/services/http-api/api/middleware"
+	spacesCreate "github.com/ongruent/gruent/services/http-api/api/v1/spaces/create"
+	spacesDelete "github.com/ongruent/gruent/services/http-api/api/v1/spaces/delete"
+	spacesGet "github.com/ongruent/gruent/services/http-api/api/v1/spaces/get"
+	spacesUpdate "github.com/ongruent/gruent/services/http-api/api/v1/spaces/update"
 )
 
 func Register(app fiber.Router) {

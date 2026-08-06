@@ -1,4 +1,4 @@
-package ioteahttputil
+package gruenthttputil
 
 import (
 	"time"
@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	TokenIssuer = "iotea"
+	TokenIssuer = "gruent"
 
 	AccessTokenExpiry = time.Minute * 15
 

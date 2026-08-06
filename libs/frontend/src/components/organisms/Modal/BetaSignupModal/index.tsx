@@ -2,10 +2,10 @@
 
 import { FC, useRef } from 'react'
 
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
 import FormFieldText from '../../../atoms/FormFieldText'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import addNewsletterMember from '@iotea/site/actions/addNewsletterMember'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import addNewsletterMember from '@gruent/site/actions/addNewsletterMember'
 import { RemixIcon, riLoader2Fill } from '@mwarnerdotme/react-remixicon'
 import { useMutation } from '@tanstack/react-query'
 

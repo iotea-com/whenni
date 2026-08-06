@@ -1,8 +1,8 @@
 'use client'
 
 import { FC, useEffect } from 'react'
-import useSettingsStore, { Theme } from '@iotea/hub/stores/settingsStore'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import useSettingsStore, { Theme } from '@gruent/hub/stores/settingsStore'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 const SettingsLoader: FC = () => {
   const { accessToken } = useAuth()

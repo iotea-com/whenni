@@ -1,6 +1,6 @@
 'use client'
 
-import { ChannelNodeType } from '@iotea/libs/engine/nodes/v1'
+import { ChannelNodeType } from '@gruent/libs/engine/nodes/v1'
 import { RemixIcon, riArrowRightSLine } from '@mwarnerdotme/react-remixicon'
 import { FC, useMemo } from 'react'
 import NodeLibrarySectionNode from './NodeLibrarySectionNode'

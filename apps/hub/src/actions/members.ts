@@ -1,8 +1,8 @@
 'use server'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { revalidatePath } from 'next/cache'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 
 type MemberInvitation = {
   orgId: string
@@ -18,7 +18,7 @@ export const handleAddMember = async (orgId: string, userId: string) => {
       error: 'Your session is currently inactive. Sign in again to add the member.',
     }
 
-  const { errors } = await ioteaClient(accessToken).organizations.members.add(orgId, userId)
+  const { errors } = await gruentClient(accessToken).organizations.members.add(orgId, userId)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -35,7 +35,7 @@ export const handleRemoveMember = async (orgId: string, userId: string) => {
       error: 'Your session is currently inactive. Sign in again to remove the member.',
     }
 
-  const { errors } = await ioteaClient(accessToken).organizations.members.remove(orgId, userId)
+  const { errors } = await gruentClient(accessToken).organizations.members.remove(orgId, userId)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -56,7 +56,7 @@ export const handleChangeMemberRole = async (
       error: 'Your session is currently inactive. Sign in again to change the member role.',
     }
 
-  const { errors } = await ioteaClient(accessToken).organizations.members.changeRole(
+  const { errors } = await gruentClient(accessToken).organizations.members.changeRole(
     orgId,
     userId,
     role,
@@ -77,7 +77,7 @@ export const handleInviteMember = async (orgId: string, email: string, origin: s
       error: 'Your session is currently inactive. Sign in again to invite a member.',
     }
 
-  const { errors } = await ioteaClient(accessToken).organizations.members.invite(
+  const { errors } = await gruentClient(accessToken).organizations.members.invite(
     orgId,
     email,
     origin,

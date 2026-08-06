@@ -1,8 +1,8 @@
 'use server'
 
-import ioteaClient from '@iotea/hub/lib/iotea'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { revalidatePath } from 'next/cache'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
 
 export const handleAddOrganization = async (userId: string, name: string) => {
   const accessToken = await getAccessToken()
@@ -12,7 +12,7 @@ export const handleAddOrganization = async (userId: string, name: string) => {
       error: 'Your session is currently inactive. Sign in again to add the space.',
     }
 
-  const { errors } = await ioteaClient(accessToken).organizations.create(userId, name)
+  const { errors } = await gruentClient(accessToken).organizations.create(userId, name)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 
@@ -28,7 +28,7 @@ export const handleDeleteOrganization = async (orgId: string) => {
       error: 'Your session is currently inactive. Sign in again to delete the space.',
     }
 
-  const { errors } = await ioteaClient(accessToken).organizations.delete(orgId)
+  const { errors } = await gruentClient(accessToken).organizations.delete(orgId)
 
   if (errors && errors.length > 0) return { error: errors[0] }
 

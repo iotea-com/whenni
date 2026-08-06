@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
-func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
+func parse(ctx *fiber.Ctx) (*gruenthttp.Request[Input], error) {
 	type RequestBody struct {
 		Token string `json:"token"`
 	}
@@ -32,7 +32,7 @@ func parse(ctx *fiber.Ctx) (*ioteahttp.Request[Input], error) {
 		attribute.String("request.Input.VerificationToken", token),
 	)
 
-	request := &ioteahttp.Request[Input]{
+	request := &gruenthttp.Request[Input]{
 		Span:         requestSpan,
 		FiberContext: ctx,
 		Context:      ctx.UserContext(),

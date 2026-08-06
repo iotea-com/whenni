@@ -1,7 +1,7 @@
 FROM golang:1.25-bookworm
 
 # Set working directory
-WORKDIR /whenni
+WORKDIR /gruent
 
 COPY . .
 
@@ -9,4 +9,4 @@ COPY . .
 RUN go install github.com/air-verse/air@latest
 
 # Start with Air
-CMD ["air", "-c", "/whenni/services/http-api/.air.toml"]
+CMD ["air", "-c", "/gruent/services/http-api/.air.toml"]

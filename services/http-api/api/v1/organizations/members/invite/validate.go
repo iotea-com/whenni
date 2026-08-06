@@ -3,11 +3,11 @@ package organizationsMembersInvite
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func validate(request *ioteahttp.Request[Input]) error {
+func validate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("validate")
 
 	v := validator.New()
@@ -18,7 +18,7 @@ func validate(request *ioteahttp.Request[Input]) error {
 			attribute.String("error.type", "input_validation"),
 			attribute.String("error.message", err.Error()),
 		)
-		validationError := ioteahttp.NewIoteaValidationError(err.(validator.ValidationErrors))
+		validationError := gruenthttp.NewGruentValidationError(err.(validator.ValidationErrors))
 		response := validationError.MarshalResponse()
 		responseJson, err := response.MarshalJson()
 		if err != nil {

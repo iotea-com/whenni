@@ -1,5 +1,5 @@
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 
 import styles from './page.module.scss'
 import {
@@ -24,16 +24,16 @@ import Image from 'next/image'
 // export const revalidate = 1 * 60 // seconds
 
 export const metadata: Metadata = {
-  title: 'Make your next IoT project faster and easier | IOTEA',
+  title: 'Make your next IoT project faster and easier | GRUENT',
   description:
-    'Integrating devices and services just got a lot easier. Drag-and-drop connections to automate tasks and scale within minutes. Try IOTEA during our beta launch.',
+    'Integrating devices and services just got a lot easier. Drag-and-drop connections to automate tasks and scale within minutes. Try GRUENT during our beta launch.',
   openGraph: {
     type: 'website',
-    url: `https://iotea.com`,
-    title: 'Make your next IoT project faster and easier | IOTEA',
+    url: `https://gruent.com`,
+    title: 'Make your next IoT project faster and easier | GRUENT',
     description:
-      'Integrating devices and services just got a lot easier. Drag-and-drop connections to automate tasks and scale within minutes. Try IOTEA during our beta launch.',
-    images: ['https://iotea.com/img/logos/app-icon-primary.png'],
+      'Integrating devices and services just got a lot easier. Drag-and-drop connections to automate tasks and scale within minutes. Try GRUENT during our beta launch.',
+    images: ['https://gruent.com/img/logos/app-icon-primary.png'],
   },
 }
 
@@ -295,7 +295,7 @@ const HomePage = () => {
                   <div className="rounded-xl px-8 py-4 bg-white w-fit mx-auto">
                     <Image
                       src="/img/logos/wordmark-secondary.png"
-                      alt="IOTEA"
+                      alt="GRUENT"
                       width={150}
                       height={150}
                     />
@@ -307,7 +307,7 @@ const HomePage = () => {
               <div className={`${styles.performanceSection}`}>
                 <h3>Production Scale</h3>
                 <p>
-                  Have thousands of things, channels, and requests per second? IOTEA is designed for
+                  Have thousands of things, channels, and requests per second? GRUENT is designed for
                   your high-throughput projects.
                 </p>
                 <div className={styles.throughputGrid}>

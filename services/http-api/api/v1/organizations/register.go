@@ -2,12 +2,12 @@ package organizations
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/iotea-com/iotea/services/http-api/api/middleware"
-	organizationsCreate "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/create"
-	organizationsDelete "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/delete"
-	organizationsGet "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/get"
-	organizationsMembers "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/members"
-	organizationsUpdate "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/update"
+	"github.com/ongruent/gruent/services/http-api/api/middleware"
+	organizationsCreate "github.com/ongruent/gruent/services/http-api/api/v1/organizations/create"
+	organizationsDelete "github.com/ongruent/gruent/services/http-api/api/v1/organizations/delete"
+	organizationsGet "github.com/ongruent/gruent/services/http-api/api/v1/organizations/get"
+	organizationsMembers "github.com/ongruent/gruent/services/http-api/api/v1/organizations/members"
+	organizationsUpdate "github.com/ongruent/gruent/services/http-api/api/v1/organizations/update"
 )
 
 func Register(app fiber.Router) {

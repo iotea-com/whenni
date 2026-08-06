@@ -1,12 +1,12 @@
 'use client'
 
 import { FC, useMemo, useState } from 'react'
-import FormFieldTextArea from '@iotea/libs/frontend/components/atoms/FormFieldTextArea'
-import { ModelAttributes } from '@iotea/libs/engine/dependencies/models'
+import FormFieldTextArea from '@gruent/libs/frontend/components/atoms/FormFieldTextArea'
+import { ModelAttributes } from '@gruent/libs/engine/dependencies/models'
 import ModelSettingsForm from '../ModelSettingsForm'
-import { handleAddModel } from '@iotea/hub/actions/models'
+import { handleAddModel } from '@gruent/hub/actions/models'
 import { useMutation } from '@tanstack/react-query'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 import { useRouter } from 'next/navigation'
 
 type Props = {

@@ -1,4 +1,4 @@
-import { ChannelEdge } from '@iotea/libs/engine/channels/index'
+import { ChannelEdge } from '@gruent/libs/engine/channels/index'
 import { IoPoint } from '../types/IoPoint'
 import { isPointInPolygon } from './isPointInPolygon'
 

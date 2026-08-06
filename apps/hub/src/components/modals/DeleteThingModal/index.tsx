@@ -1,13 +1,13 @@
 'use client'
 
 import { FC, useCallback } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
 import { useMutation } from '@tanstack/react-query'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import ioteaClient from '@iotea/hub/lib/iotea'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { useRouter } from 'next/navigation'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 type Props = {
   orgId: string
@@ -24,7 +24,7 @@ const DeleteThingModal: FC<Props> = ({ orgId, spaceId, thingId }) => {
     mutationFn: async () => {
       if (!accessToken) return
 
-      const { errors } = await ioteaClient(accessToken).things.delete(spaceId, thingId)
+      const { errors } = await gruentClient(accessToken).things.delete(spaceId, thingId)
 
       if (errors && errors.length > 0) {
         addToast({

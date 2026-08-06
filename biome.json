@@ -9,8 +9,8 @@
 			"!apps/**/cypress/**/*.ts",
 			"libs/frontend/**/*.tsx",
 			"libs/frontend/**/*.ts",
-			"libs/iotea-js/**/*.tsx",
-			"libs/iotea-js/**/*.ts",
+			"libs/gruent-js/**/*.tsx",
+			"libs/gruent-js/**/*.ts",
 			"!apps/**/.next/**"
 		]
 	},
@@ -26,7 +26,7 @@
 				"noUnusedVariables": "error"
 			}
 		},
-		"includes": ["**", "!**/node_modules", "!**/.yarn"]
+		"includes": ["**", "!**/node_modules"]
 	},
 	"javascript": {
 		"formatter": {

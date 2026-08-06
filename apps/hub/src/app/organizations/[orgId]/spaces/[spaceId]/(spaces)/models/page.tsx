@@ -1,16 +1,16 @@
-import ioteaClient from '@iotea/hub/lib/iotea'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import CreateModelModal from '@iotea/hub/components/modals/CreateModelModal'
-import ModelsTable from '@iotea/hub/components/organisms/ModelsTable'
-import Container from '@iotea/libs/frontend/components/templates/Container'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import gruentClient from '@gruent/hub/lib/gruent'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import CreateModelModal from '@gruent/hub/components/modals/CreateModelModal'
+import ModelsTable from '@gruent/hub/components/organisms/ModelsTable'
+import Container from '@gruent/libs/frontend/components/templates/Container'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import { RemixIcon, riAddCircleLine, riInstanceLine } from '@mwarnerdotme/react-remixicon'
-import ListTablePlaceholder from '@iotea/hub/components/molecules/ListTablePlaceholder'
-import Callout from '@iotea/libs/frontend/components/molecules/Callout'
+import ListTablePlaceholder from '@gruent/hub/components/molecules/ListTablePlaceholder'
+import Callout from '@gruent/libs/frontend/components/molecules/Callout'
 import { Tag } from '@prisma/client'
 
 export const metadata = {
-  title: 'Models | IOTEA',
+  title: 'Models | GRUENT',
 }
 
 const ModelsPage = async ({ params, searchParams }) => {
@@ -28,7 +28,7 @@ const ModelsPage = async ({ params, searchParams }) => {
     page,
     totalPages,
     totalResults,
-  } = await ioteaClient(accessToken).models.list(spaceId, {
+  } = await gruentClient(accessToken).models.list(spaceId, {
     page: requestedPage,
     filter,
     tagFilter,
@@ -61,7 +61,7 @@ const ModelsPage = async ({ params, searchParams }) => {
   }
 
   const { data: tagListResponse, errors: tagListErrors } =
-    await ioteaClient(accessToken).tags.list(spaceId)
+    await gruentClient(accessToken).tags.list(spaceId)
 
   if (tagListErrors && tagListErrors.length > 0) {
     return (

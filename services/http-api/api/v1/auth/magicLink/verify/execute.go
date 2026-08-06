@@ -5,17 +5,17 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruenthttputil "github.com/ongruent/gruent/libs/http/util"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.VerificationToken", request.Input.VerificationToken),
@@ -31,7 +31,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 				attribute.String("error.message", fmt.Sprintf("verification token not found: %s", request.Input.VerificationToken)),
 			)
 			dbSpan.End()
-			errResponse := ioteahttp.NewErrorResponse([]any{"Invalid magic link"})
+			errResponse := gruenthttp.NewErrorResponse([]any{"Invalid magic link"})
 			marshalledErrResponse, _ := errResponse.MarshalJson()
 			return nil, fiber.NewError(fiber.StatusUnauthorized, string(marshalledErrResponse))
 		}
@@ -41,7 +41,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.message", fmt.Sprintf("error deleting API key from the database: %s", err)),
 		)
 		dbSpan.End()
-		errResponse := ioteahttp.NewErrorResponse([]any{"Unable to verify magic link. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Unable to verify magic link. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}
@@ -54,7 +54,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.type", "verification_token_expired"),
 			attribute.String("error.message", fmt.Sprintf("verification token expired: %s", verificationToken.Token)),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{"Magic link has expired. Please request a new one."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Magic link has expired. Please request a new one."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusUnauthorized, string(marshalledErrResponse))
 	}
@@ -69,7 +69,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 				attribute.String("error.message", fmt.Sprintf("error updating user email as verified: %s", err)),
 			)
 			dbSpan.End()
-			errResponse := ioteahttp.NewErrorResponse([]any{"Unable to access the database. Please try again."})
+			errResponse := gruenthttp.NewErrorResponse([]any{"Unable to access the database. Please try again."})
 			marshalledErrResponse, _ := errResponse.MarshalJson()
 			return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 		}
@@ -78,25 +78,25 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 	}
 
 	// Create a new access token
-	accessToken, err := ioteahttputil.GenerateAccessToken(verificationToken.JoinedUserID, config.VaultConf.JwtSecret)
+	accessToken, err := gruenthttputil.GenerateAccessToken(verificationToken.JoinedUserID, config.VaultConf.JwtSecret)
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "jwt_token_generation"),
 			attribute.String("error.message", fmt.Sprintf("error generating JWT token: %s", err)),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{"Unable to create a session token. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Unable to create a session token. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}
 
 	// Create a new refresh token
-	refreshToken, err := ioteahttputil.GenerateRefreshToken()
+	refreshToken, err := gruenthttputil.GenerateRefreshToken()
 	if err != nil {
 		request.Span.SetAttributes(
 			attribute.String("error.type", "refresh_token_generation"),
 			attribute.String("error.message", fmt.Sprintf("error generating refresh token: %s", err)),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{"Unable to create a session token. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Unable to create a session token. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}
@@ -116,7 +116,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.message", fmt.Sprintf("error clearing old refresh tokens in the database: %s", err)),
 		)
 		dbSpan.End()
-		errMessage := ioteahttp.NewErrorResponse([]any{"Could not store refresh token"})
+		errMessage := gruenthttp.NewErrorResponse([]any{"Could not store refresh token"})
 		marshalledErrMessage, _ := errMessage.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrMessage))
 	}
@@ -130,7 +130,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		verificationToken.UserID,
 		*refreshToken,
 		sqldb.AppAuthTokenTypeREFRESH,
-		time.Now().Add(ioteahttputil.RefreshTokenExpiry).UTC(),
+		time.Now().Add(gruenthttputil.RefreshTokenExpiry).UTC(),
 	)
 
 	if err != nil {
@@ -139,7 +139,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.message", fmt.Sprintf("error storing refresh token: %s", err)),
 		)
 		dbSpan.End()
-		errResponse := ioteahttp.NewErrorResponse([]any{"Unable to verify magic link. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Unable to verify magic link. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}
@@ -155,7 +155,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.message", fmt.Sprintf("error removing verification token from the database: %s", err)),
 		)
 		dbSpan.End()
-		errResponse := ioteahttp.NewErrorResponse([]any{"Unable to verify magic link. Please try again."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Unable to verify magic link. Please try again."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 	}

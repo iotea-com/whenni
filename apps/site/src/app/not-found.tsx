@@ -1,9 +1,9 @@
 'use client'
 
 import '../app/styles.css'
-import Container from '@iotea/libs/frontend/components/templates/Container'
+import Container from '@gruent/libs/frontend/components/templates/Container'
 import Image from 'next/image'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 import { useRouter } from 'next/navigation'
 
 const NotFound = () => {
@@ -14,7 +14,7 @@ const NotFound = () => {
       <Container className="text-center items-center mt-24 py-20 justify-center">
         <Image
           src="/img/logos/app-icon-primary.png"
-          alt="IOTEA logo"
+          alt="GRUENT logo"
           width={200}
           height={200}
           className="mx-auto"

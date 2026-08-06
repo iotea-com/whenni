@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
-	"github.com/iotea-com/iotea/libs/telemetry"
-	"github.com/iotea-com/iotea/services/controller/api"
-	"github.com/iotea-com/iotea/services/controller/config"
+	"github.com/ongruent/gruent/libs/legacy/engine/environment"
+	"github.com/ongruent/gruent/libs/telemetry"
+	"github.com/ongruent/gruent/services/controller/api"
+	"github.com/ongruent/gruent/services/controller/config"
 )
 
 func main() {

@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
-	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
-	"github.com/iotea-com/iotea/libs/secrets"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/things"
+	"github.com/ongruent/gruent/libs/legacy/engine/environment"
+	"github.com/ongruent/gruent/libs/secrets"
 )
 
 func resolveKafkaProducerDependency(

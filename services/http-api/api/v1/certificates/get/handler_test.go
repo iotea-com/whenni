@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/id"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
-	certificatesGet "github.com/iotea-com/iotea/services/http-api/api/v1/certificates/get"
+	"github.com/ongruent/gruent/libs/id"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
+	certificatesGet "github.com/ongruent/gruent/services/http-api/api/v1/certificates/get"
 	"github.com/stretchr/testify/assert"
 )
 

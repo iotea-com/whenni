@@ -1,6 +1,6 @@
 'use client'
 
-import isBrowser from '@iotea/libs/frontend/util/isBrowser'
+import isBrowser from '@gruent/libs/frontend/util/isBrowser'
 import {
   riCodeBoxFill,
   riFilter3Fill,

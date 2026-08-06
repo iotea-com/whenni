@@ -1,11 +1,11 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { TimeSeriesDbNodeConfig } from '@iotea/libs/engine/nodes/v1/src/action/timeSeriesDb'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { TimeSeriesDbNodeConfig } from '@gruent/libs/engine/nodes/v1/src/action/timeSeriesDb'
 import { Thing } from '@prisma/client'
 import { FC, useEffect, useMemo, useState } from 'react'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 
 type Props = {
   things: Thing[]

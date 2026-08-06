@@ -1,9 +1,9 @@
 'use client'
 
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
 import { Dispatch, FC, useEffect, useMemo, useState } from 'react'
 import { Thing } from '@prisma/client'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
 
 type Props = {
   setFormData: Dispatch<Map<string, string | number | string[] | number[]>>

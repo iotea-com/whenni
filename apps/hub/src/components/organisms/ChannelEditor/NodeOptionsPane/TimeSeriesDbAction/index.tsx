@@ -1,12 +1,12 @@
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { ChannelNode } from '@iotea/libs/engine/nodes/v1'
-import { TimeSeriesDbNodeConfig } from '@iotea/libs/engine/nodes/v1/src/action/timeSeriesDb'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { ChannelNode } from '@gruent/libs/engine/nodes/v1'
+import { TimeSeriesDbNodeConfig } from '@gruent/libs/engine/nodes/v1/src/action/timeSeriesDb'
 import { Thing } from '@prisma/client'
 import { FC, useEffect, useMemo, useState } from 'react'
 import InfluxDbActionOptions from './InfluxDbActionOptions'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
-import { openModal } from '@iotea/libs/frontend/hooks/useModal'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
+import { openModal } from '@gruent/libs/frontend/hooks/useModal'
 import { RemixIcon, riAddLine } from '@mwarnerdotme/react-remixicon'
 
 type Props = {
@@ -110,7 +110,7 @@ const TimeSeriesDbActionOptions: FC<Props> = ({ things, orgId, spaceId }) => {
           label="Time Series Database"
           className="grow"
           options={timeSeriesDatabaseOptions}
-          value={selectedTimeSeriesDatabase?.id ?? '__IOTEA_IGNORE__'}
+          value={selectedTimeSeriesDatabase?.id ?? '__GRUENT_IGNORE__'}
           onChange={(e) =>
             setSelectedTimeSeriesDatabase(
               timeSeriesDatabases.find((s) => {

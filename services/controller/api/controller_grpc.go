@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 
-	pb "github.com/iotea-com/iotea/libs/protocols/controller"
+	pb "github.com/ongruent/gruent/libs/protocols/controller"
 )
 
 type controllerGRPC struct {

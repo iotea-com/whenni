@@ -1,8 +1,8 @@
-import AuthLayout from '@iotea/hub/components/layouts/AuthLayout'
-import Button from '@iotea/libs/frontend/components/atoms/Button'
+import AuthLayout from '@gruent/hub/components/layouts/AuthLayout'
+import Button from '@gruent/libs/frontend/components/atoms/Button'
 
 export const metadata = {
-  title: 'Verify magic link | IOTEA',
+  title: 'Verify magic link | GRUENT',
 }
 
 const VerifyMagicLinkPage = async ({ searchParams }) => {

@@ -1,6 +1,6 @@
 package apitest
 
-import "github.com/iotea-com/iotea/prisma/db"
+import "github.com/ongruent/gruent/prisma/db"
 
 func SetupExpectJwt(dbMocks handlerDbMocks, organizationId string, userId string) {
 	dbMocks.Server.OrganizationMember.Expect(

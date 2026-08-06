@@ -1,0 +1,15 @@
+packages:
+  - apps/*
+  - libs/*
+  - services/*
+allowBuilds:
+  '@parcel/watcher': true
+  '@prisma/client': true
+  '@prisma/engines': true
+  core-js-pure: true
+  cypress: true
+  esbuild: true
+  nx: true
+  prisma: true
+  sharp: true
+  unrs-resolver: true

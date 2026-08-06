@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	clickhouseService "github.com/iotea-com/iotea/services/http-api/services/clickhouse"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	clickhouseService "github.com/ongruent/gruent/services/http-api/services/clickhouse"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -21,7 +21,7 @@ type ChannelExecutionListItem struct {
 	Status        string            `ch:"status" json:"status"`
 }
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.ChannelId", request.Input.ChannelId),

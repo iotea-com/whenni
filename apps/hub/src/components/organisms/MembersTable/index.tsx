@@ -9,7 +9,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { OrganizationMember, PermissionSet, User } from '@prisma/client'
-import ListTable from '@iotea/hub/components/atoms/ListTable'
+import ListTable from '@gruent/hub/components/atoms/ListTable'
 import { useRouter } from 'next/navigation'
 import MemberContextMenu from './MembersContextMenu'
 import { riAdminLine, riMailLine, riUserSettingsLine } from '@mwarnerdotme/react-remixicon'

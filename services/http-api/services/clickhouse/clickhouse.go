@@ -4,5 +4,5 @@ import (
 	"github.com/ClickHouse/clickhouse-go/v2"
 )
 
-// IOTEA Clickhouse client
+// GRUENT Clickhouse client
 var Conn clickhouse.Conn

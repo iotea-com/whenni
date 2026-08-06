@@ -2,9 +2,9 @@
 
 import { useKeyDown } from '@react-hooks-library/core'
 import { RefObject } from 'react'
-import useChannelEditorStore from '@iotea/hub/stores/channelEditorStore'
+import useChannelEditorStore from '@gruent/hub/stores/channelEditorStore'
 import { EditorHooks } from '..'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
 
 export const useChannelEditorKeyboardEvents = (
   editorRef: RefObject<HTMLCanvasElement | null>,

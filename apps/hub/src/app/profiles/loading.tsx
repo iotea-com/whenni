@@ -1,4 +1,4 @@
-import LoadingSkeleton from '@iotea/hub/components/organisms/LoadingSkeleton'
+import LoadingSkeleton from '@gruent/hub/components/organisms/LoadingSkeleton'
 
 export default function Loading() {
   return <LoadingSkeleton />

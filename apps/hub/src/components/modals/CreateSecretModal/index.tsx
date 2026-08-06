@@ -1,11 +1,11 @@
 'use client'
 
 import { FC, useCallback, useState } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
-import { handleAddSecret } from '@iotea/hub/actions/secrets'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
+import { handleAddSecret } from '@gruent/hub/actions/secrets'
 
 type Props = {
   spaceId: string

@@ -10,11 +10,11 @@ import {
   riShieldUserLine,
 } from '@mwarnerdotme/react-remixicon'
 import styles from './layout.module.scss'
-import getAccessToken from '@iotea/hub/util/getAccessToken'
-import FeedbackButton from '@iotea/hub/components/molecules/FeedbackButton'
+import getAccessToken from '@gruent/hub/util/getAccessToken'
+import FeedbackButton from '@gruent/hub/components/molecules/FeedbackButton'
 
 export const metadata = {
-  title: 'Channels | IOTEA',
+  title: 'Channels | GRUENT',
 }
 
 const Layout = async ({ children, params }) => {
@@ -35,7 +35,7 @@ const Layout = async ({ children, params }) => {
             <Link href={`/dashboard`}>
               <Image
                 src="/img/logos/app-icon-primary.png"
-                alt="IOTEA logo"
+                alt="GRUENT logo"
                 width={25}
                 height={25}
               />

@@ -20,7 +20,7 @@
 				"push": false,
 				"load": true,
 				"tags": [
-					"iotea-vault:latest"
+					"gruent-vault:latest"
 				],
 				"platforms": []
 			}
@@ -87,7 +87,7 @@
 					"cwd": "{workspaceRoot}",
 					"commands": [
 						{
-							"command": "docker network create iotea_network || true"
+							"command": "docker network create gruent_network || true"
 						},
 						{
 							"command": "nx run engine:build-local"

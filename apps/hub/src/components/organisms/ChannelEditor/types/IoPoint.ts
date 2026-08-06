@@ -1,4 +1,4 @@
-import { ChannelNodeIO } from '@iotea/libs/engine/nodes/v1'
+import { ChannelNodeIO } from '@gruent/libs/engine/nodes/v1'
 
 export type IoPoint = {
   io: 'input' | 'output'

@@ -1,7 +1,7 @@
 package sqlc
 
 import (
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/iotea-com/iotea/libs/legacy/engine/channels"
-	"github.com/iotea-com/iotea/libs/legacy/engine/environment"
-	"github.com/iotea-com/iotea/libs/secrets"
+	"github.com/ongruent/gruent/libs/legacy/engine/channels"
+	"github.com/ongruent/gruent/libs/legacy/engine/environment"
+	"github.com/ongruent/gruent/libs/secrets"
 )
 
 const (

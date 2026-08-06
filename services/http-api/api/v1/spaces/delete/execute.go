@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.SpaceId", request.Input.SpaceId),
@@ -58,7 +58,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.type", "context_validation"),
 			attribute.String("error.message", "delete space failed since there are published channels linked to the space"),
 		)
-		response := ioteahttp.NewErrorResponse([]any{"unpublish or delete all channels in this space before deleting the space"})
+		response := gruenthttp.NewErrorResponse([]any{"unpublish or delete all channels in this space before deleting the space"})
 		responseJson, _ := response.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusConflict, string(responseJson))
 	}

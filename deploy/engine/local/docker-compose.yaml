@@ -1,17 +1,17 @@
-name: whenni
+name: gruent
 
 networks:
   services_network:
     name: services_network
     driver: bridge
-  iotea_network:
-    name: iotea_network
+  gruent_network:
+    name: gruent_network
     driver: bridge
     external: true
 
 volumes:
-  iotea_node_modules_volume:
-  iotea_go_modules_volume:
+  gruent_node_modules_volume:
+  gruent_go_modules_volume:
   clickhouse_data_volume:
   postgres_data_volume:
   redis_data_volume:
@@ -26,14 +26,14 @@ services:
     build:
       context: ../../..
       dockerfile: services/http-api/deploy/development/Dockerfile
-    image: iotea-http-api:local
+    image: gruent-http-api:local
     ports:
       - "9001:9001"
     volumes:
-      - ${USR_MONOREPO_ROOT}:/whenni
+      - ${USR_MONOREPO_ROOT}:/gruent
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - iotea_network
+      - gruent_network
       - services_network
     env_file:
       - .env
@@ -55,14 +55,14 @@ services:
     build:
       context: ../../..
       dockerfile: services/controller/deploy/development/Dockerfile
-    image: iotea-controller:local
+    image: gruent-controller:local
     ports:
       - "9002:9002"
     volumes:
-      - ${USR_MONOREPO_ROOT}:/whenni
+      - ${USR_MONOREPO_ROOT}:/gruent
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - iotea_network
+      - gruent_network
     env_file:
       - .env
     environment:
@@ -83,7 +83,7 @@ services:
       - "4222:4222" # Client port
       - "8222:8222" # HTTP monitoring
     networks:
-      - iotea_network
+      - gruent_network
     volumes:
       - nats_data_volume:/data # Persist JetStream data
     environment:
@@ -97,7 +97,7 @@ services:
     profiles:
       - dev
       - run
-    image: iotea-vault:latest
+    image: gruent-vault:latest
     ports:
       - "8200:8200"
     volumes:
@@ -108,7 +108,7 @@ services:
     # cap_add:
     #   - IPC_LOCK
     networks:
-      - iotea_network
+      - gruent_network
       - services_network
 
   otel-collector:
@@ -123,7 +123,7 @@ services:
     volumes:
       - ./config/otel/otel-collector-config.yaml:/otel-collector-config.yaml:ro
     networks:
-      - iotea_network
+      - gruent_network
     depends_on:
       clickhouse:
         condition: service_healthy
@@ -141,11 +141,11 @@ services:
       - clickhouse_data_volume:/var/lib/clickhouse
       - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/clickhouse/init/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     networks:
-      - iotea_network
+      - gruent_network
     environment:
       - CLICKHOUSE_DB=default
-      - CLICKHOUSE_USER=iotea
-      - CLICKHOUSE_PASSWORD=iotea
+      - CLICKHOUSE_USER=gruent
+      - CLICKHOUSE_PASSWORD=gruent
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8123 || exit 1
       interval: 10s
@@ -159,8 +159,8 @@ services:
       - run
     image: minio/minio:latest
     environment:
-      MINIO_ROOT_USER: iotea
-      MINIO_ROOT_PASSWORD: ioteastorage!
+      MINIO_ROOT_USER: gruent
+      MINIO_ROOT_PASSWORD: gruentstorage!
     ports:
       - "8675:8675"
       - "8676:8676"
@@ -168,7 +168,7 @@ services:
     volumes:
       - minio_data_volume:/data
     networks:
-      - iotea_network
+      - gruent_network
 
   postgres:
     container_name: postgres
@@ -177,9 +177,9 @@ services:
       - run
     image: postgres:latest
     environment:
-      POSTGRES_USER: iotea
-      POSTGRES_PASSWORD: iotea
-      POSTGRES_DB: iotea
+      POSTGRES_USER: gruent
+      POSTGRES_PASSWORD: gruent
+      POSTGRES_DB: gruent
     command:
       - "postgres"
       - "-c"
@@ -189,7 +189,7 @@ services:
     volumes:
       - postgres_data_volume:/var/lib/postgresql/data
     networks:
-      - iotea_network
+      - gruent_network
 
   redis:
     container_name: redis
@@ -204,7 +204,7 @@ services:
       - ${USR_MONOREPO_ROOT}/deploy/engine/local/config/redis/redis.conf:/usr/local/etc/redis/redis.conf
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
-      - iotea_network
+      - gruent_network
 
   inbucket:
     container_name: inbucket
@@ -216,4 +216,4 @@ services:
       - "9000:9000"
       - "2500:2500"
     networks:
-      - iotea_network
+      - gruent_network

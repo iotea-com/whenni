@@ -3,12 +3,12 @@ package modelsCreate
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/models"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/models"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func validate(request *ioteahttp.Request[Input]) error {
+func validate(request *gruenthttp.Request[Input]) error {
 	request.Span.AddEvent("validate")
 
 	// Validate request body
@@ -20,7 +20,7 @@ func validate(request *ioteahttp.Request[Input]) error {
 			attribute.String("error.type", "input_validation"),
 			attribute.String("error.message", err.Error()),
 		)
-		validationError := ioteahttp.NewIoteaValidationError(err.(validator.ValidationErrors))
+		validationError := gruenthttp.NewGruentValidationError(err.(validator.ValidationErrors))
 		response := validationError.MarshalResponse()
 		responseJson, err := response.MarshalJson()
 		if err != nil {
@@ -38,7 +38,7 @@ func validate(request *ioteahttp.Request[Input]) error {
 			attribute.String("error.type", "schema_validation"),
 			attribute.String("error.message", err.Error()),
 		)
-		validationError := ioteahttp.NewErrorResponse([]any{err.Error()})
+		validationError := gruenthttp.NewErrorResponse([]any{err.Error()})
 		responseJson, err := validationError.MarshalJson()
 		if err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())

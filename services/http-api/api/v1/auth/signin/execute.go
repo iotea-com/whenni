@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteahttputil "github.com/iotea-com/iotea/libs/http/util"
-	"github.com/iotea-com/iotea/services/http-api/config"
-	"github.com/iotea-com/iotea/services/http-api/services/smtp"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruenthttputil "github.com/ongruent/gruent/libs/http/util"
+	"github.com/ongruent/gruent/services/http-api/config"
+	"github.com/ongruent/gruent/services/http-api/services/smtp"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"github.com/jackc/pgx/v5"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"go.opentelemetry.io/otel"
@@ -26,7 +26,7 @@ const (
 	MagicLinkTokenExpiry = time.Minute * 15
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute", trace.WithAttributes(
 		attribute.String("request.Input.Email", request.Input.Email),
 		attribute.String("request.Input.Method", request.Input.Method),
@@ -66,7 +66,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 				attribute.String("error.type", "magic_link"),
 				attribute.String("error.message", err.Error()),
 			)
-			errResponse := ioteahttp.NewErrorResponse([]any{err.Error()})
+			errResponse := gruenthttp.NewErrorResponse([]any{err.Error()})
 			marshalledErrResponse, _ := errResponse.MarshalJson()
 			return nil, fiber.NewError(fiber.StatusInternalServerError, string(marshalledErrResponse))
 		}
@@ -79,7 +79,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 				attribute.String("error.type", "credentials"),
 				attribute.String("error.message", err.Error()),
 			)
-			errResponse := ioteahttp.NewErrorResponse([]any{err.Error()})
+			errResponse := gruenthttp.NewErrorResponse([]any{err.Error()})
 			marshalledErrResponse, _ := errResponse.MarshalJson()
 			return nil, fiber.NewError(fiber.StatusUnauthorized, string(marshalledErrResponse))
 		}
@@ -141,14 +141,14 @@ func handleMagicLinkLogin(user sqldb.AppUser, appUrl string, ctx context.Context
 
 	// Send an email with the token
 	_, smtpSpan := otel.Tracer("smtp").Start(ctx, "Send magic link email")
-	from := "auth@iotea.com"
+	from := "auth@gruent.com"
 
 	to := []string{*user.Email}
 
 	const htmlBodyTemplate = `
 	<html>
 		<body>
-			<h1>IOTEA Magic Link Sign In</h1>
+			<h1>GRUENT Magic Link Sign In</h1>
 			<p>Click the link below to login to your account:</p>
 			<p>
 				<a href="{{ .AppUrl }}/api/magic-link/verify?t={{ .Token }}">Sign in</a>
@@ -159,7 +159,7 @@ func handleMagicLinkLogin(user sqldb.AppUser, appUrl string, ctx context.Context
 	</html>
 	`
 
-	const plainBodyTemplate = `IOTEA Magic Link Sign In
+	const plainBodyTemplate = `GRUENT Magic Link Sign In
 
 	Copy and paste the link below to login to your account:
 	{{ .AppUrl }}/api/magic-link/verify?t={{ .Token }}
@@ -174,8 +174,8 @@ func handleMagicLinkLogin(user sqldb.AppUser, appUrl string, ctx context.Context
 	}
 
 	// Create multipart message
-	subject := "IOTEA Magic Link Sign In"
-	message, err := ioteahttputil.BuildEmail(from, to, subject, plainBodyTemplate, htmlBodyTemplate, bodyData)
+	subject := "GRUENT Magic Link Sign In"
+	message, err := gruenthttputil.BuildEmail(from, to, subject, plainBodyTemplate, htmlBodyTemplate, bodyData)
 	if err != nil {
 		smtpSpan.SetAttributes(
 			attribute.String("error.type", "multipart_message_build"),
@@ -217,7 +217,7 @@ func handleCredentialsLogin(user sqldb.AppUser, providedPassword string, ctx con
 
 	// Generate an access token
 	_, tokenSpan := otel.Tracer("sqlc").Start(ctx, "Generate tokens")
-	accessToken, err := ioteahttputil.GenerateAccessToken(user.ID, config.VaultConf.JwtSecret)
+	accessToken, err := gruenthttputil.GenerateAccessToken(user.ID, config.VaultConf.JwtSecret)
 	if err != nil {
 		tokenSpan.SetAttributes(
 			attribute.String("error.type", "jwt_generation"),
@@ -228,7 +228,7 @@ func handleCredentialsLogin(user sqldb.AppUser, providedPassword string, ctx con
 	}
 
 	// Generate a refresh token
-	refreshToken, err := ioteahttputil.GenerateRefreshToken()
+	refreshToken, err := gruenthttputil.GenerateRefreshToken()
 	if err != nil {
 		tokenSpan.SetAttributes(
 			attribute.String("error.type", "refresh_token_generation"),
@@ -262,7 +262,7 @@ func handleCredentialsLogin(user sqldb.AppUser, providedPassword string, ctx con
 		user.ID,
 		*refreshToken,
 		sqldb.AppAuthTokenTypeREFRESH,
-		time.Now().Add(ioteahttputil.RefreshTokenExpiry).UTC(),
+		time.Now().Add(gruenthttputil.RefreshTokenExpiry).UTC(),
 	)
 
 	if err != nil {

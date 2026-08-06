@@ -8,12 +8,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/libs/legacy/engine/dependencies/things"
-	"github.com/iotea-com/iotea/prisma/db"
-	apitest "github.com/iotea-com/iotea/services/http-api/api/test"
-	thingsCreate "github.com/iotea-com/iotea/services/http-api/api/v1/things/create"
-	"github.com/iotea-com/iotea/services/http-api/util"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/libs/legacy/engine/dependencies/things"
+	"github.com/ongruent/gruent/prisma/db"
+	apitest "github.com/ongruent/gruent/services/http-api/api/test"
+	thingsCreate "github.com/ongruent/gruent/services/http-api/api/v1/things/create"
+	"github.com/ongruent/gruent/services/http-api/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,7 +34,7 @@ func TestHandler(t *testing.T) {
 			testSpaceId, _ := id.Generator.NewSpaceId()
 			testThingId, _ := id.Generator.NewThingId()
 			testAttributes := things.HttpServer{
-				Host:     "iotea.com",
+				Host:     "gruent.com",
 				Protocol: "https",
 				Port:     443,
 				Paths: []string{

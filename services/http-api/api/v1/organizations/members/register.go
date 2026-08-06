@@ -3,11 +3,11 @@ package organizationsMembers
 import (
 	"github.com/gofiber/fiber/v2"
 
-	organizationsMembersAdd "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/members/add"
-	organizationsMembersChangeRole "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/members/changeRole"
-	organizationsMembersInvite "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/members/invite"
-	organizationsMembersList "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/members/list"
-	organizationsMembersRemove "github.com/iotea-com/iotea/services/http-api/api/v1/organizations/members/remove"
+	organizationsMembersAdd "github.com/ongruent/gruent/services/http-api/api/v1/organizations/members/add"
+	organizationsMembersChangeRole "github.com/ongruent/gruent/services/http-api/api/v1/organizations/members/changeRole"
+	organizationsMembersInvite "github.com/ongruent/gruent/services/http-api/api/v1/organizations/members/invite"
+	organizationsMembersList "github.com/ongruent/gruent/services/http-api/api/v1/organizations/members/list"
+	organizationsMembersRemove "github.com/ongruent/gruent/services/http-api/api/v1/organizations/members/remove"
 )
 
 func Register(app fiber.Router) {

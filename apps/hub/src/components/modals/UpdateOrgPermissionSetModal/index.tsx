@@ -1,17 +1,17 @@
 'use client'
 
 import { FC, useCallback, useRef } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
 import { useMutation } from '@tanstack/react-query'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import ioteaClient from '@iotea/hub/lib/iotea'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import gruentClient from '@gruent/hub/lib/gruent'
 import { useRouter } from 'next/navigation'
 import { PermissionSet } from '@prisma/client'
-import { defaultOrgPermissions } from '@iotea/libs/http/permissions'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import useAuth from '@iotea/hub/hooks/useAuth'
+import { defaultOrgPermissions } from '@gruent/libs/http/permissions'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import useAuth from '@gruent/hub/hooks/useAuth'
 
 type Props = {
   orgId: string
@@ -42,7 +42,7 @@ const UpdateOrgPermissionSetModal: FC<Props> = ({
 
       const { id, name, permissions } = permissionSetInput
 
-      const { errors } = await ioteaClient(accessToken).permissions.update(
+      const { errors } = await gruentClient(accessToken).permissions.update(
         orgId,
         id,
         name,

@@ -1,13 +1,13 @@
 'use client'
 
 import { FC, useCallback, useRef } from 'react'
-import Modal from '@iotea/libs/frontend/components/organisms/Modal'
-import FormFieldText from '@iotea/libs/frontend/components/atoms/FormFieldText'
+import Modal from '@gruent/libs/frontend/components/organisms/Modal'
+import FormFieldText from '@gruent/libs/frontend/components/atoms/FormFieldText'
 import { PermissionSet } from '@prisma/client'
-import { addToast } from '@iotea/libs/frontend/hooks/useToast'
-import { closeModal } from '@iotea/libs/frontend/hooks/useModal'
-import FormFieldSelect from '@iotea/libs/frontend/components/atoms/FormFieldSelect'
-import { handleAddApiKey } from '@iotea/hub/actions/apiKeys'
+import { addToast } from '@gruent/libs/frontend/hooks/useToast'
+import { closeModal } from '@gruent/libs/frontend/hooks/useModal'
+import FormFieldSelect from '@gruent/libs/frontend/components/atoms/FormFieldSelect'
+import { handleAddApiKey } from '@gruent/hub/actions/apiKeys'
 
 type Props = {
   orgId: string

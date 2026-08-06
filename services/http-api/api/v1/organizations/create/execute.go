@@ -4,16 +4,16 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	sqldb "github.com/iotea-com/iotea/db/sqlc"
-	ioteahttp "github.com/iotea-com/iotea/libs/http"
-	ioteapermissions "github.com/iotea-com/iotea/libs/http/permissions"
-	"github.com/iotea-com/iotea/libs/id"
-	"github.com/iotea-com/iotea/services/http-api/services/sqlc"
+	sqldb "github.com/ongruent/gruent/db/sqlc"
+	gruenthttp "github.com/ongruent/gruent/libs/http"
+	gruentpermissions "github.com/ongruent/gruent/libs/http/permissions"
+	"github.com/ongruent/gruent/libs/id"
+	"github.com/ongruent/gruent/services/http-api/services/sqlc"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
-func execute(request *ioteahttp.Request[Input]) (*Output, error) {
+func execute(request *gruenthttp.Request[Input]) (*Output, error) {
 	request.Span.AddEvent("execute")
 	request.Span.SetAttributes(
 		attribute.String("request.Input.Name", request.Input.Name),
@@ -27,7 +27,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.type", "id_generator"),
 			attribute.String("error.message", fmt.Sprintf("error generating a new Organization ID: %s", err)),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{"Could not create the organization. Please try again or contact support if the issue persists."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"Could not create the organization. Please try again or contact support if the issue persists."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusConflict, string(marshalledErrResponse))
 	}
@@ -47,7 +47,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 			attribute.String("error.type", "validation"),
 			attribute.String("error.message", "user has no email address"),
 		)
-		errResponse := ioteahttp.NewErrorResponse([]any{"User account must have an email address to create an organization."})
+		errResponse := gruenthttp.NewErrorResponse([]any{"User account must have an email address to create an organization."})
 		marshalledErrResponse, _ := errResponse.MarshalJson()
 		return nil, fiber.NewError(fiber.StatusBadRequest, string(marshalledErrResponse))
 	}
@@ -82,7 +82,7 @@ func execute(request *ioteahttp.Request[Input]) (*Output, error) {
 		OrganizationID: organization.ID,
 		SpaceID:        nil,
 		Name:           "Default",
-		Permissions:    ioteapermissions.DefaultMemberOrganizationPermissions,
+		Permissions:    gruentpermissions.DefaultMemberOrganizationPermissions,
 		CreatedBy:      request.GetActorId(),
 		UpdatedBy:      request.GetActorId(),
 	})
