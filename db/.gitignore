@@ -1,9 +1,0 @@
-# Ignore generated sqlc code
-sqlc/
-
-# Ignore editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
