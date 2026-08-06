@@ -26,7 +26,7 @@
 				"noUnusedVariables": "error"
 			}
 		},
-		"includes": ["**", "!**/node_modules", "!**/.yarn"]
+		"includes": ["**", "!**/node_modules"]
 	},
 	"javascript": {
 		"formatter": {

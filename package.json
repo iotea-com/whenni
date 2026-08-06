@@ -62,10 +62,5 @@
     "ts-node": "^10.9.2",
     "typescript": "5.9.3"
   },
-  "workspaces": [
-    "apps/*",
-    "libs/*",
-    "services/*"
-  ],
-  "packageManager": "yarn@4.5.0"
+  "packageManager": "pnpm@11.16.0"
 }

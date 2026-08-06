@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Get yarn on the path
+# Get pnpm on the path
 export NVM_DIR="$HOME/.nvm" && \
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
 
 # install dependencies and generate prisma client
 go mod tidy
-yarn install
+pnpm install
 nx generate-client db
 
 # start supervisord

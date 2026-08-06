@@ -46,7 +46,7 @@ ENV GOPATH=/go \
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # -----------------------------------------------------------------------------------------------------
-#                                                                                            Node, Yarn
+#                                                                                             Node, pnpm
 # ---------------------------------------------------------------------------------------------------*/
 
 # Install dependencies required for nvm and Node.js
@@ -55,14 +55,14 @@ RUN apt-get install -y zsh && chsh -s $(which zsh)
 # Set the SHELL to use zsh for RUN commands
 SHELL ["/usr/bin/zsh", "-c"]
 
-# Install nvm, Node.js, and yarn globally
+# Install nvm, Node.js, and pnpm globally
 ENV NVM_DIR=/root/.nvm
 RUN touch ~/.zshrc && \
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
     echo 'source $NVM_DIR/nvm.sh' >> ~/.zshrc && \
     source ~/.zshrc && \
     nvm install v20.10.0 && \
-    npm install -g npm@10.2.4 yarn corepack
+    npm install -g npm@10.2.4 pnpm corepack
 
 # -----------------------------------------------------------------------------------------------------
 #                                                                                                 Build

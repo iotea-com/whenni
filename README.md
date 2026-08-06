@@ -17,8 +17,8 @@ This monorepo contains all of the code to make GRUENT work! Backend services, br
 Of course, tooling makes all of this easier to manage. We utilize [Nx](https://nx.dev/) to create, manage, and run all of our projects. For example, if you want to run the GRUENT browser app locally, simply clone this repo and run (after updating environment variables):
 
 ```bash
-yarn
-yarn nx serve hub
+pnpm install
+pnpm nx serve hub
 ```
 
 and voila! - you are up and running with one of the various projects that make up our ecosystem.
